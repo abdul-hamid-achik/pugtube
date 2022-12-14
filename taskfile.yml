@@ -1,0 +1,63 @@
+version: '3'
+
+tasks:
+  compose.up:
+    cmds:
+      - docker compose up
+
+  compose.down:
+    cmds:
+      - docker compose down
+
+  cd.api:
+    cmds:
+      - cd api
+  cd.web:
+    cmds:
+      - cd web
+  build.web.local:
+    cmds:
+      - cd web && npm run build
+
+  build.web:
+    cmds:
+      - cd web && docker build -t web .
+
+  build:
+    cmds:
+      - task: build.web
+      - task: build.api
+
+  run:
+    depends: [compose.up, build]
+    cmds:
+      - task: run.web
+      - task: run.api
+
+  run.web:
+    deps: [build.web]
+    cmds:
+      - docker run -p 3000:3000 web
+
+  build.api:
+    cmds:
+      - cd api && docker build -t api .
+
+  run.api:
+    deps: [build.api]
+    cmds:
+      - docker run -p 8080:8080 api
+
+  api.migrate:
+    cmds:
+      - cd api && pdm manage migrate
+
+  start.api:
+    deps: [api.migrate]
+    cmds:
+      - cd api && pdm manage runserver
+
+  start.web:
+    deps: [build.web]
+    cmds:
+      - cd web && npm start
