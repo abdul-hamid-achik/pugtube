@@ -6,7 +6,7 @@ authors = [
     {name = "abdul hamid", email = "abdulachik@icloud.com"},
 ]
 dependencies = [
-    "django>=4.1.4",
+    "django>=4",
     "djangorestframework>=3.14.0",
     "django-filter>=22.1",
     "markdown>=3.4.1",
@@ -20,8 +20,18 @@ dependencies = [
     "django-environ>=0.9.0",
     "psycopg2-binary>=2.9.5",
     "gunicorn>=20.1.0",
+    "sicksid-drf-tus>=1.22.0",
+    "sicksid-django-binary-database-files>=1.1.0",
+    "python-dateutil>=2.8.2",
+    "django-dbbackup>=4.0.2",
+    "django-userforeignkey>=0.5.0",
+    "django-polymorphic>=3.1.0",
+    "django-fsm>=2.8.0",
+    "django-lifecycle>=1.0.0",
+    "pyyaml>=6.0",
+    "uritemplate>=4.1.1",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.11.1"
 license = {text = "GPLv3"}
 
 [build-system]
@@ -36,8 +46,62 @@ dev = [
     "black[d]>=22.12.0",
     "pylint>=2.15.8",
     "model-bakery>=1.9.0",
+    "pylint-django>=2.5.3",
+    "faker>=15.3.4",
+    "pytest-testdox>=3.0.1",
+    "pytest-env>=0.8.1",
 ]
 
 [[tool.pdm.autoexport]]
 filename = "requirements.txt"
 without-hashes = true
+
+[tool.pylint.DESIGN]
+max-parents = 15
+
+[tool.pylint.FORMAT]
+max-line-length = 120
+
+[tool.pylint.MASTER]
+init-hook = "import os, sys; sys.path.append(os.path.dirname('.'))"
+load-plugins = "pylint_django"
+django-settings-module = "pugtube.settings"
+fail-under = 5.00
+ignore-patterns = ["__pypackages__",
+    "fixtures",
+    "docs",
+    ".venv"]
+disable = ["C0114", # missing-module-docstring
+    "C0115", # missing-class-docstring
+    "C0116", # missing-function-docstring
+    "C0321", # multiple-statements
+    "W0221", # arguments-differ
+    "W0222", # signature-differs
+    "E1131", # unsupported-binary-operation
+    "R0903", ] # too-few-public-methods
+
+[tool.black]
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.pytest_cache
+  | __pypackages__
+  | .venv
+  | migrations
+  | settings
+  | apps.py
+  | urls.py
+  | wsgi.py
+  | asgi.py
+  | manage.py
+  | __version__.py
+)/
+'''
+
+
+[tool.pdm.scripts]
+test = "pytest"
+start = {cmd = "python manage.py runserver"}
+format = "black . --check --diff"

@@ -1,0 +1,11 @@
+name: Webapp Compliance CI
+
+on:
+  push:
+    paths:
+      - 'web/**'
+
+defaults:
+  run:
+    shell: bash
+    working-directory: web

@@ -1,13 +1,24 @@
 version: '3'
 
 tasks:
+  ci.push:
+    cmds:
+      - act push
+
+  ci.pr:
+    cmds:
+      - act pull_request
+
   compose.up:
     cmds:
-      - docker compose up
+      - docker compose up -d
 
   compose.down:
     cmds:
       - docker compose down
+  compose.build:
+    cmds:
+      - docker compose build
 
   cd.api:
     cmds:
@@ -15,13 +26,16 @@ tasks:
   cd.web:
     cmds:
       - cd web
+      -
   build.web.local:
+    workdir: web
     cmds:
-      - cd web && npm run build
+      - npm run build
 
   build.web:
+    workdir: web
     cmds:
-      - cd web && docker build -t web .
+      - docker build -t web .
 
   build:
     cmds:
@@ -29,35 +43,38 @@ tasks:
       - task: build.api
 
   run:
-    depends: [compose.up, build]
+    deps: [ compose.build, compose.up ]
     cmds:
-      - task: run.web
-      - task: run.api
+      - docker compose logs -t
 
   run.web:
-    deps: [build.web]
+    deps: [ compose.up, build.web ]
     cmds:
-      - docker run -p 3000:3000 web
+      - docker run -p 3000:3000 web -d
 
   build.api:
+    workdir: api
     cmds:
-      - cd api && docker build -t api .
+      - docker build -t api .
 
   run.api:
-    deps: [build.api]
+    deps: [ compose.up, build.api ]
     cmds:
-      - docker run -p 8080:8080 api
+      - docker run -p 8080:8080 api -d
 
   api.migrate:
+    workdir: api
     cmds:
-      - cd api && pdm manage migrate
+      - pdm manage migrate
 
   start.api:
-    deps: [api.migrate]
+    workdir: api
+    deps: [ api.migrate ]
     cmds:
-      - cd api && pdm manage runserver
+      - pdm manage runserver
 
   start.web:
-    deps: [build.web]
+    workdir: web
+    deps: [ build.web ]
     cmds:
-      - cd web && npm start
+      - npm start

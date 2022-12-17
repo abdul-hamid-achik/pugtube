@@ -1,18 +1,70 @@
-version: '3'
-
 services:
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
+    command: /api/scripts/entrypoint.sh
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
+      DEBUG: True
     ports:
-      - "8080:8080"
+      - 8000:8000
+#    volumes:
+#      - ./api:/api
 
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    command: /web/scripts/entrypoint.sh
     depends_on:
-      - api
+      database:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+    volumes:
+      - ./web:/web
+
+  database:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_database: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pugtube.dev
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 5050:5050
+    restart: unless-stopped
+
+volumes:
+  database:
+  pgadmin:
+
