@@ -1,0 +1,19 @@
+.idea
+node_modules
+.venv
+__pycache__
+.pytest_cache
+
+static
+    css
+    js
+    img
+    fonts
+    admin
+    django_extensions
+    guardian
+    rest_framework
+    polymorphic
+    staticfiles.json
+
+.env

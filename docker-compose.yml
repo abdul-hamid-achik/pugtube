@@ -1,0 +1,94 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
+      DEBUG: True
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/api
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+    volumes:
+      - ./web:/web
+
+  database:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_database: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@pugtube.dev
+      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_CONFIG_SERVER_MODE='False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - 5050:5050
+    restart: unless-stopped
+
+  prefect.orion:
+    image: prefecthq/prefect:2.7.7-python3.11
+    entrypoint: ["prefect", "orion", "start", "--host", "0.0.0.0"]
+    environment:
+      - PREFECT_ORION_API_HOST=0.0.0.0
+      - PREFECT_ORION_API_PORT=4200
+      - PREFECT_ORION_DATABASE_CONNECTION_URL=postgresql+asyncpg://postgres:postgres@database:5432/postgres
+    ports:
+      - 4200:4200
+    volumes:
+      - prefect:/root/.prefect
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  prefect.agent:
+    image: prefecthq/prefect:2.7.7-python3.11
+    command: ["prefect", "agent", "start", "-q", "default"]
+    environment:
+      - PREFECT_API_URL=http://prefect.orion:4200/api
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  database:
+  pgadmin:
+  prefect:
