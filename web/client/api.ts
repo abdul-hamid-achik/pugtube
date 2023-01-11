@@ -24,6 +24,441 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface ListOriginalVideos200Response
+ */
+export interface ListOriginalVideos200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListOriginalVideos200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListOriginalVideos200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListOriginalVideos200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<OriginalVideo>}
+     * @memberof ListOriginalVideos200Response
+     */
+    'results'?: Array<OriginalVideo>;
+}
+/**
+ * 
+ * @export
+ * @interface ListProcessedVideos200Response
+ */
+export interface ListProcessedVideos200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListProcessedVideos200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListProcessedVideos200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListProcessedVideos200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<ProcessedVideo>}
+     * @memberof ListProcessedVideos200Response
+     */
+    'results'?: Array<ProcessedVideo>;
+}
+/**
+ * 
+ * @export
+ * @interface ListVideoPosters200Response
+ */
+export interface ListVideoPosters200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListVideoPosters200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideoPosters200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideoPosters200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<VideoPoster>}
+     * @memberof ListVideoPosters200Response
+     */
+    'results'?: Array<VideoPoster>;
+}
+/**
+ * 
+ * @export
+ * @interface ListVideoTimelinePreviews200Response
+ */
+export interface ListVideoTimelinePreviews200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListVideoTimelinePreviews200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideoTimelinePreviews200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideoTimelinePreviews200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<VideoTimelinePreview>}
+     * @memberof ListVideoTimelinePreviews200Response
+     */
+    'results'?: Array<VideoTimelinePreview>;
+}
+/**
+ * 
+ * @export
+ * @interface ListVideos200Response
+ */
+export interface ListVideos200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListVideos200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideos200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListVideos200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Video>}
+     * @memberof ListVideos200Response
+     */
+    'results'?: Array<Video>;
+}
+/**
+ * 
+ * @export
+ * @interface OriginalVideo
+ */
+export interface OriginalVideo {
+    /**
+     * 
+     * @type {number}
+     * @memberof OriginalVideo
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof OriginalVideo
+     */
+    'tags'?: Array<string> | null;
+    /**
+     * Quality of the video, e.g. hd, sd, etc.
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'quality'?: string | null;
+    /**
+     * File type of the video, e.g. mp4, webm, etc.
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'file_type'?: string | null;
+    /**
+     * Duration of the video in seconds
+     * @type {number}
+     * @memberof OriginalVideo
+     */
+    'duration'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof OriginalVideo
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof OriginalVideo
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof OriginalVideo
+     */
+    'fps'?: number | null;
+    /**
+     * 
+     * @type {File}
+     * @memberof OriginalVideo
+     */
+    'file': File;
+    /**
+     * Original link to the file if it was uploaded from another site
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'original'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'polymorphic_ctype'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof OriginalVideo
+     */
+    'created_by'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ProcessedVideo
+ */
+export interface ProcessedVideo {
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ProcessedVideo
+     */
+    'tags'?: Array<string> | null;
+    /**
+     * Quality of the video, e.g. hd, sd, etc.
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'quality'?: string | null;
+    /**
+     * File type of the video, e.g. mp4, webm, etc.
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'file_type'?: string | null;
+    /**
+     * Duration of the video in seconds
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'duration'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'fps'?: number | null;
+    /**
+     * 
+     * @type {File}
+     * @memberof ProcessedVideo
+     */
+    'file': File;
+    /**
+     * Encoding of the video, e.g. h264, vp9, etc.
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'encoding'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'bitrate'?: number | null;
+    /**
+     * Audio codec of the video, e.g. aac, mp3, etc.
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'audio_codec'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'audio_bitrate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'audio_sample_rate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof ProcessedVideo
+     */
+    'audio_channels'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'polymorphic_ctype'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'created_by'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProcessedVideo
+     */
+    'original_video': string;
+}
+/**
+ * 
+ * @export
+ * @interface TokenObtainPair
+ */
+export interface TokenObtainPair {
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenObtainPair
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenObtainPair
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface TokenRefresh
+ */
+export interface TokenRefresh {
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenRefresh
+     */
+    'refresh': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenRefresh
+     */
+    'access'?: string;
+}
+/**
+ * 
+ * @export
  * @interface Upload
  */
 export interface Upload {
@@ -38,44 +473,2715 @@ export interface Upload {
      * @type {string}
      * @memberof Upload
      */
-    'created_at'?: string;
+    'guid'?: string;
     /**
      * 
      * @type {string}
      * @memberof Upload
      */
-    'modified_at'?: string;
+    'state'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Upload
+     */
+    'upload_offset'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Upload
+     */
+    'upload_length'?: number;
     /**
      * 
      * @type {string}
      * @memberof Upload
      */
-    'title': string;
+    'upload_metadata': string;
     /**
      * 
      * @type {string}
      * @memberof Upload
      */
-    'description'?: string | null;
+    'filename'?: string;
     /**
      * 
-     * @type {Array<string>}
+     * @type {string}
      * @memberof Upload
      */
-    'tags'?: Array<string> | null;
+    'temporary_file_path'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Upload
+     */
+    'expires'?: string | null;
     /**
      * 
      * @type {File}
      * @memberof Upload
      */
-    'file': File;
+    'uploaded_file'?: File | null;
+}
+/**
+ * 
+ * @export
+ * @interface Video
+ */
+export interface Video {
+    /**
+     * 
+     * @type {number}
+     * @memberof Video
+     */
+    'id'?: number;
     /**
      * 
      * @type {string}
-     * @memberof Upload
+     * @memberof Video
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Video
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof Video
+     */
+    'tags'?: Array<string> | null;
+    /**
+     * Quality of the video, e.g. hd, sd, etc.
+     * @type {string}
+     * @memberof Video
+     */
+    'quality'?: string | null;
+    /**
+     * File type of the video, e.g. mp4, webm, etc.
+     * @type {string}
+     * @memberof Video
+     */
+    'file_type'?: string | null;
+    /**
+     * Duration of the video in seconds
+     * @type {number}
+     * @memberof Video
+     */
+    'duration'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Video
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Video
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof Video
+     */
+    'fps'?: number | null;
+    /**
+     * 
+     * @type {VideoOriginalVideo}
+     * @memberof Video
+     */
+    'original_video'?: VideoOriginalVideo;
+    /**
+     * 
+     * @type {Array<VideoProcessedVideosInner>}
+     * @memberof Video
+     */
+    'processed_videos'?: Array<VideoProcessedVideosInner>;
+    /**
+     * 
+     * @type {VideoPoster}
+     * @memberof Video
+     */
+    'poster'?: VideoPoster;
+    /**
+     * 
+     * @type {Array<VideoPreviewsInner>}
+     * @memberof Video
+     */
+    'previews'?: Array<VideoPreviewsInner>;
+}
+/**
+ * 
+ * @export
+ * @interface VideoOriginalVideo
+ */
+export interface VideoOriginalVideo {
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoOriginalVideo
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof VideoOriginalVideo
+     */
+    'tags'?: Array<string> | null;
+    /**
+     * Quality of the video, e.g. hd, sd, etc.
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'quality'?: string | null;
+    /**
+     * File type of the video, e.g. mp4, webm, etc.
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'file_type'?: string | null;
+    /**
+     * Duration of the video in seconds
+     * @type {number}
+     * @memberof VideoOriginalVideo
+     */
+    'duration'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoOriginalVideo
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoOriginalVideo
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoOriginalVideo
+     */
+    'fps'?: number | null;
+    /**
+     * 
+     * @type {File}
+     * @memberof VideoOriginalVideo
+     */
+    'file': File;
+    /**
+     * Original link to the file if it was uploaded from another site
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'original'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
+     */
+    'polymorphic_ctype'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoOriginalVideo
      */
     'created_by'?: string | null;
 }
+/**
+ * 
+ * @export
+ * @interface VideoPoster
+ */
+export interface VideoPoster {
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPoster
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPoster
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPoster
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {File}
+     * @memberof VideoPoster
+     */
+    'file': File;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPoster
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPoster
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPoster
+     */
+    'polymorphic_ctype'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPoster
+     */
+    'created_by'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPoster
+     */
+    'video': number;
+}
+/**
+ * 
+ * @export
+ * @interface VideoPreviewsInner
+ */
+export interface VideoPreviewsInner {
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPreviewsInner
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPreviewsInner
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPreviewsInner
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {File}
+     * @memberof VideoPreviewsInner
+     */
+    'preview_image': File;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPreviewsInner
+     */
+    'preview_time'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoPreviewsInner
+     */
+    'created_by'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoPreviewsInner
+     */
+    'video': number;
+}
+/**
+ * 
+ * @export
+ * @interface VideoProcessedVideosInner
+ */
+export interface VideoProcessedVideosInner {
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'title': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof VideoProcessedVideosInner
+     */
+    'tags'?: Array<string> | null;
+    /**
+     * Quality of the video, e.g. hd, sd, etc.
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'quality'?: string | null;
+    /**
+     * File type of the video, e.g. mp4, webm, etc.
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'file_type'?: string | null;
+    /**
+     * Duration of the video in seconds
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'duration'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'width'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'height'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'fps'?: number | null;
+    /**
+     * 
+     * @type {File}
+     * @memberof VideoProcessedVideosInner
+     */
+    'file': File;
+    /**
+     * Encoding of the video, e.g. h264, vp9, etc.
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'encoding'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'bitrate'?: number | null;
+    /**
+     * Audio codec of the video, e.g. aac, mp3, etc.
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'audio_codec'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'audio_bitrate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'audio_sample_rate'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoProcessedVideosInner
+     */
+    'audio_channels'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'polymorphic_ctype'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'created_by'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoProcessedVideosInner
+     */
+    'original_video': string;
+}
+/**
+ * 
+ * @export
+ * @interface VideoTimelinePreview
+ */
+export interface VideoTimelinePreview {
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoTimelinePreview
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoTimelinePreview
+     */
+    'created_at'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoTimelinePreview
+     */
+    'modified_at'?: string;
+    /**
+     * 
+     * @type {File}
+     * @memberof VideoTimelinePreview
+     */
+    'preview_image': File;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoTimelinePreview
+     */
+    'preview_time'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof VideoTimelinePreview
+     */
+    'created_by'?: string | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof VideoTimelinePreview
+     */
+    'video': number;
+}
+
+/**
+ * AuthApi - axios parameter creator
+ * @export
+ */
+export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
+         * @param {TokenObtainPair} [tokenObtainPair] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTokenObtainPair: async (tokenObtainPair?: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/token/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+         * @param {TokenRefresh} [tokenRefresh] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTokenRefresh: async (tokenRefresh?: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/token/refresh/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthApi - functional programming interface
+ * @export
+ */
+export const AuthApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
+         * @param {TokenObtainPair} [tokenObtainPair] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createTokenObtainPair(tokenObtainPair?: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenObtainPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createTokenObtainPair(tokenObtainPair, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+         * @param {TokenRefresh} [tokenRefresh] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createTokenRefresh(tokenRefresh?: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenRefresh>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createTokenRefresh(tokenRefresh, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * AuthApi - factory interface
+ * @export
+ */
+export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthApiFp(configuration)
+    return {
+        /**
+         * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
+         * @param {TokenObtainPair} [tokenObtainPair] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTokenObtainPair(tokenObtainPair?: TokenObtainPair, options?: any): AxiosPromise<TokenObtainPair> {
+            return localVarFp.createTokenObtainPair(tokenObtainPair, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+         * @param {TokenRefresh} [tokenRefresh] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTokenRefresh(tokenRefresh?: TokenRefresh, options?: any): AxiosPromise<TokenRefresh> {
+            return localVarFp.createTokenRefresh(tokenRefresh, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * AuthApi - object-oriented interface
+ * @export
+ * @class AuthApi
+ * @extends {BaseAPI}
+ */
+export class AuthApi extends BaseAPI {
+    /**
+     * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
+     * @param {TokenObtainPair} [tokenObtainPair] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public createTokenObtainPair(tokenObtainPair?: TokenObtainPair, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).createTokenObtainPair(tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+     * @param {TokenRefresh} [tokenRefresh] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public createTokenRefresh(tokenRefresh?: TokenRefresh, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).createTokenRefresh(tokenRefresh, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
+ * ContentSystemApi - axios parameter creator
+ * @export
+ */
+export const ContentSystemApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createOriginalVideo: async (originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/original/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(originalVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createProcessedVideo: async (processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/processed/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(processedVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideo: async (video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/video/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(video, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideoPoster: async (videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/poster/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoPoster, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideoTimelinePreview: async (videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/preview/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoTimelinePreview, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyOriginalVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyOriginalVideo', 'id', id)
+            const localVarPath = `/content-system/original/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyProcessedVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyProcessedVideo', 'id', id)
+            const localVarPath = `/content-system/processed/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyVideo', 'id', id)
+            const localVarPath = `/content-system/video/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideoPoster: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyVideoPoster', 'id', id)
+            const localVarPath = `/content-system/poster/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideoTimelinePreview: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyVideoTimelinePreview', 'id', id)
+            const localVarPath = `/content-system/preview/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listOriginalVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/original/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listProcessedVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/processed/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideoPosters: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/poster/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideoTimelinePreviews: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/preview/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/content-system/video/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateOriginalVideo: async (id: string, originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateOriginalVideo', 'id', id)
+            const localVarPath = `/content-system/original/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(originalVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateProcessedVideo: async (id: string, processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateProcessedVideo', 'id', id)
+            const localVarPath = `/content-system/processed/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(processedVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideo: async (id: string, video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateVideo', 'id', id)
+            const localVarPath = `/content-system/video/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(video, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideoPoster: async (id: string, videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateVideoPoster', 'id', id)
+            const localVarPath = `/content-system/poster/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoPoster, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideoTimelinePreview: async (id: string, videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateVideoTimelinePreview', 'id', id)
+            const localVarPath = `/content-system/preview/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoTimelinePreview, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveOriginalVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveOriginalVideo', 'id', id)
+            const localVarPath = `/content-system/original/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveProcessedVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveProcessedVideo', 'id', id)
+            const localVarPath = `/content-system/processed/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveVideo', 'id', id)
+            const localVarPath = `/content-system/video/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideoPoster: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveVideoPoster', 'id', id)
+            const localVarPath = `/content-system/poster/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideoTimelinePreview: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveVideoTimelinePreview', 'id', id)
+            const localVarPath = `/content-system/preview/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateOriginalVideo: async (id: string, originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateOriginalVideo', 'id', id)
+            const localVarPath = `/content-system/original/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(originalVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateProcessedVideo: async (id: string, processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateProcessedVideo', 'id', id)
+            const localVarPath = `/content-system/processed/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(processedVideo, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideo: async (id: string, video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateVideo', 'id', id)
+            const localVarPath = `/content-system/video/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(video, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideoPoster: async (id: string, videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateVideoPoster', 'id', id)
+            const localVarPath = `/content-system/poster/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoPoster, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideoTimelinePreview: async (id: string, videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateVideoTimelinePreview', 'id', id)
+            const localVarPath = `/content-system/preview/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(videoTimelinePreview, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ContentSystemApi - functional programming interface
+ * @export
+ */
+export const ContentSystemApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContentSystemApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createOriginalVideo(originalVideo?: OriginalVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OriginalVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createOriginalVideo(originalVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createProcessedVideo(processedVideo?: ProcessedVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProcessedVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createProcessedVideo(processedVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createVideo(video?: Video, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Video>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createVideo(video, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createVideoPoster(videoPoster?: VideoPoster, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoPoster>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createVideoPoster(videoPoster, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createVideoTimelinePreview(videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoTimelinePreview>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createVideoTimelinePreview(videoTimelinePreview, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyOriginalVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyOriginalVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyProcessedVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyProcessedVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyVideoPoster(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyVideoPoster(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyVideoTimelinePreview(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyVideoTimelinePreview(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listOriginalVideos(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListOriginalVideos200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listOriginalVideos(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listProcessedVideos(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListProcessedVideos200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listProcessedVideos(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listVideoPosters(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListVideoPosters200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listVideoPosters(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listVideoTimelinePreviews(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListVideoTimelinePreviews200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listVideoTimelinePreviews(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listVideos(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListVideos200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listVideos(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OriginalVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateOriginalVideo(id, originalVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProcessedVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateProcessedVideo(id, processedVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateVideo(id: string, video?: Video, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Video>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateVideo(id, video, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoPoster>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateVideoPoster(id, videoPoster, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoTimelinePreview>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateVideoTimelinePreview(id, videoTimelinePreview, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveOriginalVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OriginalVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveOriginalVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveProcessedVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProcessedVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveProcessedVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveVideo(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Video>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveVideo(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveVideoPoster(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoPoster>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveVideoPoster(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveVideoTimelinePreview(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoTimelinePreview>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveVideoTimelinePreview(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OriginalVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateOriginalVideo(id, originalVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProcessedVideo>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateProcessedVideo(id, processedVideo, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateVideo(id: string, video?: Video, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Video>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateVideo(id, video, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoPoster>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateVideoPoster(id, videoPoster, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VideoTimelinePreview>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateVideoTimelinePreview(id, videoTimelinePreview, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * ContentSystemApi - factory interface
+ * @export
+ */
+export const ContentSystemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContentSystemApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createOriginalVideo(originalVideo?: OriginalVideo, options?: any): AxiosPromise<OriginalVideo> {
+            return localVarFp.createOriginalVideo(originalVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createProcessedVideo(processedVideo?: ProcessedVideo, options?: any): AxiosPromise<ProcessedVideo> {
+            return localVarFp.createProcessedVideo(processedVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideo(video?: Video, options?: any): AxiosPromise<Video> {
+            return localVarFp.createVideo(video, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideoPoster(videoPoster?: VideoPoster, options?: any): AxiosPromise<VideoPoster> {
+            return localVarFp.createVideoPoster(videoPoster, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createVideoTimelinePreview(videoTimelinePreview?: VideoTimelinePreview, options?: any): AxiosPromise<VideoTimelinePreview> {
+            return localVarFp.createVideoTimelinePreview(videoTimelinePreview, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyOriginalVideo(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyOriginalVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyProcessedVideo(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyProcessedVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideo(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideoPoster(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyVideoPoster(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyVideoTimelinePreview(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyVideoTimelinePreview(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listOriginalVideos(page?: number, options?: any): AxiosPromise<ListOriginalVideos200Response> {
+            return localVarFp.listOriginalVideos(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listProcessedVideos(page?: number, options?: any): AxiosPromise<ListProcessedVideos200Response> {
+            return localVarFp.listProcessedVideos(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideoPosters(page?: number, options?: any): AxiosPromise<ListVideoPosters200Response> {
+            return localVarFp.listVideoPosters(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideoTimelinePreviews(page?: number, options?: any): AxiosPromise<ListVideoTimelinePreviews200Response> {
+            return localVarFp.listVideoTimelinePreviews(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listVideos(page?: number, options?: any): AxiosPromise<ListVideos200Response> {
+            return localVarFp.listVideos(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: any): AxiosPromise<OriginalVideo> {
+            return localVarFp.partialUpdateOriginalVideo(id, originalVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: any): AxiosPromise<ProcessedVideo> {
+            return localVarFp.partialUpdateProcessedVideo(id, processedVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideo(id: string, video?: Video, options?: any): AxiosPromise<Video> {
+            return localVarFp.partialUpdateVideo(id, video, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideoPoster(id: string, videoPoster?: VideoPoster, options?: any): AxiosPromise<VideoPoster> {
+            return localVarFp.partialUpdateVideoPoster(id, videoPoster, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: any): AxiosPromise<VideoTimelinePreview> {
+            return localVarFp.partialUpdateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveOriginalVideo(id: string, options?: any): AxiosPromise<OriginalVideo> {
+            return localVarFp.retrieveOriginalVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveProcessedVideo(id: string, options?: any): AxiosPromise<ProcessedVideo> {
+            return localVarFp.retrieveProcessedVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideo(id: string, options?: any): AxiosPromise<Video> {
+            return localVarFp.retrieveVideo(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideoPoster(id: string, options?: any): AxiosPromise<VideoPoster> {
+            return localVarFp.retrieveVideoPoster(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveVideoTimelinePreview(id: string, options?: any): AxiosPromise<VideoTimelinePreview> {
+            return localVarFp.retrieveVideoTimelinePreview(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this original video.
+         * @param {OriginalVideo} [originalVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: any): AxiosPromise<OriginalVideo> {
+            return localVarFp.updateOriginalVideo(id, originalVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this processed video.
+         * @param {ProcessedVideo} [processedVideo] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: any): AxiosPromise<ProcessedVideo> {
+            return localVarFp.updateProcessedVideo(id, processedVideo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video.
+         * @param {Video} [video] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideo(id: string, video?: Video, options?: any): AxiosPromise<Video> {
+            return localVarFp.updateVideo(id, video, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video poster.
+         * @param {VideoPoster} [videoPoster] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideoPoster(id: string, videoPoster?: VideoPoster, options?: any): AxiosPromise<VideoPoster> {
+            return localVarFp.updateVideoPoster(id, videoPoster, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this video timeline preview.
+         * @param {VideoTimelinePreview} [videoTimelinePreview] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: any): AxiosPromise<VideoTimelinePreview> {
+            return localVarFp.updateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ContentSystemApi - object-oriented interface
+ * @export
+ * @class ContentSystemApi
+ * @extends {BaseAPI}
+ */
+export class ContentSystemApi extends BaseAPI {
+    /**
+     * 
+     * @param {OriginalVideo} [originalVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public createOriginalVideo(originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).createOriginalVideo(originalVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {ProcessedVideo} [processedVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public createProcessedVideo(processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).createProcessedVideo(processedVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {Video} [video] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public createVideo(video?: Video, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).createVideo(video, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {VideoPoster} [videoPoster] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public createVideoPoster(videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).createVideoPoster(videoPoster, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {VideoTimelinePreview} [videoTimelinePreview] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public createVideoTimelinePreview(videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).createVideoTimelinePreview(videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this original video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public destroyOriginalVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).destroyOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this processed video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public destroyProcessedVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).destroyProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public destroyVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).destroyVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video poster.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public destroyVideoPoster(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).destroyVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video timeline preview.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public destroyVideoTimelinePreview(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).destroyVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public listOriginalVideos(page?: number, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).listOriginalVideos(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public listProcessedVideos(page?: number, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).listProcessedVideos(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public listVideoPosters(page?: number, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).listVideoPosters(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public listVideoTimelinePreviews(page?: number, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).listVideoTimelinePreviews(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public listVideos(page?: number, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).listVideos(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this original video.
+     * @param {OriginalVideo} [originalVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public partialUpdateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).partialUpdateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this processed video.
+     * @param {ProcessedVideo} [processedVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public partialUpdateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).partialUpdateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video.
+     * @param {Video} [video] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public partialUpdateVideo(id: string, video?: Video, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).partialUpdateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video poster.
+     * @param {VideoPoster} [videoPoster] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public partialUpdateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).partialUpdateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video timeline preview.
+     * @param {VideoTimelinePreview} [videoTimelinePreview] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public partialUpdateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).partialUpdateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this original video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public retrieveOriginalVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).retrieveOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this processed video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public retrieveProcessedVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).retrieveProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public retrieveVideo(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).retrieveVideo(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video poster.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public retrieveVideoPoster(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).retrieveVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video timeline preview.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public retrieveVideoTimelinePreview(id: string, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).retrieveVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this original video.
+     * @param {OriginalVideo} [originalVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public updateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).updateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this processed video.
+     * @param {ProcessedVideo} [processedVideo] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public updateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).updateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video.
+     * @param {Video} [video] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public updateVideo(id: string, video?: Video, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).updateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video poster.
+     * @param {VideoPoster} [videoPoster] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public updateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).updateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this video timeline preview.
+     * @param {VideoTimelinePreview} [videoTimelinePreview] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContentSystemApi
+     */
+    public updateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
+        return ContentSystemApiFp(this.configuration).updateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 /**
  * TusApi - axios parameter creator
@@ -377,429 +3483,6 @@ export class TusApi extends BaseAPI {
      */
     public updateUpload(guid: string, upload?: Upload, options?: AxiosRequestConfig) {
         return TusApiFp(this.configuration).updateUpload(guid, upload, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-/**
- * UploadApi - axios parameter creator
- * @export
- */
-export const UploadApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * 
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createUpload: async (upload?: Upload, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/upload/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(upload, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        destroyUpload: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('destroyUpload', 'id', id)
-            const localVarPath = `/upload/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        listUploads: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/upload/`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        partialUpdateUpload: async (id: string, upload?: Upload, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('partialUpdateUpload', 'id', id)
-            const localVarPath = `/upload/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(upload, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieveUpload: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('retrieveUpload', 'id', id)
-            const localVarPath = `/upload/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateUpload: async (id: string, upload?: Upload, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateUpload', 'id', id)
-            const localVarPath = `/upload/{id}/`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(upload, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * UploadApi - functional programming interface
- * @export
- */
-export const UploadApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = UploadApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * 
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async createUpload(upload?: Upload, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Upload>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createUpload(upload, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async destroyUpload(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyUpload(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async listUploads(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Upload>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listUploads(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async partialUpdateUpload(id: string, upload?: Upload, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Upload>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateUpload(id, upload, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async retrieveUpload(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Upload>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveUpload(id, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async updateUpload(id: string, upload?: Upload, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Upload>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateUpload(id, upload, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-    }
-};
-
-/**
- * UploadApi - factory interface
- * @export
- */
-export const UploadApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = UploadApiFp(configuration)
-    return {
-        /**
-         * 
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createUpload(upload?: Upload, options?: any): AxiosPromise<Upload> {
-            return localVarFp.createUpload(upload, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        destroyUpload(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.destroyUpload(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        listUploads(options?: any): AxiosPromise<Array<Upload>> {
-            return localVarFp.listUploads(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        partialUpdateUpload(id: string, upload?: Upload, options?: any): AxiosPromise<Upload> {
-            return localVarFp.partialUpdateUpload(id, upload, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieveUpload(id: string, options?: any): AxiosPromise<Upload> {
-            return localVarFp.retrieveUpload(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} id A unique integer value identifying this upload.
-         * @param {Upload} [upload] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        updateUpload(id: string, upload?: Upload, options?: any): AxiosPromise<Upload> {
-            return localVarFp.updateUpload(id, upload, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * UploadApi - object-oriented interface
- * @export
- * @class UploadApi
- * @extends {BaseAPI}
- */
-export class UploadApi extends BaseAPI {
-    /**
-     * 
-     * @param {Upload} [upload] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public createUpload(upload?: Upload, options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).createUpload(upload, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} id A unique integer value identifying this upload.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public destroyUpload(id: string, options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).destroyUpload(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public listUploads(options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).listUploads(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} id A unique integer value identifying this upload.
-     * @param {Upload} [upload] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public partialUpdateUpload(id: string, upload?: Upload, options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).partialUpdateUpload(id, upload, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} id A unique integer value identifying this upload.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public retrieveUpload(id: string, options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).retrieveUpload(id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} id A unique integer value identifying this upload.
-     * @param {Upload} [upload] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UploadApi
-     */
-    public updateUpload(id: string, upload?: Upload, options?: AxiosRequestConfig) {
-        return UploadApiFp(this.configuration).updateUpload(id, upload, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

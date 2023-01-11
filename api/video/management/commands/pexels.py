@@ -1,7 +1,7 @@
 import httpx
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand, CommandError
-from video.models import Upload
+from video.models import OriginalVideo
 from video.pexels.api import get_popular_videos
 
 
@@ -29,11 +29,11 @@ class Command(BaseCommand):
 
             with httpx.Client(follow_redirects=True) as client:
                 try:
-                    video_file = next(video["video_files"])
+                    video_file = video["video_files"][0]
                     self.stdout.write(f"Downloading video link {video_file['link']}")
                     response = client.get(video_file["link"])
                     response.raise_for_status()
-                    upload = Upload.objects.create(
+                    original_video = OriginalVideo.objects.create(
                         title=video["url"],
                         file=SimpleUploadedFile(
                             f"video-{video['id']}.mp4",
@@ -50,7 +50,7 @@ class Command(BaseCommand):
                     )
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f"processed successfully: video_id: {video['id']} - upload_id: {upload.id}"
+                            f"processed successfully: video_id: {video['id']} - original_video_id: {original_video.id}"
                         )
                     )
                 except httpx.HTTPError as exc:

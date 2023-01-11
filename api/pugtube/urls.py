@@ -19,30 +19,35 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
-    path("admin", admin.site.urls),
+    path("admin/", admin.site.urls),
     path("health", include("health_check.urls")),
-    path("auth", include("knox.urls")),
     path("tus/", include("rest_framework_tus.urls", namespace="rest_framework_tus")),
     path("schema", get_schema_view(title="PugTube API"), name="openapi-schema"),
-    path("", include("binary_database_files.urls")),
-    path(
-        "",
-        include(
-            (
-                "video.urls",
-                "video",
-            ),
-            namespace="video",
-        ),
-    ),
     path(
         "docs/",
         TemplateView.as_view(
             template_name="docs.html", extra_context={"schema_url": "openapi-schema"}
         ),
         name="docs",
+    ),
+    path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("storage/", include("binary_database_files.urls")),
+    path(
+        "content-system/",
+        include(
+            (
+                "video.urls",
+                "video",
+            ),
+            namespace="content-system",
+        ),
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

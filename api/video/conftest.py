@@ -1,8 +1,8 @@
 import os
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from knox.models import AuthToken
 from model_bakery import baker
+from rest_framework_simplejwt.tokens import AccessToken
 
 from pugtube import settings
 from rest_framework.test import APIClient
@@ -16,8 +16,8 @@ def api_client():
 @pytest.fixture()
 def get_authenticated_client(api_client):
     def _get_authenticated_client(user):
-        instance, token = AuthToken.objects.create(user=user)
-        api_client.credentials(HTTP_AUTHORIZATION=f"Bear {token}")
+        token = AccessToken.for_user(user=user)
+        api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         return api_client
 
     return _get_authenticated_client

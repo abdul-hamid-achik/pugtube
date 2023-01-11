@@ -28,6 +28,8 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
       NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_PATH: http://api:8000
+      NEXT_AUTH_URL: http://web:8000
     ports:
       - 3000:3000
     volumes:

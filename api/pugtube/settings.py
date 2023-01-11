@@ -69,10 +69,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_tus",
     "rest_framework_api_key",
-    "knox",
     "health_check",
     "health_check.db",
     "binary_database_files",
+    "rest_framework_simplejwt",
 ]
 
 INSTALLED_APPS += ["video"]
@@ -169,9 +169,12 @@ REST_FRAMEWORK = {  # Use Django's standard `django.contrib.auth` permissions,
         # "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
         # "rest_framework_api_key.permissions.HasAPIKey",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 12,
 }
-
 APPEND_SLASH = False
 
 DBBACKUP_STORAGE = "binary_database_files.storage.DatabaseStorage"

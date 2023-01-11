@@ -35,6 +35,9 @@ dependencies = [
     "ffmpeg-python>=0.2.0",
     "ffprobe-python>=1.0.3",
     "prefect>=2.7.7",
+    "Pillow>=9.4.0",
+    "djangorestframework-simplejwt>=5.2.2",
+    "spacy>=3.4.4",
 ]
 requires-python = ">=3.11.1"
 license = {text = "GPLv3"}
@@ -107,6 +110,7 @@ exclude = '''
 
 
 [tool.pdm.scripts]
+_.env_file = ".env"
 test = "pytest"
 start = {cmd = "python manage.py runserver"}
 format = "black . --check --diff"

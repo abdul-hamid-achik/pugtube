@@ -34,7 +34,7 @@ tasks:
   compose.logs:
     desc: Shows logs for all services in docker-compose.yml
     cmds:
-      - docker compose logs -f
+      - docker compose logs -f api web
 
   logs:
     desc: Shows logs for all services in docker-compose.yml
@@ -78,7 +78,15 @@ tasks:
 
   dev:
     desc: Starts all services in docker-compose.yml and prints logs, ideal for local development
+    summary: |
+        This task starts all services in docker-compose.yml and prints logs, ideal for local development
     deps: [ compose.build, compose.up ]
+    cmds:
+      - task: logs
+
+  reset:
+    desc: Resets all services in docker-compose.yml
+    deps: [ compose.down, compose.build, compose.up ]
     cmds:
       - task: logs
 
