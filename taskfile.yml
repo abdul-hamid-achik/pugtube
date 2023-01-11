@@ -23,13 +23,22 @@ tasks:
     cmds:
       - docker compose build
 
+  compose.logs:
+    cmds:
+      - docker compose logs -f
+
+  logs:
+    cmds:
+      - task: compose.logs
+
   cd.api:
     cmds:
       - cd api
+
   cd.web:
     cmds:
       - cd web
-      -
+
   build.web.local:
     workdir: web
     cmds:

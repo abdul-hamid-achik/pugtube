@@ -1,5 +1,6 @@
 services:
   api:
+    image: abdulachik/pugtube.api:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       - ./api:/api
 
   web:
+    image: abdulachik/pugtube.web:latest
     build:
       context: ./web
       dockerfile: Dockerfile
@@ -62,7 +64,7 @@ services:
       - 5050:5050
     restart: unless-stopped
 
-  prefect.orion:
+  orion:
     image: prefecthq/prefect:2.7.7-python3.11
     entrypoint: ["prefect", "orion", "start", "--host", "0.0.0.0"]
     environment:
@@ -78,11 +80,11 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  prefect.agent:
+  prefect:
     image: prefecthq/prefect:2.7.7-python3.11
     command: ["prefect", "agent", "start", "-q", "default"]
     environment:
-      - PREFECT_API_URL=http://prefect.orion:4200/api
+      - PREFECT_API_URL=http://orion:4200/api
     depends_on:
       database:
         condition: service_healthy
