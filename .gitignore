@@ -59,6 +59,8 @@ node_modules
 __pycache__
 .pytest_cache
 
+.task
+
 static
     css
     js
