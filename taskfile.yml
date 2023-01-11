@@ -2,91 +2,124 @@ version: '3'
 
 tasks:
   docker.start:
+    desc: Starts Docker engine locally
     cmds:
       - open -a Docker
+
   ci.push:
+    desc: Runs github actions locally as if it was pushed to the repo
     cmds:
       - act push
 
   ci.pr:
+    desc: Runs github actions locally as if it was a pull request
     cmds:
       - act pull_request
 
   compose.up:
+    desc: Starts all services in docker-compose.yml
     cmds:
       - docker compose up -d
 
   compose.down:
+    desc: Stops all services in docker-compose.yml
     cmds:
       - docker compose down
+
   compose.build:
+    desc: Builds all services in docker-compose.yml
     cmds:
       - docker compose build
 
   compose.logs:
+    desc: Shows logs for all services in docker-compose.yml
     cmds:
       - docker compose logs -f
 
   logs:
+    desc: Shows logs for all services in docker-compose.yml
     cmds:
       - task: compose.logs
 
   cd.api:
+    desc: Changes directory to api
     cmds:
       - cd api
 
   cd.web:
+    desc: Changes directory to web
     cmds:
       - cd web
 
   build.web.local:
-    workdir: web
+    desc: Builds web locally
+    dir: web
     cmds:
       - npm run build
+    sources:
+      - components/**/*.ts[x]
+      - pages/**/*.ts[x]
+      - styles/**/*.(css|less|sass)
+      - client/*.ts
+    generates:
+      - .next/*
 
   build.web:
-    workdir: web
+    desc: Builds web container
+    dir: web
     cmds:
       - docker build -t web .
 
   build:
+    desc: Builds all containers(api, web)
     cmds:
       - task: build.web
       - task: build.api
 
   dev:
+    desc: Starts all services in docker-compose.yml and prints logs, ideal for local development
     deps: [ compose.build, compose.up ]
     cmds:
-      - docker compose logs -t
+      - task: logs
 
   run.web:
+    desc: Runs web container
     deps: [ compose.up, build.web ]
     cmds:
       - docker run -p 3000:3000 web -d
 
   build.api:
-    workdir: api
+    desc: Builds api container
+    dir: api
     cmds:
       - docker build -t api .
 
   run.api:
+    desc: Runs api container
     deps: [ compose.up, build.api ]
     cmds:
       - docker run -p 8080:8080 api -d
 
   api.migrate:
-    workdir: api
+    desc: Runs migrations for api locally
+    dir: api
     cmds:
       - pdm manage migrate
 
   start.api:
-    workdir: api
+    desc: Starts api locally
+    dir: api
     deps: [ api.migrate ]
     cmds:
       - pdm manage runserver
 
   start.web:
-    workdir: web
-    deps: [ build.web ]
+    desc: Starts web locally
+    dir: web
+    deps: [ build.web.local ]
     cmds:
       - npm start
+
+  default:
+    desc: Starts all services in docker-compose.yml and prints logs, ideal for local development
+    deps: [ dev ]
