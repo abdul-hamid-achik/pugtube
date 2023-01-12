@@ -58,10 +58,10 @@
               }
             },
             "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtube.env.production.l419f00ev.DOCKER_USERNAME"
+              "fromParameterStore": "fc.pugtube.env.production.l419g00sx.DOCKER_USERNAME"
             },
             "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtube.env.production.l419g00sx.DOCKER_PASSWORD"
+              "fromParameterStore": "fc.pugtube.env.production.l419f00ev.DOCKER_PASSWORD"
             }
           }
         },
@@ -138,10 +138,10 @@
               }
             },
             "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtube.env.production.l419f00ev.DOCKER_USERNAME"
+              "fromParameterStore": "fc.pugtube.env.production.l419g00sx.DOCKER_USERNAME"
             },
             "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtube.env.production.l419g00sx.DOCKER_PASSWORD"
+              "fromParameterStore": "fc.pugtube.env.production.l419f00ev.DOCKER_PASSWORD"
             }
           }
         },
