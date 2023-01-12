@@ -129,6 +129,37 @@ tasks:
     cmds:
       - pdm manage migrate
 
+  api.test:
+    desc: Runs tests for api locally
+    dir: api
+    cmds:
+      - pdm test
+
+  api.shell:
+    desc: Runs shell for api locally
+    dir: api
+    cmds:
+      - pdm manage shell_plus
+
+  api.routes:
+    desc: Shows routes for api locally
+    dir: api
+    cmds:
+      - pdm manage show_urls
+
+  web.test:
+    desc: Runs tests for web locally
+    dir: web
+    cmds:
+      - npm run test
+
+  test:
+    desc: Runs tests for api and web locally
+    deps: [compose.up]
+    cmds:
+      - task: api.test
+      - task: web.test
+
   start.api:
     desc: Starts api locally
     dir: api

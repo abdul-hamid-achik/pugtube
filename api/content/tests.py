@@ -66,6 +66,7 @@ def test_original_video_pagination(get_authenticated_client, user, settings):
     assert "previous" in response.data
 
 
+# /content/poster
 def test_create_video_poster(get_authenticated_client, user, poster_file):
     client = get_authenticated_client(user)
     original_video = baker.make_recipe("content.original_video")
@@ -77,6 +78,25 @@ def test_create_video_poster(get_authenticated_client, user, poster_file):
     assert VideoPoster.objects.count() == 1
 
 
+def test_update_video_poster(get_authenticated_client, user, poster_file):
+    client = get_authenticated_client(user)
+    video_poster = baker.make_recipe("content.video_poster")
+    url = reverse("content:video-poster-detail", args=[video_poster.pk])
+    response = client.put(url, {"file": poster_file}, format="multipart")
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert VideoPoster.objects.count() == 1
+
+
+def test_delete_video_poster(get_authenticated_client, user):
+    client = get_authenticated_client(user)
+    video_poster = baker.make_recipe("content.video_poster")
+    url = reverse("content:video-poster-detail", args=[video_poster.pk])
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert VideoPoster.objects.count() == 0
+
+
+# /content/processed-video
 def test_create_processed_video(get_authenticated_client, user, processed_video_file):
     client = get_authenticated_client(user)
     original_video = baker.make_recipe("content.original_video")
@@ -101,6 +121,45 @@ def test_create_processed_video(get_authenticated_client, user, processed_video_
     assert ProcessedVideo.objects.count() == 1
 
 
+def test_update_processed_video(get_authenticated_client, user, processed_video_file):
+    client = get_authenticated_client(user)
+    original_video = baker.make_recipe("content.original_video")
+    processed_video = baker.make_recipe(
+        "content.processed_video", original_video=original_video
+    )
+    url = reverse("content:processed-video-detail", args=[processed_video.pk])
+    response = client.patch(
+        url, {"title": "updated", "file": processed_video_file}, format="multipart"
+    )
+    assert response.status_code == status.HTTP_200_OK, response.data
+    processed_video.refresh_from_db()
+    assert processed_video.title == "updated"
+    assert ProcessedVideo.objects.count() == 1
+
+
+def test_delete_processed_video(get_authenticated_client, user):
+    client = get_authenticated_client(user)
+    processed_video = baker.make_recipe("content.processed_video")
+    url = reverse("content:processed-video-detail", args=[processed_video.pk])
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.data
+    assert ProcessedVideo.objects.count() == 0
+
+
+def test_processed_video_pagination(get_authenticated_client, user, settings):
+    client = get_authenticated_client(user)
+    baker.make_recipe("content.processed_video", _quantity=20)
+    url = reverse("content:processed-video-list")
+    response = client.get(url, {})
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert (
+        len(response.data["results"]) == settings.REST_FRAMEWORK["PAGE_SIZE"]
+    )  # default page size is 12
+    assert "next" in response.data
+    assert "previous" in response.data
+
+
+# /content/preview
 def test_create_video_timeline_preview(get_authenticated_client, user, preview_file):
     client = get_authenticated_client(user)
     original_video = baker.make_recipe("content.original_video")
@@ -116,3 +175,38 @@ def test_create_video_timeline_preview(get_authenticated_client, user, preview_f
     )
     assert response.status_code == status.HTTP_201_CREATED
     assert VideoTimelinePreview.objects.count() == 1
+
+
+def test_update_video_timeline_preview(get_authenticated_client, user, preview_file):
+    client = get_authenticated_client(user)
+    video_timeline_preview = baker.make_recipe("content.video_timeline_preview")
+    url = reverse(
+        "content:video-timeline-preview-detail", args=[video_timeline_preview.pk]
+    )
+    response = client.put(
+        url, {"preview_image": preview_file, "preview_time": 15}, format="multipart"
+    )
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert VideoTimelinePreview.objects.count() == 1
+
+
+def test_delete_video_timeline_preview(get_authenticated_client, user):
+    client = get_authenticated_client(user)
+    video_timeline_preview = baker.make_recipe("content.video_timeline_preview")
+    url = reverse(
+        "content:video-timeline-preview-detail", args=[video_timeline_preview.pk]
+    )
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert VideoTimelinePreview.objects.count() == 0
+
+
+def test_video_poster_pagination(get_authenticated_client, user, settings):
+    client = get_authenticated_client(user)
+    baker.make_recipe("content.video_poster", _quantity=20)
+    url = reverse("content:video-poster-list")
+    response = client.get(url, {})
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert len(response.data["results"]) == settings.REST_FRAMEWORK["PAGE_SIZE"]
+    assert "next" in response.data
+    assert "previous" in response.data
