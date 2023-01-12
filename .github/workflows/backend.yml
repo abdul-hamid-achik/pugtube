@@ -23,7 +23,7 @@ jobs:
           pdm format
 
   test:
-    depends-on: format
+    needs: format
     runs-on: ubuntu-latest
     services:
       postgres:
