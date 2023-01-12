@@ -115,16 +115,3 @@ test = "pytest"
 start = {cmd = "python manage.py runserver"}
 format = "black . --check --diff"
 
-#[tool.pytest]
-#DJANGO_SETTINGS_MODULE = "pugtube.settings"
-#adopts = "--testdox"
-#use-fixtures = "db"
-#test-paths = "**/*"
-#python_files = [
-#    "tests.py",
-#    "test_*.py",
-#    "*_tests.py"
-#]
-#env = []
-#markers = []
-

@@ -32,6 +32,9 @@ export default function Home({videos}: { videos: ListVideos200Response }) {
             <link rel="icon" href="/favicon.ico"/>
         </Head>
 
+        <header>
+            <h1>Welcome to Pugtube!</h1>
+        </header>
         <main>
             {videos?.results?.map((video) => (<div key={video.id}>
                 <h1>{video.title}</h1>
