@@ -13,6 +13,7 @@ from .models import (
 pytest_mark = pytest.mark.django_db
 
 
+# /content/original-video tests
 def test_create_original_video(get_authenticated_client, user, video_file):
     client = get_authenticated_client(user)
     url = reverse("content:original-video-list")
@@ -21,6 +22,48 @@ def test_create_original_video(get_authenticated_client, user, video_file):
     )
     assert response.status_code == status.HTTP_201_CREATED, response.data
     assert OriginalVideo.objects.count() == 1
+
+
+def test_update_original_video(get_authenticated_client, user, video_file):
+    client = get_authenticated_client(user)
+    original_video = baker.make_recipe("content.original_video")
+    url = reverse("content:original-video-detail", args=[original_video.pk])
+    response = client.put(
+        url,
+        {
+            "file": video_file,
+            "title": "original_updated.mp4",
+            "description": "updated description",
+        },
+        format="multipart",
+    )
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert OriginalVideo.objects.count() == 1
+    updated_video = OriginalVideo.objects.first()
+    assert updated_video.title == "original_updated.mp4"
+    assert updated_video.description == "updated description"
+
+
+def test_delete_original_video(get_authenticated_client, user):
+    client = get_authenticated_client(user)
+    original_video = baker.make_recipe("content.original_video")
+    url = reverse("content:original-video-detail", args=[original_video.pk])
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert OriginalVideo.objects.count() == 0
+
+
+def test_original_video_pagination(get_authenticated_client, user, settings):
+    client = get_authenticated_client(user)
+    baker.make_recipe("content.original_video", _quantity=20)
+    url = reverse("content:original-video-list")
+    response = client.get(url, {})
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert (
+        len(response.data["results"]) == settings.REST_FRAMEWORK["PAGE_SIZE"]
+    )  # default page size is 12
+    assert "next" in response.data
+    assert "previous" in response.data
 
 
 def test_create_video_poster(get_authenticated_client, user, poster_file):
