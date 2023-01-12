@@ -7,7 +7,6 @@ class BaseMixin(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     created_by = UserForeignKey(auto_user_add=True)
-    # modified_by = UserForeignKey(auto_user=True)
 
     class Meta:
         abstract = True

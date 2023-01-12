@@ -1,7 +1,8 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from pugtube.shared import BaseMixin
 from polymorphic.models import PolymorphicModel
+
+from pugtube.shared import BaseMixin
 
 
 class Video(PolymorphicModel, BaseMixin):
@@ -27,6 +28,16 @@ class Video(PolymorphicModel, BaseMixin):
     width = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
     fps = models.FloatField(blank=True, null=True)
+
+    thumbnail = models.ImageField(
+        upload_to="thumbnails/",
+        blank=True,
+        null=True,
+        help_text="Thumbnail of the video",
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class OriginalVideo(Video):
@@ -61,11 +72,17 @@ class ProcessedVideo(Video):
     audio_sample_rate = models.IntegerField(blank=True, null=True)
     audio_channels = models.IntegerField(blank=True, null=True)
 
+    class Meta:
+        ordering = ["-modified_at"]
+
 
 class Image(PolymorphicModel, BaseMixin):
     file = models.ImageField(upload_to="images")
     width = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class VideoPoster(Image):

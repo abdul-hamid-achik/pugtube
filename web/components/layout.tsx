@@ -1,17 +1,3 @@
-/*
-  This example requires some changes to your config:
-
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import { Fragment, useState } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import {
@@ -26,6 +12,8 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
+import { useSession, signIn } from 'next-auth/react'
+import ProfileThumbnail from "./profile_thumbnail"
 
 const navigation = [
     { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
@@ -47,17 +35,10 @@ function classNames(...classes: string[]) {
 
 export default function Layout({children}: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const session = useSession()
 
     return (
         <>
-            {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full">
-        <body class="h-full">
-        ```
-      */}
             <div>
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
@@ -223,15 +204,11 @@ export default function Layout({children}: { children: React.ReactNode }) {
                                     </button>
 
                                     {/* Profile dropdown */}
-                                    <Menu as="div" className="relative ml-3">
+                                    {session.status === 'authenticated' ? <Menu as="div" className="relative ml-3">
                                         <div>
                                             <Menu.Button className="flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                                 <span className="sr-only">Open user menu</span>
-                                                {/*<img*/}
-                                                {/*    className="h-8 w-8 rounded-full"*/}
-                                                {/*    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"*/}
-                                                {/*    alt=""*/}
-                                                {/*/>*/}
+                                                <ProfileThumbnail />
                                             </Menu.Button>
                                         </div>
                                         <Transition
@@ -261,7 +238,8 @@ export default function Layout({children}: { children: React.ReactNode }) {
                                                 ))}
                                             </Menu.Items>
                                         </Transition>
-                                    </Menu>
+                                    </Menu>: <button onClick={() => signIn()} className="bg-white p-2 rounded">Login</button>}
+
                                 </div>
                             </div>
                         </div>
@@ -269,12 +247,10 @@ export default function Layout({children}: { children: React.ReactNode }) {
                         <main className="flex-1">
                             <div className="py-6">
                                 <div className="px-4 sm:px-6 md:px-0">
-                                    <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                                    <h1 className="text-2xl font-semibold text-gray-900">Feed</h1>
                                 </div>
                                 <div className="px-4 sm:px-6 md:px-0">
-                                    {/* Replace with your content */}
                                     {children}
-                                    {/* /End replace */}
                                 </div>
                             </div>
                         </main>

@@ -4,7 +4,7 @@
     {
       "id": "production",
       "name": "Production",
-      "region": "us-west-2",
+      "region": "us-west-1",
       "source": {
         "branch": "main"
       },
@@ -80,7 +80,7 @@
     {
       "id": "preview",
       "name": "Preview Environment",
-      "region": "us-west-2",
+      "region": "us-west-1",
       "source": {
         "pr": true,
         "filter":  {

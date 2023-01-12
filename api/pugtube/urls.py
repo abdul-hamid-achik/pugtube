@@ -24,6 +24,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from content.views import LandingPageView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("health", include("health_check.urls")),
@@ -49,6 +51,17 @@ urlpatterns = [
             namespace="content",
         ),
     ),
+    path(
+        "accounts/",
+        include(
+            (
+                "accounts.urls",
+                "accounts",
+            ),
+            namespace="accounts",
+        ),
+    ),
+    path("", LandingPageView.as_view(), name="landing-page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

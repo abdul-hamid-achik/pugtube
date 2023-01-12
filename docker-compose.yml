@@ -29,7 +29,8 @@ services:
       DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
       NODE_ENV: development
       NEXT_PUBLIC_API_BASE_PATH: http://api:8000
-      NEXT_AUTH_URL: http://web:8000
+      NEXTAUTH_URL: http://web:8000
+      NO_SECRET: secret
     ports:
       - 3000:3000
     volumes:
@@ -68,7 +69,7 @@ services:
 
   orion:
     image: prefecthq/prefect:2.7.7-python3.11
-    entrypoint: ["prefect", "orion", "start", "--host", "0.0.0.0"]
+    entrypoint: [ "prefect", "orion", "start", "--host", "0.0.0.0" ]
     environment:
       - PREFECT_ORION_API_HOST=0.0.0.0
       - PREFECT_ORION_API_PORT=4200
@@ -84,7 +85,7 @@ services:
 
   prefect:
     image: prefecthq/prefect:2.7.7-python3.11
-    command: ["prefect", "agent", "start", "-q", "default"]
+    command: [ "prefect", "agent", "start", "-q", "default" ]
     environment:
       - PREFECT_API_URL=http://orion:4200/api
     depends_on:

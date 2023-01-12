@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.views.generic import TemplateView
 from rest_framework import viewsets
 
 from .models import (
@@ -54,3 +56,13 @@ class VideoTimelinePreviewViewSet(viewsets.ModelViewSet):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class LandingPageView(TemplateView):
+    template_name = "landing_page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["PUBLIC_MESSAGE"] = settings.PUBLIC_MESSAGE
+        context["PUBLIC_URL"] = settings.PUBLIC_URL
+        return context

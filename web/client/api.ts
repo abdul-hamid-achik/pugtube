@@ -24,6 +24,76 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface Account
+ */
+export interface Account {
+    /**
+     * 
+     * @type {number}
+     * @memberof Account
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {ProfileUser}
+     * @memberof Account
+     */
+    'user': ProfileUser;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Account
+     */
+    'subscription_status'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Account
+     */
+    'subscription_type'?: AccountSubscriptionTypeEnum;
+}
+
+export const AccountSubscriptionTypeEnum = {
+    Free: 'free',
+    Premium: 'premium'
+} as const;
+
+export type AccountSubscriptionTypeEnum = typeof AccountSubscriptionTypeEnum[keyof typeof AccountSubscriptionTypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface ListAccounts200Response
+ */
+export interface ListAccounts200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListAccounts200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListAccounts200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListAccounts200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Account>}
+     * @memberof ListAccounts200Response
+     */
+    'results'?: Array<Account>;
+}
+/**
+ * 
+ * @export
  * @interface ListOriginalVideos200Response
  */
 export interface ListOriginalVideos200Response {
@@ -82,6 +152,68 @@ export interface ListProcessedVideos200Response {
      * @memberof ListProcessedVideos200Response
      */
     'results'?: Array<ProcessedVideo>;
+}
+/**
+ * 
+ * @export
+ * @interface ListProfiles200Response
+ */
+export interface ListProfiles200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListProfiles200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListProfiles200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListProfiles200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Profile>}
+     * @memberof ListProfiles200Response
+     */
+    'results'?: Array<Profile>;
+}
+/**
+ * 
+ * @export
+ * @interface ListUsers200Response
+ */
+export interface ListUsers200Response {
+    /**
+     * 
+     * @type {number}
+     * @memberof ListUsers200Response
+     */
+    'count'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListUsers200Response
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ListUsers200Response
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<User>}
+     * @memberof ListUsers200Response
+     */
+    'results'?: Array<User>;
 }
 /**
  * 
@@ -255,6 +387,12 @@ export interface OriginalVideo {
      */
     'fps'?: number | null;
     /**
+     * Thumbnail of the video
+     * @type {File}
+     * @memberof OriginalVideo
+     */
+    'thumbnail'?: File | null;
+    /**
      * 
      * @type {File}
      * @memberof OriginalVideo
@@ -358,6 +496,12 @@ export interface ProcessedVideo {
      */
     'fps'?: number | null;
     /**
+     * Thumbnail of the video
+     * @type {File}
+     * @memberof ProcessedVideo
+     */
+    'thumbnail'?: File | null;
+    /**
      * 
      * @type {File}
      * @memberof ProcessedVideo
@@ -417,6 +561,100 @@ export interface ProcessedVideo {
      * @memberof ProcessedVideo
      */
     'original_video': string;
+}
+/**
+ * 
+ * @export
+ * @interface Profile
+ */
+export interface Profile {
+    /**
+     * 
+     * @type {number}
+     * @memberof Profile
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {ProfileUser}
+     * @memberof Profile
+     */
+    'user': ProfileUser;
+    /**
+     * 
+     * @type {string}
+     * @memberof Profile
+     */
+    'bio'?: string;
+    /**
+     * 
+     * @type {File}
+     * @memberof Profile
+     */
+    'profile_picture'?: File;
+    /**
+     * 
+     * @type {string}
+     * @memberof Profile
+     */
+    'online_status'?: ProfileOnlineStatusEnum;
+}
+
+export const ProfileOnlineStatusEnum = {
+    Online: 'online',
+    Offline: 'offline'
+} as const;
+
+export type ProfileOnlineStatusEnum = typeof ProfileOnlineStatusEnum[keyof typeof ProfileOnlineStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface ProfileUser
+ */
+export interface ProfileUser {
+    /**
+     * 
+     * @type {number}
+     * @memberof ProfileUser
+     */
+    'id'?: number;
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     * @type {string}
+     * @memberof ProfileUser
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfileUser
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfileUser
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProfileUser
+     */
+    'last_name'?: string;
+    /**
+     * Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+     * @type {boolean}
+     * @memberof ProfileUser
+     */
+    'is_active'?: boolean;
+    /**
+     * Designates whether the user can log into this admin site.
+     * @type {boolean}
+     * @memberof ProfileUser
+     */
+    'is_staff'?: boolean;
 }
 /**
  * 
@@ -522,6 +760,55 @@ export interface Upload {
      * @memberof Upload
      */
     'uploaded_file'?: File | null;
+}
+/**
+ * 
+ * @export
+ * @interface User
+ */
+export interface User {
+    /**
+     * 
+     * @type {number}
+     * @memberof User
+     */
+    'id'?: number;
+    /**
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+     * @type {string}
+     * @memberof User
+     */
+    'username': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'first_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
+    'last_name'?: string;
+    /**
+     * Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
+     * @type {boolean}
+     * @memberof User
+     */
+    'is_active'?: boolean;
+    /**
+     * Designates whether the user can log into this admin site.
+     * @type {boolean}
+     * @memberof User
+     */
+    'is_staff'?: boolean;
 }
 /**
  * 
@@ -692,6 +979,12 @@ export interface VideoOriginalVideo {
      * @memberof VideoOriginalVideo
      */
     'fps'?: number | null;
+    /**
+     * Thumbnail of the video
+     * @type {File}
+     * @memberof VideoOriginalVideo
+     */
+    'thumbnail'?: File | null;
     /**
      * 
      * @type {File}
@@ -906,6 +1199,12 @@ export interface VideoProcessedVideosInner {
      */
     'fps'?: number | null;
     /**
+     * Thumbnail of the video
+     * @type {File}
+     * @memberof VideoProcessedVideosInner
+     */
+    'thumbnail'?: File | null;
+    /**
      * 
      * @type {File}
      * @memberof VideoProcessedVideosInner
@@ -1015,6 +1314,957 @@ export interface VideoTimelinePreview {
      */
     'video': number;
 }
+
+/**
+ * AccountsApi - axios parameter creator
+ * @export
+ */
+export const AccountsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createAccount: async (account?: Account, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts/accounts/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(account, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createUser: async (user?: User, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts/users/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyAccount: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyAccount', 'id', id)
+            const localVarPath = `/accounts/accounts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyUser: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('destroyUser', 'id', id)
+            const localVarPath = `/accounts/users/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listAccounts: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts/accounts/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listProfiles: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts/profiles/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listUsers: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts/users/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateAccount: async (id: string, account?: Account, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateAccount', 'id', id)
+            const localVarPath = `/accounts/accounts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(account, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateUser: async (id: string, user?: User, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('partialUpdateUser', 'id', id)
+            const localVarPath = `/accounts/users/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveAccount: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveAccount', 'id', id)
+            const localVarPath = `/accounts/accounts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveProfile: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveProfile', 'id', id)
+            const localVarPath = `/accounts/profiles/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveUser: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieveUser', 'id', id)
+            const localVarPath = `/accounts/users/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateAccount: async (id: string, account?: Account, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateAccount', 'id', id)
+            const localVarPath = `/accounts/accounts/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(account, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateUser: async (id: string, user?: User, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateUser', 'id', id)
+            const localVarPath = `/accounts/users/{id}/`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AccountsApi - functional programming interface
+ * @export
+ */
+export const AccountsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AccountsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createAccount(account?: Account, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Account>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createAccount(account, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createUser(user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createUser(user, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyAccount(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyAccount(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async destroyUser(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.destroyUser(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listAccounts(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListAccounts200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listAccounts(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listProfiles(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListProfiles200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listProfiles(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listUsers(page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ListUsers200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listUsers(page, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateAccount(id: string, account?: Account, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Account>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateAccount(id, account, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async partialUpdateUser(id: string, user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.partialUpdateUser(id, user, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveAccount(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Account>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveAccount(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveProfile(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Profile>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveProfile(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieveUser(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieveUser(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateAccount(id: string, account?: Account, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Account>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateAccount(id, account, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateUser(id: string, user?: User, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateUser(id, user, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * AccountsApi - factory interface
+ * @export
+ */
+export const AccountsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AccountsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createAccount(account?: Account, options?: any): AxiosPromise<Account> {
+            return localVarFp.createAccount(account, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createUser(user?: User, options?: any): AxiosPromise<User> {
+            return localVarFp.createUser(user, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyAccount(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyAccount(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        destroyUser(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.destroyUser(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listAccounts(page?: number, options?: any): AxiosPromise<ListAccounts200Response> {
+            return localVarFp.listAccounts(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listProfiles(page?: number, options?: any): AxiosPromise<ListProfiles200Response> {
+            return localVarFp.listProfiles(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] A page number within the paginated result set.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listUsers(page?: number, options?: any): AxiosPromise<ListUsers200Response> {
+            return localVarFp.listUsers(page, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateAccount(id: string, account?: Account, options?: any): AxiosPromise<Account> {
+            return localVarFp.partialUpdateAccount(id, account, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        partialUpdateUser(id: string, user?: User, options?: any): AxiosPromise<User> {
+            return localVarFp.partialUpdateUser(id, user, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveAccount(id: string, options?: any): AxiosPromise<Account> {
+            return localVarFp.retrieveAccount(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this profile.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveProfile(id: string, options?: any): AxiosPromise<Profile> {
+            return localVarFp.retrieveProfile(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieveUser(id: string, options?: any): AxiosPromise<User> {
+            return localVarFp.retrieveUser(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this account.
+         * @param {Account} [account] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateAccount(id: string, account?: Account, options?: any): AxiosPromise<Account> {
+            return localVarFp.updateAccount(id, account, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id A unique integer value identifying this user.
+         * @param {User} [user] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateUser(id: string, user?: User, options?: any): AxiosPromise<User> {
+            return localVarFp.updateUser(id, user, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * AccountsApi - object-oriented interface
+ * @export
+ * @class AccountsApi
+ * @extends {BaseAPI}
+ */
+export class AccountsApi extends BaseAPI {
+    /**
+     * 
+     * @param {Account} [account] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public createAccount(account?: Account, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).createAccount(account, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {User} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public createUser(user?: User, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).createUser(user, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this account.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public destroyAccount(id: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).destroyAccount(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this user.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public destroyUser(id: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).destroyUser(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public listAccounts(page?: number, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).listAccounts(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public listProfiles(page?: number, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).listProfiles(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] A page number within the paginated result set.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public listUsers(page?: number, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).listUsers(page, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this account.
+     * @param {Account} [account] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public partialUpdateAccount(id: string, account?: Account, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).partialUpdateAccount(id, account, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this user.
+     * @param {User} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public partialUpdateUser(id: string, user?: User, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).partialUpdateUser(id, user, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this account.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public retrieveAccount(id: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).retrieveAccount(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this profile.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public retrieveProfile(id: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).retrieveProfile(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this user.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public retrieveUser(id: string, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).retrieveUser(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this account.
+     * @param {Account} [account] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public updateAccount(id: string, account?: Account, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).updateAccount(id, account, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id A unique integer value identifying this user.
+     * @param {User} [user] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AccountsApi
+     */
+    public updateUser(id: string, user?: User, options?: AxiosRequestConfig) {
+        return AccountsApiFp(this.configuration).updateUser(id, user, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 /**
  * AuthApi - axios parameter creator

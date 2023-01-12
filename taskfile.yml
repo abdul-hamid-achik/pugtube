@@ -182,4 +182,10 @@ tasks:
     desc: Clears all containers and images
     cmds:
       - task: compose.down
-      - docker system prune -a --volumes -y
+      - docker system prune -a --volumes
+
+  seed:
+    desc: Seeds the database
+    dir: api
+    cmds:
+      - pdm manage pexels
