@@ -40,13 +40,13 @@ urlpatterns = [
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("storage/", include("binary_database_files.urls")),
     path(
-        "content-system/",
+        "content/",
         include(
             (
-                "video.urls",
-                "video",
+                "content.urls",
+                "content",
             ),
-            namespace="content-system",
+            namespace="content",
         ),
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

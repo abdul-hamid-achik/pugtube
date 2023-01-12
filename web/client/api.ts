@@ -1181,10 +1181,10 @@ export class AuthApi extends BaseAPI {
 
 
 /**
- * ContentSystemApi - axios parameter creator
+ * ContentApi - axios parameter creator
  * @export
  */
-export const ContentSystemApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ContentApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
@@ -1193,7 +1193,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         createOriginalVideo: async (originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/original/`;
+            const localVarPath = `/content/original-video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1226,7 +1226,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         createProcessedVideo: async (processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/processed/`;
+            const localVarPath = `/content/processed-video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1259,7 +1259,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         createVideo: async (video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/video/`;
+            const localVarPath = `/content/video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1292,7 +1292,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         createVideoPoster: async (videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/poster/`;
+            const localVarPath = `/content/poster/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1325,7 +1325,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         createVideoTimelinePreview: async (videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/preview/`;
+            const localVarPath = `/content/preview/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1360,7 +1360,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         destroyOriginalVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('destroyOriginalVideo', 'id', id)
-            const localVarPath = `/content-system/original/{id}/`
+            const localVarPath = `/content/original-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1393,7 +1393,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         destroyProcessedVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('destroyProcessedVideo', 'id', id)
-            const localVarPath = `/content-system/processed/{id}/`
+            const localVarPath = `/content/processed-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1426,7 +1426,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         destroyVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('destroyVideo', 'id', id)
-            const localVarPath = `/content-system/video/{id}/`
+            const localVarPath = `/content/video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1459,7 +1459,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         destroyVideoPoster: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('destroyVideoPoster', 'id', id)
-            const localVarPath = `/content-system/poster/{id}/`
+            const localVarPath = `/content/poster/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1492,7 +1492,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         destroyVideoTimelinePreview: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('destroyVideoTimelinePreview', 'id', id)
-            const localVarPath = `/content-system/preview/{id}/`
+            const localVarPath = `/content/preview/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1523,7 +1523,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         listOriginalVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/original/`;
+            const localVarPath = `/content/original-video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1557,7 +1557,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         listProcessedVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/processed/`;
+            const localVarPath = `/content/processed-video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1591,7 +1591,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         listVideoPosters: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/poster/`;
+            const localVarPath = `/content/poster/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1625,7 +1625,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         listVideoTimelinePreviews: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/preview/`;
+            const localVarPath = `/content/preview/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1659,7 +1659,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
          * @throws {RequiredError}
          */
         listVideos: async (page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/content-system/video/`;
+            const localVarPath = `/content/video/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1696,7 +1696,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         partialUpdateOriginalVideo: async (id: string, originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('partialUpdateOriginalVideo', 'id', id)
-            const localVarPath = `/content-system/original/{id}/`
+            const localVarPath = `/content/original-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1733,7 +1733,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         partialUpdateProcessedVideo: async (id: string, processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('partialUpdateProcessedVideo', 'id', id)
-            const localVarPath = `/content-system/processed/{id}/`
+            const localVarPath = `/content/processed-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1770,7 +1770,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         partialUpdateVideo: async (id: string, video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('partialUpdateVideo', 'id', id)
-            const localVarPath = `/content-system/video/{id}/`
+            const localVarPath = `/content/video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1807,7 +1807,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         partialUpdateVideoPoster: async (id: string, videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('partialUpdateVideoPoster', 'id', id)
-            const localVarPath = `/content-system/poster/{id}/`
+            const localVarPath = `/content/poster/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1844,7 +1844,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         partialUpdateVideoTimelinePreview: async (id: string, videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('partialUpdateVideoTimelinePreview', 'id', id)
-            const localVarPath = `/content-system/preview/{id}/`
+            const localVarPath = `/content/preview/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1880,7 +1880,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         retrieveOriginalVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveOriginalVideo', 'id', id)
-            const localVarPath = `/content-system/original/{id}/`
+            const localVarPath = `/content/original-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1913,7 +1913,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         retrieveProcessedVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveProcessedVideo', 'id', id)
-            const localVarPath = `/content-system/processed/{id}/`
+            const localVarPath = `/content/processed-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1946,7 +1946,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         retrieveVideo: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveVideo', 'id', id)
-            const localVarPath = `/content-system/video/{id}/`
+            const localVarPath = `/content/video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1979,7 +1979,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         retrieveVideoPoster: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveVideoPoster', 'id', id)
-            const localVarPath = `/content-system/poster/{id}/`
+            const localVarPath = `/content/poster/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2012,7 +2012,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         retrieveVideoTimelinePreview: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveVideoTimelinePreview', 'id', id)
-            const localVarPath = `/content-system/preview/{id}/`
+            const localVarPath = `/content/preview/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2046,7 +2046,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         updateOriginalVideo: async (id: string, originalVideo?: OriginalVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateOriginalVideo', 'id', id)
-            const localVarPath = `/content-system/original/{id}/`
+            const localVarPath = `/content/original-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2083,7 +2083,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         updateProcessedVideo: async (id: string, processedVideo?: ProcessedVideo, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateProcessedVideo', 'id', id)
-            const localVarPath = `/content-system/processed/{id}/`
+            const localVarPath = `/content/processed-video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2120,7 +2120,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         updateVideo: async (id: string, video?: Video, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateVideo', 'id', id)
-            const localVarPath = `/content-system/video/{id}/`
+            const localVarPath = `/content/video/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2157,7 +2157,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         updateVideoPoster: async (id: string, videoPoster?: VideoPoster, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateVideoPoster', 'id', id)
-            const localVarPath = `/content-system/poster/{id}/`
+            const localVarPath = `/content/poster/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2194,7 +2194,7 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
         updateVideoTimelinePreview: async (id: string, videoTimelinePreview?: VideoTimelinePreview, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateVideoTimelinePreview', 'id', id)
-            const localVarPath = `/content-system/preview/{id}/`
+            const localVarPath = `/content/preview/{id}/`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2225,11 +2225,11 @@ export const ContentSystemApiAxiosParamCreator = function (configuration?: Confi
 };
 
 /**
- * ContentSystemApi - functional programming interface
+ * ContentApi - functional programming interface
  * @export
  */
-export const ContentSystemApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = ContentSystemApiAxiosParamCreator(configuration)
+export const ContentApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ContentApiAxiosParamCreator(configuration)
     return {
         /**
          * 
@@ -2545,11 +2545,11 @@ export const ContentSystemApiFp = function(configuration?: Configuration) {
 };
 
 /**
- * ContentSystemApi - factory interface
+ * ContentApi - factory interface
  * @export
  */
-export const ContentSystemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = ContentSystemApiFp(configuration)
+export const ContentApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ContentApiFp(configuration)
     return {
         /**
          * 
@@ -2835,21 +2835,21 @@ export const ContentSystemApiFactory = function (configuration?: Configuration, 
 };
 
 /**
- * ContentSystemApi - object-oriented interface
+ * ContentApi - object-oriented interface
  * @export
- * @class ContentSystemApi
+ * @class ContentApi
  * @extends {BaseAPI}
  */
-export class ContentSystemApi extends BaseAPI {
+export class ContentApi extends BaseAPI {
     /**
      * 
      * @param {OriginalVideo} [originalVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public createOriginalVideo(originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).createOriginalVideo(originalVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).createOriginalVideo(originalVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2857,10 +2857,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {ProcessedVideo} [processedVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public createProcessedVideo(processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).createProcessedVideo(processedVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).createProcessedVideo(processedVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2868,10 +2868,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {Video} [video] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public createVideo(video?: Video, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).createVideo(video, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).createVideo(video, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2879,10 +2879,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoPoster} [videoPoster] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public createVideoPoster(videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).createVideoPoster(videoPoster, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).createVideoPoster(videoPoster, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2890,10 +2890,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoTimelinePreview} [videoTimelinePreview] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public createVideoTimelinePreview(videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).createVideoTimelinePreview(videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).createVideoTimelinePreview(videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2901,10 +2901,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this original video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public destroyOriginalVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).destroyOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).destroyOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2912,10 +2912,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this processed video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public destroyProcessedVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).destroyProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).destroyProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2923,10 +2923,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public destroyVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).destroyVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).destroyVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2934,10 +2934,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video poster.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public destroyVideoPoster(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).destroyVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).destroyVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2945,10 +2945,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video timeline preview.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public destroyVideoTimelinePreview(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).destroyVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).destroyVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2956,10 +2956,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {number} [page] A page number within the paginated result set.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public listOriginalVideos(page?: number, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).listOriginalVideos(page, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).listOriginalVideos(page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2967,10 +2967,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {number} [page] A page number within the paginated result set.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public listProcessedVideos(page?: number, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).listProcessedVideos(page, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).listProcessedVideos(page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2978,10 +2978,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {number} [page] A page number within the paginated result set.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public listVideoPosters(page?: number, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).listVideoPosters(page, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).listVideoPosters(page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2989,10 +2989,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {number} [page] A page number within the paginated result set.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public listVideoTimelinePreviews(page?: number, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).listVideoTimelinePreviews(page, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).listVideoTimelinePreviews(page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3000,10 +3000,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {number} [page] A page number within the paginated result set.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public listVideos(page?: number, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).listVideos(page, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).listVideos(page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3012,10 +3012,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {OriginalVideo} [originalVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public partialUpdateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).partialUpdateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).partialUpdateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3024,10 +3024,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {ProcessedVideo} [processedVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public partialUpdateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).partialUpdateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).partialUpdateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3036,10 +3036,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {Video} [video] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public partialUpdateVideo(id: string, video?: Video, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).partialUpdateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).partialUpdateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3048,10 +3048,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoPoster} [videoPoster] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public partialUpdateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).partialUpdateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).partialUpdateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3060,10 +3060,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoTimelinePreview} [videoTimelinePreview] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public partialUpdateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).partialUpdateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).partialUpdateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3071,10 +3071,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this original video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public retrieveOriginalVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).retrieveOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).retrieveOriginalVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3082,10 +3082,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this processed video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public retrieveProcessedVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).retrieveProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).retrieveProcessedVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3093,10 +3093,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public retrieveVideo(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).retrieveVideo(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).retrieveVideo(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3104,10 +3104,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video poster.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public retrieveVideoPoster(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).retrieveVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).retrieveVideoPoster(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3115,10 +3115,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {string} id A unique integer value identifying this video timeline preview.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public retrieveVideoTimelinePreview(id: string, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).retrieveVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).retrieveVideoTimelinePreview(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3127,10 +3127,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {OriginalVideo} [originalVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public updateOriginalVideo(id: string, originalVideo?: OriginalVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).updateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).updateOriginalVideo(id, originalVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3139,10 +3139,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {ProcessedVideo} [processedVideo] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public updateProcessedVideo(id: string, processedVideo?: ProcessedVideo, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).updateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).updateProcessedVideo(id, processedVideo, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3151,10 +3151,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {Video} [video] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public updateVideo(id: string, video?: Video, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).updateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).updateVideo(id, video, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3163,10 +3163,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoPoster} [videoPoster] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public updateVideoPoster(id: string, videoPoster?: VideoPoster, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).updateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).updateVideoPoster(id, videoPoster, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3175,10 +3175,10 @@ export class ContentSystemApi extends BaseAPI {
      * @param {VideoTimelinePreview} [videoTimelinePreview] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof ContentSystemApi
+     * @memberof ContentApi
      */
     public updateVideoTimelinePreview(id: string, videoTimelinePreview?: VideoTimelinePreview, options?: AxiosRequestConfig) {
-        return ContentSystemApiFp(this.configuration).updateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
+        return ContentApiFp(this.configuration).updateVideoTimelinePreview(id, videoTimelinePreview, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

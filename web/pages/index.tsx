@@ -1,11 +1,11 @@
 import Head from 'next/head'
-import {Configuration, ContentSystemApi, ListVideos200Response} from '../client'
+import {Configuration, ContentApi, ListVideos200Response} from '../client'
 
 const apiConfiguration = new Configuration({
     basePath: process.env.NEXT_PUBLIC_API_BASE_PATH,
 })
 
-const api = new ContentSystemApi(apiConfiguration)
+const api = new ContentApi(apiConfiguration)
 
 export async function getServerSideProps() {
     let videos: ListVideos200Response = {results: []}

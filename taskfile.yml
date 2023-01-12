@@ -21,6 +21,11 @@ tasks:
     cmds:
       - docker compose up -d
 
+  compose.dev:
+    desc: stops api and web so we can run them locally with debugger
+    cmds:
+      - docker compose stop api web
+
   compose.down:
     desc: Stops all services in docker-compose.yml
     cmds:
@@ -76,14 +81,24 @@ tasks:
       - task: build.web
       - task: build.api
 
-  dev:
-    desc: Starts all services in docker-compose.yml and prints logs, ideal for local development
+  start:
+    desc: Starts all services in docker-compose.yml
     summary: |
-        This task starts all services in docker-compose.yml and prints logs, ideal for local development
+        Starts all services in docker-compose.yml, including api and web.
+        This is the same as running `docker compose up -d`
     deps: [ compose.build, compose.up ]
     cmds:
       - task: logs
 
+  dev:
+    desc: Starts services in docker-compose.yml except for api and web, ideal for local development
+    summary: |
+      This task starts all services in docker-compose.yml except for api and web. which are stopped
+      you may want to run this to have the database and all the services running locally with docker
+      but run the api and web locally with the debugger
+    deps: [ compose.build, compose.up, compose.dev ]
+    cmds:
+      - task: logs
   reset:
     desc: Resets all services in docker-compose.yml
     deps: [ compose.down, compose.build, compose.up ]
@@ -131,3 +146,9 @@ tasks:
   default:
     desc: Starts all services in docker-compose.yml and prints logs, ideal for local development
     deps: [ dev ]
+
+  clear:
+    desc: Clears all containers and images
+    cmds:
+      - task: compose.down
+      - docker system prune -a --volumes -y

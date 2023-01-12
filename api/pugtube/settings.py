@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
 ]
 
-INSTALLED_APPS += ["video"]
+INSTALLED_APPS += ["content"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
