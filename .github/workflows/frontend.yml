@@ -19,7 +19,7 @@ jobs:
       - uses: ./.github/actions/setup_node
         with:
           env: 'dev'
-      - run:  |
+      - run: |
           npm ci
           npm run lint
 
@@ -34,8 +34,6 @@ jobs:
           env: 'dev'
 
       - name: Run Tests
-        with:
-          env: 'dev'
-      - run:  |
+        run: |
           npm ci
           npm test

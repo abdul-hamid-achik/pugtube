@@ -10,7 +10,7 @@ runs:
   steps:
     - uses: marocchino/tool-versions-action@v1
       id: versions
-    #
+
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ steps.versions.outputs.nodejs }}
