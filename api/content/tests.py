@@ -82,7 +82,9 @@ def test_update_video_poster(get_authenticated_client, user, poster_file):
     client = get_authenticated_client(user)
     video_poster = baker.make_recipe("content.video_poster")
     url = reverse("content:video-poster-detail", args=[video_poster.pk])
-    response = client.put(url, {"file": poster_file}, format="multipart")
+    response = client.put(
+        url, {"file": poster_file, "video": video_poster.video.pk}, format="multipart"
+    )
     assert response.status_code == status.HTTP_200_OK, response.data
     assert VideoPoster.objects.count() == 1
 
@@ -184,7 +186,13 @@ def test_update_video_timeline_preview(get_authenticated_client, user, preview_f
         "content:video-timeline-preview-detail", args=[video_timeline_preview.pk]
     )
     response = client.put(
-        url, {"preview_image": preview_file, "preview_time": 15}, format="multipart"
+        url,
+        {
+            "preview_image": preview_file,
+            "preview_time": 15,
+            "video": video_timeline_preview.video.pk,
+        },
+        format="multipart",
     )
     assert response.status_code == status.HTTP_200_OK, response.data
     assert VideoTimelinePreview.objects.count() == 1

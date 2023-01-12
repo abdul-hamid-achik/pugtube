@@ -50,7 +50,7 @@ processed_video = Recipe(
 
 video_poster = Recipe(
     VideoPoster,
-    video=foreign_key(original_video),
+    video=foreign_key(original_video, one_to_one=True),
     file=File(
         open(os.path.join(settings.BASE_DIR, "fixtures", "images", "poster.png"), "rb"),
         name="poster.png",
@@ -61,7 +61,7 @@ video_poster = Recipe(
 
 video_timeline_preview = Recipe(
     VideoTimelinePreview,
-    video=foreign_key(original_video),
+    video=foreign_key(original_video, one_to_one=True),
     preview_image=File(
         open(
             os.path.join(settings.BASE_DIR, "fixtures", "images", "preview.png"), "rb"

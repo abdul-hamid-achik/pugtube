@@ -16,3 +16,4 @@ runs:
         node-version: ${{ steps.versions.outputs.nodejs }}
         token: ${{ github.token }}
         cache: 'npm'
+        cache-dependency-path: 'web/package-lock.json'
