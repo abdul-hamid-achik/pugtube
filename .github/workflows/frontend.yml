@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup_node
+      - uses: .github/actions/setup_node
         with:
           env: 'dev'
       - run: |
@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup_node
+      - uses: .github/actions/setup_node
         with:
           env: 'dev'
 
@@ -42,7 +42,7 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
-    name: Release to Docker Hub
+    name: Release to www.pugtube.dev Docker Hub
     steps:
       - uses: actions/checkout@v3
 
@@ -52,9 +52,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - uses: benjlevesque/short-sha@v2.1
+        id: short-sha
+        with:
+          length: 8
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: abdulachik/www.pugtube.dev:latest,abdulachik/www.pugtube.dev:${{ github.sha }}
+          file: orion.Dockerfile
+          tags: abdulachik/www.pugtube.dev:latest,abdulachik/www.pugtube.dev:${{ steps.short-sha.outputs.sha }}

@@ -16,12 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup_python
+      - uses: .github/actions/setup_python
         with:
           env: 'dev'
-      - run:  |
-          pdm sync --dev
-          pdm format
+      - run: pdm sync --dev
+      - uses: psf/black@stable
 
   test:
     needs: format
@@ -33,7 +32,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
-        ports: ['5432:5432']
+        ports: [ '5432:5432' ]
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
@@ -49,14 +48,9 @@ jobs:
           pdm sync --dev
           pdm test
 
-  release:
-#    needs: test
+  release-api:
     runs-on: ubuntu-latest
-    name: Release to Docker Hub
-    strategy:
-      matrix:
-        dockerfile: [ Dockerfile, agent.Dockerfile, orion.Dockerfile ]
-        repo: [ abdulachik/api.pugtube.dev, abdulachik/agent.pugtube.dev, abdulachik/orion.pugtube.dev ]
+    name: Release api.pugtube.dev to Docker Hub
     steps:
       - uses: actions/checkout@v3
 
@@ -66,10 +60,64 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - uses: benjlevesque/short-sha@v2.1
+        id: short-sha
+        with:
+          length: 8
+
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          file: ${{ matrix.dockerfile }}
-          tags: ${{ matrix.repo }}:latest,${{ matrix.repo }}:${{ github.sha }}
+          tags: abdulachik/api.pugtube.dev:latest,abdulachik/api.pugtube.dev:${{ steps.short-sha.outputs.sha }}
+
+  release-orion:
+    runs-on: ubuntu-latest
+    name: Release orion.pugtube.dev to Docker Hub
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - uses: benjlevesque/short-sha@v2.1
+        id: short-sha
+        with:
+          length: 8
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          file: orion.Dockerfile
+          tags: abdulachik/orion.pugtube.dev:latest,abdulachik/orion.pugtube.dev:${{ steps.short-sha.outputs.sha }}
+
+  release-agent:
+    runs-on: ubuntu-latest
+    name: Release agent.pugtube.dev to Docker Hub
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - uses: benjlevesque/short-sha@v2.1
+        id: short-sha
+        with:
+          length: 8
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          file: agent.Dockerfile
+          tags: abdulachik/agent.pugtube.dev:latest,abdulachik/agent.pugtube.dev:${{ steps.short-sha.outputs.sha }}
