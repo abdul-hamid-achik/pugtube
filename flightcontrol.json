@@ -76,7 +76,7 @@
         },
         {
           "id": "db",
-          "name": "Database",
+          "name": "db.pugtube.dev",
           "type": "rds",
           "engine": "postgres",
           "engineVersion": "14",
@@ -96,7 +96,7 @@
           "buildType": "docker",
           "cpu": 0.25,
           "memory": 0.5,
-          "domain": "api.pugtube.dev",
+          "domain": "orion.pugtube.dev",
           "port": 4200,
           "minInstances": 1,
           "maxInstances": 1,
