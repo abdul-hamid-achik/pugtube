@@ -14,9 +14,9 @@ else
 
   if [ "$DEBUG" = "true" ]; then
     echo "dev mode"
-    pdm manage runserver 0.0.0.0:8000
+    pdm manage runserver 0.0.0.0:8080
   else
     echo "production mode"
-    pdm run gunicorn --bind 0.0.0.0:8000 pugtube.wsgi:application
+    pdm run gunicorn --bind 0.0.0.0:8080 pugtube.wsgi:application
   fi
 fi
