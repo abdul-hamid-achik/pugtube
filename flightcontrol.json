@@ -108,10 +108,7 @@
             "PREFECT_ORION_API_HOST": "0.0.0.0",
             "PREFECT_ORION_API_PORT": 4200,
             "PREFECT_ORION_DATABASE_CONNECTION_URL": {
-              "fromService": {
-                "id": "db",
-                "value": "dbConnectionString"
-              }
+              "fromParameterStore": "PREFECT_ORION_DATABASE_CONNECTION_URL"
             },
             "DOCKER_USERNAME": {
               "fromParameterStore": "DOCKER_USERNAME"

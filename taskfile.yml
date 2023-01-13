@@ -182,7 +182,7 @@ tasks:
     desc: Clears all containers and images
     cmds:
       - task: compose.down
-      - docker system prune -a --volumes
+      - docker system prune -af --volumes
 
   seed:
     desc: Seeds the database
