@@ -62,5 +62,4 @@ jobs:
         with:
           context: web
           push: true
-          file: orion.Dockerfile
           tags: abdulachik/www.pugtube.dev:latest,abdulachik/www.pugtube.dev:${{ steps.short-sha.outputs.sha }}

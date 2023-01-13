@@ -94,7 +94,7 @@ jobs:
         with:
           context: api
           push: true
-          file: orion.Dockerfile
+          file: api/orion.Dockerfile
           tags: abdulachik/orion.pugtube.dev:latest,abdulachik/orion.pugtube.dev:${{ steps.short-sha.outputs.sha }}
 
   release-agent:
@@ -119,5 +119,5 @@ jobs:
         with:
           context: api
           push: true
-          file: agent.Dockerfile
+          file: api/agent.Dockerfile
           tags: abdulachik/agent.pugtube.dev:latest,abdulachik/agent.pugtube.dev:${{ steps.short-sha.outputs.sha }}
