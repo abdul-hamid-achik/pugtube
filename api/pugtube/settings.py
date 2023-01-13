@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
 ]
 
-INSTALLED_APPS += ["content", "accounts"]
+INSTALLED_APPS += ["content", "identity"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -185,4 +185,4 @@ DATABASE_FILES_URL_METHOD = "URL_METHOD_2"
 DATABASE_FILES_BASE_URL = env("BASE_URL")
 PUBLIC_MESSAGE = "This is the API backend for pugtube.dev. Access to this page is restricted. If you need access, please contact the administrator."
 PUBLIC_URL = env("PUBLIC_URL")
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "identity.User"

@@ -21,4 +21,4 @@ def get_authenticated_client(api_client):
 
 @pytest.fixture()
 def user():
-    return baker.make_recipe("accounts.user")
+    return baker.make_recipe("identity.user")

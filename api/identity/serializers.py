@@ -14,19 +14,26 @@ class UserSerializer(serializers.ModelSerializer):
             "is_active",
             "is_staff",
         )
+        read_only_fields = ("id",)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = Profile
         fields = ("id", "user", "bio", "profile_picture", "online_status")
+        read_only_fields = ("id",)
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = Account
         fields = ("id", "user", "subscription_status", "subscription_type")
+        read_only_fields = ("id",)

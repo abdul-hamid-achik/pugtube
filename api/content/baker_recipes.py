@@ -17,8 +17,8 @@ fake = Faker()
 
 original_video = Recipe(
     OriginalVideo,
-    title=fake.sentence(),
-    description=fake.paragraph(),
+    title=fake.sentence,
+    description=fake.paragraph,
     file=File(
         open(
             os.path.join(settings.BASE_DIR, "fixtures", "videos", "original.mp4"),
@@ -30,8 +30,8 @@ original_video = Recipe(
 
 processed_video = Recipe(
     ProcessedVideo,
-    title=fake.sentence(),
-    description=fake.paragraph(),
+    title=fake.sentence,
+    description=fake.paragraph,
     original_video=foreign_key(original_video),
     file=File(
         open(

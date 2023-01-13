@@ -10,13 +10,12 @@ class User(AbstractUser, LifecycleModel):
         Account.objects.create(user=self)
 
 
-class Profile(models.Model):
+class Profile(LifecycleModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/",
         blank=True,
-        default="://loremflickr.com/8/8/dog,pug",
     )
     ONLINE_STATUS = (
         ("online", "Online"),
@@ -27,7 +26,7 @@ class Profile(models.Model):
     )
 
 
-class Account(models.Model):
+class Account(LifecycleModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subscription_status = models.BooleanField(default=False)
     SUBSCRIPTION_TYPE = (

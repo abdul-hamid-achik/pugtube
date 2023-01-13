@@ -51,6 +51,7 @@
           "envVariables": {
             "DEBUG": false,
             "BASE_URL": "https://api.pugtube.dev",
+            "PUBLIC_URL": "https://pugtube.dev",
             "DATABASE_URL": {
               "fromService": {
                 "id": "db",
@@ -70,90 +71,10 @@
           "name": "Database",
           "type": "rds",
           "engine": "postgres",
-          "engineVersion": "13",
+          "engineVersion": "14",
           "instanceSize": "db.t4g.micro",
           "storage": 20,
-          "private": false
-        }
-      ]
-    },
-    {
-      "id": "preview",
-      "name": "Preview Environment",
-      "region": "us-west-1",
-      "source": {
-        "pr": true,
-        "filter":  {
-          "labels": ["preview"],
-          "toBranches": ["main"]
-        }
-      },
-      "services": [
-        {
-          "id": "frontend",
-          "name": "PugTube Frontend",
-          "type": "fargate",
-          "watchPaths": ["./web/**"],
-          "dockerfilePath": "./web/Dockerfile",
-          "dockerContext": "./web",
-          "port": 3000,
-          "cpu": 0.25,
-          "memory": 0.5,
-          "domain": "*.preview.pugtube.dev",
-          "minInstances": 1,
-          "maxInstances": 1,
-          "dependsOn": ["backend"],
-          "envVariables": {
-            "NODE_ENV": "production",
-            "DATABASE_URL": {
-              "fromService": {
-                "id": "db",
-                "value": "dbConnectionString"
-              }
-            }
-          }
-        },
-        {
-          "id": "backend",
-          "name": "PugTube Backend",
-          "type": "fargate",
-          "dockerfilePath": "./api/Dockerfile",
-          "dockerContext": "./api",
-          "watchPaths": ["./api/**"],
-          "cpu": 0.25,
-          "memory": 0.5,
-          "domain": "*.api.pugtube.dev",
-          "port": 8080,
-          "minInstances": 1,
-          "maxInstances": 1,
-          "healthCheckPath": "/health",
-          "dependsOn": ["db"],
-          "envVariables": {
-            "DEBUG": false,
-            "BASE_URL": "https://*,api.pugtube.dev",
-            "DATABASE_URL": {
-              "fromService": {
-                "id": "db",
-                "value": "dbConnectionString"
-              }
-            },
-            "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
-            },
-            "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
-            }
-          }
-        },
-        {
-          "id": "db",
-          "name": "Database",
-          "type": "rds",
-          "engine": "postgres",
-          "engineVersion": "13",
-          "instanceSize": "db.t4g.micro",
-          "storage": 20,
-          "private": false
+          "private": true
         }
       ]
     }

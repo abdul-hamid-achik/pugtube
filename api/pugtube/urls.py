@@ -52,13 +52,13 @@ urlpatterns = [
         ),
     ),
     path(
-        "accounts/",
+        "identity/",
         include(
             (
-                "accounts.urls",
-                "accounts",
+                "identity.urls",
+                "identity",
             ),
-            namespace="accounts",
+            namespace="identity",
         ),
     ),
     path("", LandingPageView.as_view(), name="landing-page"),

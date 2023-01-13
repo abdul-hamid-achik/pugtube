@@ -1,8 +1,8 @@
-from guardian.mixins import GuardianUserMixin, PermissionRequiredMixin
-from rest_framework import viewsets, permissions
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from guardian.mixins import GuardianUserMixin
+from rest_framework import viewsets
+
 from .models import Profile, User, Account
-from .permissions import IsProfileOwner
+from .permissions import IsProfileOwner, IsAccountOwner
 from .serializers import ProfileSerializer, UserSerializer, AccountSerializer
 
 
@@ -14,9 +14,10 @@ class UserViewSet(GuardianUserMixin, viewsets.ModelViewSet):
 class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    permission_classes = [IsAccountOwner]
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsProfileOwner]
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsProfileOwner]
