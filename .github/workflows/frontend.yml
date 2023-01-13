@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'web/**'
+      - '.github/**'
 
 defaults:
   run:
