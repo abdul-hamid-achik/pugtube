@@ -88,7 +88,7 @@
           "id": "orion",
           "name": "orion.pugtube.dev",
           "type": "fargate",
-          "dockerfilePath": "./api/Dockerfile",
+          "dockerfilePath": "./api/orion.Dockerfile",
           "dockerContext": "./api",
           "watchPaths": [
             "./api/**"
@@ -128,13 +128,14 @@
           "buildType": "docker",
           "cpu": 0.25,
           "memory": 0.5,
-          "dockerfilePath": "./api/Dockerfile",
+          "dockerfilePath": "./api/agent.Dockerfile",
           "dockerContext": "./api",
           "watchPaths": [
             "./api/**"
           ],
           "dependsOn": [
-            "db"
+            "db",
+            "orion"
           ],
           "envVariables": {
             "DEBUG": false,

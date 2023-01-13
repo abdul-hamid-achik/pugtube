@@ -44,9 +44,6 @@ agent = [
     "ffmpeg-python>=0.2.0",
     "ffprobe-python>=1.0.3",
 ]
-orion = [
-    "prefect>=2.7.7",
-]
 
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]

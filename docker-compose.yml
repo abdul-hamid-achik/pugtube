@@ -1,6 +1,6 @@
 services:
   api:
-    image: abdulachik/pugtube.api:latest
+    image: abdulachik/api.pugtube.dev:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -18,7 +18,7 @@ services:
       - ./api:/api
 
   web:
-    image: abdulachik/pugtube.web:latest
+    image: abdulachik/www.pugtube.dev:latest
     build:
       context: ./web
       dockerfile: Dockerfile
@@ -70,12 +70,10 @@ services:
     restart: unless-stopped
 
   orion:
-    image: abdulachik/pugtube.orion:latest
+    image: abdulachik/orion.pugtube.dev:latest
     build:
       context: ./api
-      dockerfile: Dockerfile
-      args:
-        - MODE=orion
+      dockerfile: orion.Dockerfile
     environment:
       - PREFECT_ORION_API_HOST=0.0.0.0
       - PREFECT_ORION_API_PORT=4200
@@ -90,12 +88,10 @@ services:
     restart: unless-stopped
 
   agent:
-    image: abdulachik/pugtube.prefect:latest
+    image: abdulachik/agent.pugtube.dev:latest
     build:
       context: ./api
-      dockerfile: Dockerfile
-      args:
-        - MODE=agent
+      dockerfile: agent.Dockerfile
     command: [ "prefect", "agent", "start", "-q", "default" ]
     environment:
       - PREFECT_API_URL=http://orion:4200/api
@@ -104,6 +100,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      orion:
+          condition: service_healthy
     restart: unless-stopped
 
 volumes:
