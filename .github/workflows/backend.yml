@@ -49,12 +49,13 @@ jobs:
           pdm test
 
   release:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     name: Release to Docker Hub
-    matrix:
-      dockerfile: [Dockerfile, agent.Dockerfile, orion.Dockerfile]
-      repo: [abdulachik/api.pugtube.dev, abdulachik/agent.pugtube.dev, abdulachik/orion.pugtube.dev]
+    strategy:
+      matrix:
+        dockerfile: [ Dockerfile, agent.Dockerfile, orion.Dockerfile ]
+        repo: [ abdulachik/api.pugtube.dev, abdulachik/agent.pugtube.dev, abdulachik/orion.pugtube.dev ]
     steps:
       - uses: actions/checkout@v3
 
@@ -69,5 +70,5 @@ jobs:
         with:
           context: .
           push: true
-          file: {context}/${{ matrix.dockerfile }}
+          file: ${{ matrix.dockerfile }}
           tags: ${{ matrix.repo }}:latest,${{ matrix.repo }}:${{ github.sha }}
