@@ -74,3 +74,4 @@ static
     staticfiles.json
 
 .env
+.secrets
