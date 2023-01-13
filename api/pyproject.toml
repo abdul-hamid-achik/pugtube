@@ -39,7 +39,7 @@ requires-python = ">=3.11.1"
 license = { text = "GPLv3" }
 [project.optional-dependencies]
 agent = [
-    "spacy>=3.4.4",
+#    "spacy>=3.4.4",
     "prefect>=2.7.7",
     "ffmpeg-python>=0.2.0",
     "ffprobe-python>=1.0.3",

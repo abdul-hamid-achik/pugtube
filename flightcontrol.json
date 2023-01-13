@@ -67,10 +67,10 @@
               }
             },
             "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
+              "fromParameterStore": "DOCKER_USERNAME"
             },
             "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
+              "fromParameterStore": "DOCKER_PASSWORD"
             }
           }
         },
@@ -114,10 +114,10 @@
               }
             },
             "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
+              "fromParameterStore": "DOCKER_USERNAME"
             },
             "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
+              "fromParameterStore": "DOCKER_PASSWORD"
             }
           }
         },
@@ -148,10 +148,10 @@
             },
             "PREFECT_API_URL": "https://orion.pugtube.dev/api",
             "DOCKER_USERNAME": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
+              "fromParameterStore": "DOCKER_USERNAME"
             },
             "DOCKER_PASSWORD": {
-              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
+              "fromParameterStore": "DOCKER_PASSWORD"
             }
           }
         }
