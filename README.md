@@ -1,4 +1,6 @@
 # PugTube
+[![Backend Compliance CI](https://github.com/sicksid/pugtube/actions/workflows/backend.yml/badge.svg?branch=main&event=push)](https://github.com/sicksid/pugtube/actions/workflows/backend.yml)
+[![Webapp Compliance CI](https://github.com/sicksid/pugtube/actions/workflows/frontend.yml/badge.svg?branch=main&event=push)](https://github.com/sicksid/pugtube/actions/workflows/frontend.yml)
 
 A video sharing service built with Django and Next.js
 
