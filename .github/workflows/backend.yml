@@ -68,7 +68,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: api
           push: true
           tags: abdulachik/api.pugtube.dev:latest,abdulachik/api.pugtube.dev:${{ steps.short-sha.outputs.sha }}
 
@@ -92,7 +92,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: api
           push: true
           file: orion.Dockerfile
           tags: abdulachik/orion.pugtube.dev:latest,abdulachik/orion.pugtube.dev:${{ steps.short-sha.outputs.sha }}
@@ -117,7 +117,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: api
           push: true
           file: agent.Dockerfile
           tags: abdulachik/agent.pugtube.dev:latest,abdulachik/agent.pugtube.dev:${{ steps.short-sha.outputs.sha }}

@@ -105,8 +105,6 @@
           ],
           "healthCheckPath": "/health",
           "envVariables": {
-            "PREFECT_ORION_API_HOST": "orion.pugtube.dev",
-            "PREFECT_ORION_API_PORT": 4200,
             "PREFECT_ORION_DATABASE_CONNECTION_URL": {
               "fromParameterStore": "PREFECT_ORION_DATABASE_CONNECTION_URL"
             },
