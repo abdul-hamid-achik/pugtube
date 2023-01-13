@@ -68,8 +68,12 @@ services:
     restart: unless-stopped
 
   orion:
-    image: prefecthq/prefect:2.7.7-python3.11
-    entrypoint: [ "prefect", "orion", "start", "--host", "0.0.0.0" ]
+    image: abdulachik/pugtube.orion:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        - MODE=orion
     environment:
       - PREFECT_ORION_API_HOST=0.0.0.0
       - PREFECT_ORION_API_PORT=4200
@@ -83,11 +87,18 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  prefect:
-    image: prefecthq/prefect:2.7.7-python3.11
+  agent:
+    image: abdulachik/pugtube.prefect:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        - MODE=agent
     command: [ "prefect", "agent", "start", "-q", "default" ]
     environment:
       - PREFECT_API_URL=http://orion:4200/api
+      - DATABASE_URL=postgres://postgres:postgres@database:5432/postgres
+      - DEBUG=True
     depends_on:
       database:
         condition: service_healthy

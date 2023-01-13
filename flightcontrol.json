@@ -13,7 +13,9 @@
           "id": "frontend",
           "name": "www.pugtube.dev",
           "type": "fargate",
-          "watchPaths": ["./web/**"],
+          "watchPaths": [
+            "./web/**"
+          ],
           "cpu": 0.25,
           "memory": 0.5,
           "domain": "www.pugtube.dev",
@@ -22,7 +24,9 @@
           "dockerfilePath": "./web/Dockerfile",
           "dockerContext": "./web",
           "port": 3000,
-          "dependsOn": ["backend"],
+          "dependsOn": [
+            "backend"
+          ],
           "envVariables": {
             "NODE_ENV": "production",
             "DATABASE_URL": {
@@ -39,14 +43,18 @@
           "type": "fargate",
           "dockerfilePath": "./api/Dockerfile",
           "dockerContext": "./api",
-          "watchPaths": ["./api/**"],
+          "watchPaths": [
+            "./api/**"
+          ],
           "cpu": 0.25,
           "memory": 0.5,
           "domain": "api.pugtube.dev",
-          "port": 8080,
+          "port": 8000,
           "minInstances": 1,
           "maxInstances": 1,
-          "dependsOn": ["db"],
+          "dependsOn": [
+            "db"
+          ],
           "healthCheckPath": "/health",
           "envVariables": {
             "DEBUG": false,
@@ -75,6 +83,77 @@
           "instanceSize": "db.t4g.micro",
           "storage": 20,
           "private": true
+        },
+        {
+          "id": "orion",
+          "name": "orion.pugtube.dev",
+          "type": "fargate",
+          "dockerfilePath": "./api/Dockerfile",
+          "dockerContext": "./api",
+          "watchPaths": [
+            "./api/**"
+          ],
+          "buildType": "docker",
+          "cpu": 0.25,
+          "memory": 0.5,
+          "domain": "api.pugtube.dev",
+          "port": 4200,
+          "minInstances": 1,
+          "maxInstances": 1,
+          "dependsOn": [
+            "db"
+          ],
+          "healthCheckPath": "/health",
+          "envVariables": {
+            "PREFECT_ORION_API_HOST": "0.0.0.0",
+            "PREFECT_ORION_API_PORT": 4200,
+            "PREFECT_ORION_DATABASE_CONNECTION_URL": {
+              "fromService": {
+                "id": "db",
+                "value": "dbConnectionString"
+              }
+            },
+            "DOCKER_USERNAME": {
+              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
+            },
+            "DOCKER_PASSWORD": {
+              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
+            }
+          }
+        },
+        {
+          "id": "agent",
+          "name": "Prefect Agent",
+          "type": "fargate-worker",
+          "buildType": "docker",
+          "cpu": 0.25,
+          "memory": 0.5,
+          "dockerfilePath": "./api/Dockerfile",
+          "dockerContext": "./api",
+          "watchPaths": [
+            "./api/**"
+          ],
+          "dependsOn": [
+            "db"
+          ],
+          "envVariables": {
+            "DEBUG": false,
+            "BASE_URL": "https://orion.pugtube.dev",
+            "PUBLIC_URL": "https://orion.pugtube.dev",
+            "DATABASE_URL": {
+              "fromService": {
+                "id": "db",
+                "value": "dbConnectionString"
+              }
+            },
+            "PREFECT_API_URL": "https://orion.pugtube.dev/api",
+            "DOCKER_USERNAME": {
+              "fromParameterStore": "fc.pugtubedev.env.production.l419g00sx.DOCKER_USERNAME"
+            },
+            "DOCKER_PASSWORD": {
+              "fromParameterStore": "fc.pugtubedev.env.production.l419f00ev.DOCKER_PASSWORD"
+            }
+          }
         }
       ]
     }

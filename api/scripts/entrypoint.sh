@@ -1,10 +1,22 @@
 #!/bin/sh
 
-python manage.py migrate
-python manage.py collectstatic --noinput
-
-if [ "$DEBUG" = "true" ]; then
-    python manage.py runserver 0.0.0.0:8000
+if [ "$MODE" = "agent" ]; then
+  echo "Running Prefect Agent"
+  pdm manage shell < workflows/deploy.py
+  pdm run prefect agent start -q default
+elif [ "$MODE" = "orion" ]; then
+  echo "Running Prefect Orion"
+  pdm run prefect orion start --host 0.0.0.0 --port 4200
 else
-    python -m gunicorn --bind 0.0.0.0:8080 pugtube.wsgi:application
+  echo "Running Pugtube.dev"
+  pdm manage migrate
+  pdm manage collectstatic --noinput
+
+  if [ "$DEBUG" = "true" ]; then
+    echo "dev mode"
+    pdm manage runserver 0.0.0.0:8000
+  else
+    echo "production mode"
+    pdm run gunicorn --bind 0.0.0.0:8000 pugtube.wsgi:application
+  fi
 fi

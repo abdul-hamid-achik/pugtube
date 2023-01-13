@@ -2,7 +2,7 @@ import httpx
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand, CommandError
 from content.models import OriginalVideo
-from content.pexels.api import get_popular_videos
+from content.pexels.api import get_popular_videos, save_as_original_video
 
 
 class Command(BaseCommand):
@@ -31,23 +31,7 @@ class Command(BaseCommand):
                 try:
                     video_file = video["video_files"][0]
                     self.stdout.write(f"Downloading video link {video_file['link']}")
-                    response = client.get(video_file["link"])
-                    response.raise_for_status()
-                    original_video = OriginalVideo.objects.create(
-                        title=video["url"],
-                        file=SimpleUploadedFile(
-                            f"video-{video['id']}.mp4",
-                            response.content,
-                            content_type=video_file["file_type"],
-                        ),
-                        original=video["url"],
-                        quality=video_file["quality"],
-                        file_type=video_file["file_type"],
-                        duration=video["duration"],
-                        width=video["width"],
-                        height=video["height"],
-                        fps=video_file["fps"],
-                    )
+                    original_video = save_as_original_video(video)
                     self.stdout.write(
                         self.style.SUCCESS(
                             f"processed successfully: video_id: {video['id']} - original_video_id: {original_video.id}"
