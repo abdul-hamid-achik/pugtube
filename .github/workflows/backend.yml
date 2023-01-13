@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: .github/actions/setup_python
+      - uses: ./.github/actions/setup_python
         with:
           env: 'dev'
       - run: pdm sync --dev
