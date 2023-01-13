@@ -4,6 +4,8 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+      args:
+        - MODE=api
     depends_on:
       database:
         condition: service_healthy
