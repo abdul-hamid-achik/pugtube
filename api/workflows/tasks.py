@@ -1,3 +1,8 @@
+import os, django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pugtube.settings")
+django.setup()
+
 import httpx
 from ffprobe import FFProbe
 from prefect import task, get_run_logger
