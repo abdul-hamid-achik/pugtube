@@ -50,6 +50,7 @@ jobs:
 
   release-api:
     runs-on: ubuntu-latest
+    needs: test
     name: Release api.pugtube.dev to Docker Hub
     steps:
       - uses: actions/checkout@v3
@@ -75,6 +76,7 @@ jobs:
 
   release-orion:
     runs-on: ubuntu-latest
+    needs: test
     name: Release orion.pugtube.dev to Docker Hub
     steps:
       - uses: actions/checkout@v3
@@ -102,6 +104,7 @@ jobs:
   release-agent:
     runs-on: ubuntu-latest
     name: Release agent.pugtube.dev to Docker Hub
+    needs: test
     steps:
       - uses: actions/checkout@v3
 
