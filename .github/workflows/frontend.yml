@@ -62,5 +62,4 @@ jobs:
         with:
           context: web
           push: true
-          repository: abdulachik/pugtube-web
-          tags: latest,${{ steps.short-sha.outputs.sha }}
+          tags: abdulachik/www.pugtube.dev:latest,abdulachik/www.pugtube.dev:${{ steps.short-sha.outputs.sha }}
