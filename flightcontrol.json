@@ -66,6 +66,9 @@
                 "value": "dbConnectionString"
               }
             },
+            "PEXELS_API_KEY": {
+              "fromParameterStore": "PEXELS_API_KEY"
+            },
             "DOCKER_USERNAME": {
               "fromParameterStore": "DOCKER_USERNAME"
             },
@@ -147,6 +150,9 @@
               }
             },
             "PREFECT_API_URL": "https://orion.pugtube.dev/api",
+            "PEXELS_API_KEY": {
+              "fromParameterStore": "PEXELS_API_KEY"
+            },
             "DOCKER_USERNAME": {
               "fromParameterStore": "DOCKER_USERNAME"
             },

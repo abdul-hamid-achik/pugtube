@@ -7,7 +7,7 @@ block_storage = LocalFileSystem(basepath="/tmp/prefect")
 block_storage.save("local-storage", overwrite=True)
 
 deployment = Deployment.build_from_flow(
-    name="seed",
+    name="onboarding",
     flow=seed,
     storage=LocalFileSystem.load("local-storage"),
 )
