@@ -15,7 +15,7 @@ def load_pexels_popular_videos():
     logger = get_run_logger()
     logger.info("Loading Pexels Popular Videos")
     popular_videos = get_popular_videos()
-
+    original_videos = []
     for video in popular_videos["videos"]:
         logger.info(f"Processing video {video['id']}")
 
@@ -24,11 +24,14 @@ def load_pexels_popular_videos():
                 video_file = video["video_files"][0]
                 logger.info(f"Downloading video link {video_file['link']}")
                 original_video = save_as_original_video(video)
+                original_videos.append(original_video)
                 logger.info(
                     f"processed successfully: video_id: {video['id']} - original_video_id: {original_video.id}"
                 )
             except httpx.HTTPError as exc:
                 logger.error(f"HTTP Exception for {exc.request.url} - {exc}")
+
+    return original_videos
 
 
 @task()
