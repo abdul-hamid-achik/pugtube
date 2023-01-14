@@ -129,7 +129,7 @@
           "type": "fargate-worker",
           "buildType": "docker",
           "cpu": 0.25,
-          "memory": 0.5,
+          "memory": 1,
           "dockerfilePath": "./api/agent.Dockerfile",
           "dockerContext": "./api",
           "watchPaths": [
