@@ -70,7 +70,8 @@ jobs:
         with:
           context: api
           push: true
-          tags: api.pugtube.dev:latest,api.pugtube.dev:${{ steps.short-sha.outputs.sha }}
+          repository: abdulachik/pugtube-api
+          tags: latest,${{ steps.short-sha.outputs.sha }}
 
   release-orion:
     runs-on: ubuntu-latest
@@ -94,8 +95,9 @@ jobs:
         with:
           context: api
           push: true
+          repository: abdulachik/pugtube-orion
           file: api/orion.Dockerfile
-          tags: orion.pugtube.dev:latest,orion.pugtube.dev:${{ steps.short-sha.outputs.sha }}
+          tags: latest,${{ steps.short-sha.outputs.sha }}
 
   release-agent:
     runs-on: ubuntu-latest
@@ -119,5 +121,6 @@ jobs:
         with:
           context: api
           push: true
+          repository: abdulachik/pugtube-agent
           file: api/agent.Dockerfile
-          tags: agent.pugtube.dev:latest,agent.pugtube.dev:${{ steps.short-sha.outputs.sha }}
+          tags: latest,${{ steps.short-sha.outputs.sha }}
