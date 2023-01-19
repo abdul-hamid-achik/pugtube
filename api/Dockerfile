@@ -1,11 +1,32 @@
-FROM python:3.11.1-alpine
+# build stage
+FROM python:3.11-alpine AS builder
+
+# install PDM
 RUN pip install -U pip setuptools wheel
 RUN pip install pdm
-RUN pdm plugin add pdm-django
-ENV MODE=api
-ENV TZ UTC
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# copy files
+COPY . /api
+
+# install dependencies and project into the local packages directory
 WORKDIR /api
-COPY . .
-RUN pdm install --prod --no-lock --no-editable
-ENTRYPOINT ./scripts/entrypoint.sh
+
+RUN mkdir __pypackages__ && pdm install --prod --no-lock --no-editable
+
+# run stage
+FROM python:3.11-alpine AS runner
+
+ENV PYTHONPATH=/pugtube/pkgs
+ENV PATH=/pugtube/bin:$PATH
+ENV MODE=api
+
+RUN mkdir -p /pugtube
+
+# retrieve packages from build stage
+COPY --from=builder /api/__pypackages__/3.11/lib /pugtube/pkgs
+COPY --from=builder /api/__pypackages__/3.11/bin /pugtube/bin
+COPY . /api
+
+WORKDIR /api
+# set entrypoint
+ENTRYPOINT /api/scripts/entrypoint.sh

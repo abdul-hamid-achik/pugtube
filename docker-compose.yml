@@ -4,8 +4,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-      args:
-        - MODE=api
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.25'
+          memory: 250M
     depends_on:
       database:
         condition: service_healthy
@@ -27,6 +33,14 @@ services:
         condition: service_healthy
       api:
         condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500M
+        reservations:
+          cpus: '0.25'
+          memory: 250M
     environment:
       DATABASE_URL: postgres://postgres:postgres@database:5432/postgres
       NODE_ENV: development
@@ -56,6 +70,8 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
+    profiles:
+      - debug
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@pugtube.dev
       - PGADMIN_DEFAULT_PASSWORD=password
@@ -67,7 +83,6 @@ services:
         condition: service_healthy
     ports:
       - 5050:5050
-    restart: unless-stopped
 
   orion:
     image: abdulachik/orion.pugtube.dev:latest
@@ -92,6 +107,14 @@ services:
     build:
       context: ./api
       dockerfile: agent.Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 1G
     command: [ "prefect", "agent", "start", "-q", "default" ]
     environment:
       - PREFECT_API_URL=http://orion:4200/api
@@ -101,7 +124,7 @@ services:
       database:
         condition: service_healthy
       orion:
-          condition: service_healthy
+        condition: service_started
     restart: unless-stopped
 
 volumes:

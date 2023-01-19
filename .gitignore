@@ -54,7 +54,6 @@ out/
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm
 
-node_modules
 .venv
 __pycache__
 .pytest_cache
@@ -75,4 +74,3 @@ static
     staticfiles.json
 
 .env
-.secrets
