@@ -1,7 +1,0 @@
-.venv
-static
-__pycache__
-fixtures
-**/tests.py
-**/baker_recipes.py
-**/conftest.py

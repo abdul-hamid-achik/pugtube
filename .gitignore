@@ -1,76 +1,42 @@
-#editor
-# Created by https://www.toptal.com/developers/gitignore/api/pycharm
-# Edit at https://www.toptal.com/developers/gitignore?templates=pycharm
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-### PyCharm ###
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
+# testing
+/coverage
 
-# AWS User-specific
-.idea/**/aws.xml
+# database
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
 
-# Generated files
-.idea/**/contentModel.xml
+# next.js
+/.next/
+/out/
+next-env.d.ts
 
-# Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/dbnavigator.xml
+# production
+/build
 
-# File-based project format
-*.iws
-
-# IntelliJ
-out/
-
-# Editor-based Rest Client
-.idea/httpRequests
-
-### PyCharm Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
-
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
-
-
-# Cache file creation bug
-# See https://youtrack.jetbrains.com/issue/JBR-2257
-.idea/$CACHE_FILE$
-
-# CodeStream plugin
-# https://plugins.jetbrains.com/plugin/12206-codestream
-.idea/codestream.xml
-
-# End of https://www.toptal.com/developers/gitignore/api/pycharm
-
-.venv
-__pycache__
-.pytest_cache
+# misc
 .DS_Store
-.task
-.secrets
+*.pem
 
-static
-    css
-    js
-    img
-    fonts
-    admin
-    django_extensions
-    guardian
-    rest_framework
-    polymorphic
-    staticfiles.json
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
+# local env files
+# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
 .env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
