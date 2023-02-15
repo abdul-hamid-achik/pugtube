@@ -29,6 +29,8 @@ export const videoRouter = createTRPCRouter({
       console.log("User is not authenticated")
     }
 
+    console.log(input)
+
     if (!input.originalUpload.id) {
       throw new Error("No original upload id provided");
     }
@@ -38,11 +40,6 @@ export const videoRouter = createTRPCRouter({
     const video: Video = await ctx.prisma.video.create({
       data: {
         ...input,
-        // author: {
-        //   connect: {
-        //     id: userId
-        //   }
-        // },
         originalUpload: {
           connect: {
             id: input.originalUpload.id
@@ -53,6 +50,9 @@ export const videoRouter = createTRPCRouter({
         originalUpload: true
       }
     });
+
+    console.log(video)
+
 
     return video;
   }),

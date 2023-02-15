@@ -59,7 +59,7 @@ export default function UploadForm() {
         console.log(file, uploadId);
         mutate({
             ...data,
-            originalUpload: {id: uploadId},
+            originalUpload: { id: uploadId },
             duration: 0
         });
         console.log("UPLOADED")
