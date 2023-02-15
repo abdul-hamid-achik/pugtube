@@ -33,14 +33,14 @@ export default function VideoCard({ video }: VideoCardProps) {
                 </Link>
                 <p className="text-gray-500">{video.description}</p>
                 <div className="flex items-center mt-2">
-                    <Image
+                    {/* <Image
                         className="w-10 h-10 object-cover rounded-full shadow-sm"
-                        src={video.author.avatarUrl as string}
-                        alt={video.author.name as string}
+                        src={video?.author?.avatarUrl as string}
+                        alt={video?.author?.name as string}
                     />
-                    <Link href={`/channel/${video.author.id}`}>
-                        <a className="ml-2 text-gray-800 font-medium hover:text-gray-600">{video.author.name}</a>
-                    </Link>
+                    <Link href={`/channel/${video?.author?.id}`}>
+                        <a className="ml-2 text-gray-800 font-medium hover:text-gray-600">{video?.author?.name}</a>
+                    </Link> */}
                 </div>
             </div>
         </div>
