@@ -11,6 +11,7 @@ import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store'
 import { prisma } from '../../../server/db'
 import type { Upload, VideoMetadata } from '@prisma/client'
+import { inngest } from '../../../server/background'
 
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata
@@ -82,6 +83,13 @@ const tusServer = new Server({
     })
 
     console.log('newUpload', newUpload)
+
+    await inngest.send({
+      name: "hls.transcode",
+      data: {
+        uploadId: newUpload.id,
+      }
+    })
 
     return response
   },
