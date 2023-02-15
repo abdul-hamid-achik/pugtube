@@ -6,55 +6,56 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
-    userId            String
+    userId            String  @map("user_id")
     type              String
     provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    providerAccountId String  @map("provider_account_id")
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String? @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
+    @@map("accounts")
 }
 
 model Session {
     id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
+    sessionToken String   @unique @map("session_token")
+    userId       String   @map("user_id")
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@map("sessions")
 }
 
 model User {
     id            String    @id @default(cuid())
     name          String?
     email         String?   @unique
-    emailVerified DateTime?
+    emailVerified DateTime? @map("email_verified")
     image         String?
     accounts      Account[]
     sessions      Session[]
+    videos        Video[]
+    comments      Comment[]
+    likes         Like[]
+
+    @@map("users")
 }
 
 model VerificationToken {
@@ -63,4 +64,105 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+    @@map("verificationtokens")
+}
+
+model Video {
+    id           String        @id @default(cuid())
+    title        String
+    description  String?
+    duration     Int?
+    thumbnailUrl String?
+    category     String?
+    userId       String        @map("user_id")
+    author       User?         @relation(fields: [userId], references: [id])
+    comments     Comment[]
+    likes        Like[]
+    hlsPlaylist  String?       @map("hls_playlist")
+    HlsSegment   HlsSegment[]
+    HlsPlaylist  HlsPlaylist[]
+
+    originalUploadId String @map("original_upload_id")
+    originalUpload   Upload @relation(fields: [originalUploadId], references: [id])
+
+    @@index([userId])
+    @@index([originalUploadId])
+    @@map("videos")
+}
+
+model Comment {
+    id      String @id @default(cuid())
+    text    String
+    userId  String @map("user_id")
+    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    videoId String @map("video_id")
+    Video   Video  @relation(fields: [videoId], references: [id])
+
+    @@index([userId])
+    @@index([videoId])
+    @@map("comments")
+}
+
+model Like {
+    id      String @id @default(cuid())
+    userId  String @map("user_id")
+    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    videoId String @map("video_id")
+    Video   Video  @relation(fields: [videoId], references: [id])
+
+    @@index([userId])
+    @@index([videoId])
+    @@map("likes")
+}
+
+// experimental
+
+model HlsSegment {
+    id            String @id @default(cuid())
+    videoId       String @map("video_id")
+    segmentNumber Int    @map("segment_number")
+    resolution    String
+    url           String
+
+    video Video @relation(fields: [videoId], references: [id])
+
+    @@unique([videoId, segmentNumber])
+}
+
+model HlsPlaylist {
+    id         String @id @default(cuid())
+    videoId    String @map("video_id")
+    resolution String
+    url        String
+
+    video Video @relation(fields: [videoId], references: [id])
+
+    @@index([videoId])
+}
+
+model VideoMetadata {
+    id           String @id @default(cuid())
+    name         String
+    type         String
+    filetype     String
+    filename     String
+    relativePath String
+
+    uploadId String  @unique
+    Upload   Upload?
+
+    @@map("video_metadata")
+}
+
+model Upload {
+    id            String         @id @default(cuid())
+    size          Int?
+    offset        Int
+    creation_date DateTime?
+    metadata      VideoMetadata? @relation(fields: [metadataId], references: [id])
+
+    metadataId String? @unique
+    videos     Video[]
+
+    @@map("uploads")
 }

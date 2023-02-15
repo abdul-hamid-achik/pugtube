@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { PagesOptions } from "next-auth";
 import NextAuth, { type NextAuthOptions } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db";
+import { hashPassword, verifyPassword } from "../../../utils/auth";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -16,13 +19,86 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  pages: {
+    signUp: "/sign-up"
+  } as Partial<PagesOptions>,
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      id: "app-login",
+      name: "App Login",
+      credentials: {
+        email: {
+          label: "Email Address",
+          type: "email",
+          placeholder: "john.doe@example.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "Your super secure password",
+        },
+      },
+      async authorize(credentials: Record<"email" | "password", string> | undefined) {
+        if (!credentials || !credentials?.password || !credentials?.email) {
+          throw new Error("Invalid Credentials");
+        }
+
+        try {
+          let maybeUser = await prisma.user.findFirst({
+            where: {
+              email: credentials?.email,
+            },
+            select: {
+              id: true,
+              email: true,
+              password: true,
+              name: true,
+            },
+          });
+
+          if (!maybeUser) {
+            if (!credentials?.password || !credentials?.email) {
+              throw new Error("Invalid Credentials");
+            }
+
+            maybeUser = await prisma.user.create({
+              data: {
+                email: credentials?.email,
+                password: await hashPassword(credentials?.password),
+              },
+              select: {
+                id: true,
+                email: true,
+                password: true,
+                name: true,
+              },
+            });
+          } else {
+            const isValid = await verifyPassword(
+              credentials.password,
+              maybeUser?.password || undefined
+            );
+
+            if (!isValid) {
+              throw new Error("Invalid Credentials");
+            }
+          }
+
+          return {
+            id: maybeUser.id,
+            email: maybeUser.email,
+            name: maybeUser.name,
+          };
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      },
     }),
+
+
     /**
      * ...add more providers here
      *

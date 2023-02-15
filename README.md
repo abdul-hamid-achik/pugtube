@@ -1,28 +1,45 @@
-# Create T3 App
+# PugTube
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+PugTube is a video sharing platform where users can upload, watch and interact with videos. This project is built with the [T3 stack](https://create.t3.app/) which includes the following technologies:
 
-## What's next? How do I make an app with this?
+- TypeScript
+- React
+- Next.js
+- Prisma
+- PostgreSQL
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Getting Started
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+To get started with PugTube, clone the repository and run the following commands:
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+```bash
+pnpm install
+pnpm dev
+```
 
-## Learn More
+This will install the dependencies and start the development server.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Usage
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+PugTube has several features that allow users to interact with the videos on the platform. These include:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- Uploading videos
+- Watching videos
+- Liking and disliking videos
+- Commenting on videos
+- Searching for videos
 
-## How do I deploy this?
+## Contributing
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Contributions to PugTube are welcome! To contribute, please follow these steps:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b my-feature-branch`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-feature-branch`)
+6. Create a new pull request
+
+## License
+
+PugTube is licensed under the MIT license. See the [LICENSE](LICENSE) file for more information.
