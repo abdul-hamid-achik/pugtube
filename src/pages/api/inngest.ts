@@ -8,7 +8,6 @@ import { inngest } from '../../server/background'
 import { serve } from "inngest/next"
 import { prisma } from "../../server/db"
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg'
-import type { Upload } from '@prisma/client';
 
 const transcode = inngest.createFunction("Transcode to HLS", "hls.transcode", async ({ event }) => {
     const { uploadId } = event.data as { uploadId: string };
@@ -17,7 +16,7 @@ const transcode = inngest.createFunction("Transcode to HLS", "hls.transcode", as
         where: {
             id: uploadId
         }
-    }) as Upload | null;
+    });
 
     if (!upload) {
         throw new Error("Upload not found")
