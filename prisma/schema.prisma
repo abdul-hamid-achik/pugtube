@@ -54,6 +54,7 @@ model User {
     videos        Video[]
     comments      Comment[]
     likes         Like[]
+    password      String?   @db.Text
 
     @@map("users")
 }
