@@ -35,7 +35,7 @@ const transcode = inngest.createFunction("Transcode to HLS", "hls.transcode", as
 
     // Download the file from S3 and write it to the virtual file system
     const inputFilePath = `/tmp/${upload.id}`;
-    await s3.getObject({ Bucket: process.env.AWS_S3_BUCKET as string, Key: upload.id })
+    s3.getObject({ Bucket: process.env.AWS_S3_BUCKET as string, Key: upload.id })
         .createReadStream()
         .pipe(fs.createWriteStream(inputFilePath))
 
