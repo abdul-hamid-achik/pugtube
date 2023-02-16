@@ -39,7 +39,7 @@ jobs:
         run: pnpm install
 
       - name: Cypress
-        uses: cypress-io/github-action@v5.x.x # use the explicit version number
+        uses: cypress-io/github-action@v5 # use the explicit version number
         with:
           build: pnpm build
           start: pnpm start
