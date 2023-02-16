@@ -25,11 +25,15 @@
       "next/types/global",
       "node",
       "cypress",
+      "cypress-file-upload",
       "@testing-library/cypress"
     ],
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@cypress/*": [
+        "./cypress/*"
       ]
     }
   },
@@ -42,6 +46,5 @@
   ],
   "exclude": [
     "node_modules",
-    "cypress/e2e/**/*"
   ]
 }

@@ -5,10 +5,12 @@
   "plugins": [
     "prettier",
     "unused-imports",
+    "cypress",
     "tailwindcss"
   ],
   "extends": [
     "next/core-web-vitals",
+    "plugin:cypress/recommended",
     "plugin:tailwindcss/recommended"
   ],
   "overrides": [
@@ -17,38 +19,7 @@
         "*.ts",
         "*.tsx"
       ],
-      "rules": {
-        // "react/jsx-props-no-spreading": "off",
-        // "react/react-in-jsx-scope": "off",
-        // "@typescript-eslint/no-throw-literal": "off",
-        // "jsx-a11y/label-has-associated-control": [
-        //   "error",
-        //   {
-        //     "required": {
-        //       "some": [
-        //         "nesting",
-        //         "id"
-        //       ]
-        //     }
-        //   }
-        // ],
-        // "jsx-a11y/label-has-for": [
-        //   "error",
-        //   {
-        //     "required": {
-        //       "some": [
-        //         "nesting",
-        //         "id"
-        //       ]
-        //     }
-        //   }
-        // ],
-        // "import/extensions": "off",
-        // "import/prefer-default-export": "off",
-        // "import/no-extraneous-dependencies": "off",
-        // "no-underscore-dangle": "off",
-        // "no-console": "off"
-      }
+      "rules": {}
     }
   ]
 }
