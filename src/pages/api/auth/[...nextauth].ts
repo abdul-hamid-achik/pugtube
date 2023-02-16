@@ -1,48 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PagesOptions } from "next-auth";
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { type NextAuthOptions, type PagesOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 // Prisma adapter for NextAuth, optional and can be removed
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-import { prisma } from "../../../server/db";
-import { hashPassword, verifyPassword } from "../../../utils/auth";
+import { prisma } from '@/server/db';
+import { hashPassword, verifyPassword } from '@/utils/auth';
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
     session({ session, user }) {
       if (session.user) {
-        session.user.id = user.id;
+        return { ...session, user: { ...session.user, id: user.id } };
       }
       return session;
     },
   },
   pages: {
-    signUp: "/sign-up"
+    signUp: '/sign-up',
   } as Partial<PagesOptions>,
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
-      id: "app-login",
-      name: "App Login",
+      id: 'app-login',
+      name: 'App Login',
       credentials: {
         email: {
-          label: "Email Address",
-          type: "email",
-          placeholder: "john.doe@example.com",
+          label: 'Email Address',
+          type: 'email',
+          placeholder: 'john.doe@example.com',
         },
         password: {
-          label: "Password",
-          type: "password",
-          placeholder: "Your super secure password",
+          label: 'Password',
+          type: 'password',
+          placeholder: 'Your super secure password',
         },
       },
-      async authorize(credentials: Record<"email" | "password", string> | undefined) {
+      async authorize(credentials: Record<'email' | 'password', string> | undefined) {
         if (!credentials || !credentials?.password || !credentials?.email) {
-          throw new Error("Invalid Credentials");
+          throw new Error('Invalid Credentials');
         }
 
         try {
@@ -60,7 +57,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!maybeUser) {
             if (!credentials?.password || !credentials?.email) {
-              throw new Error("Invalid Credentials");
+              throw new Error('Invalid Credentials');
             }
 
             maybeUser = await prisma.user.create({
@@ -78,11 +75,11 @@ export const authOptions: NextAuthOptions = {
           } else {
             const isValid = await verifyPassword(
               credentials.password,
-              maybeUser?.password || undefined
+              maybeUser?.password || undefined,
             );
 
             if (!isValid) {
-              throw new Error("Invalid Credentials");
+              throw new Error('Invalid Credentials');
             }
           }
 
@@ -97,7 +94,6 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-
 
     /**
      * ...add more providers here

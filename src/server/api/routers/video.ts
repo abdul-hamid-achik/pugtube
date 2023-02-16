@@ -1,17 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import { z } from 'zod'
-import { getSession } from "next-auth/react";
-import type { Video } from "@prisma/client";
+import { z } from 'zod';
+import { getSession } from 'next-auth/react';
+import type { Video } from '@prisma/client';
+import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const videoRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.video.findMany({
-      orderBy: {
-        // createdAt: "desc"
-      }
-    });
-  }),
+  getAll: publicProcedure.query(({ ctx }) => ctx.prisma.video.findMany({
+    orderBy: {
+      // createdAt: "desc"
+    },
+  })),
 
   create: publicProcedure.input(z.object({
     originalUpload: z.object({
@@ -19,20 +16,20 @@ export const videoRouter = createTRPCRouter({
     }),
     title: z.string(),
     description: z.string().optional(),
-    categories: z.array(z.string()).optional(),
-    thumbnailUrl: z.string().optional(),
+    category: z.string().optional(),
     duration: z.number().optional(),
+    thumbnailUrl: z.string().optional(),
   })).mutation(async ({ ctx, input }) => {
     const session = await getSession();
     if (!session) {
       // throw new Error("User is not authenticated");
-      console.log("User is not authenticated")
+      console.log('User is not authenticated');
     }
 
-    console.log(input)
+    console.log(input);
 
     if (!input.originalUpload.id) {
-      throw new Error("No original upload id provided");
+      throw new Error('No original upload id provided');
     }
 
     // const userId = session?.user?.id;
@@ -42,17 +39,16 @@ export const videoRouter = createTRPCRouter({
         ...input,
         originalUpload: {
           connect: {
-            id: input.originalUpload.id
-          }
-        }
+            id: input.originalUpload.id,
+          },
+        },
       },
       include: {
-        originalUpload: true
-      }
+        originalUpload: true,
+      },
     });
 
-    console.log(video)
-
+    console.log(video);
 
     return video;
   }),
@@ -64,24 +60,24 @@ export const videoRouter = createTRPCRouter({
   })).mutation(async ({ ctx, input }) => {
     const session = await getSession();
     if (!session) {
-      throw new Error("User is not authenticated");
+      throw new Error('User is not authenticated');
     }
 
     const userId = session?.user?.id;
     const video = await ctx.prisma.video.update({
       where: {
-        id: input.id
+        id: input.id,
       },
       data: {
         ...input,
         author: {
           connect: {
-            id: userId
-          }
-        }
-      }
+            id: userId,
+          },
+        },
+      },
     });
 
     return video;
-  })
+  }),
 });

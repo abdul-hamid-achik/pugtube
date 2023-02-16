@@ -1,7 +1,7 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import * as z from "zod";
-import {hashPassword} from "../../../utils/auth"
-import type { User } from "@prisma/client";
+import * as z from 'zod';
+import { hashPassword } from '@/utils/auth';
+import type { User } from '@prisma/client';
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 
 export const usersRouter = createTRPCRouter({
   signup: publicProcedure
@@ -10,9 +10,9 @@ export const usersRouter = createTRPCRouter({
         name: z.string(),
         email: z.string().email(),
         password: z.string(),
-      })
+      }),
     )
-    .mutation(async ({ input, ctx  }) => {
+    .mutation(async ({ input, ctx }) => {
       const hashedPassword = await hashPassword(input.password);
       const user: User = await ctx.prisma.user.create({
         data: {
