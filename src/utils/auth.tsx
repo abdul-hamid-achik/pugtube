@@ -1,10 +1,10 @@
-import { hash, compare } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import type { DefaultSession } from 'next-auth';
 import type {
-  GetSessionParams,
+  GetSessionParams
 } from 'next-auth/react';
 import {
-  getSession as getNextSession,
+  getSession as getNextSession
 } from 'next-auth/react';
 
 type DefaultSessionUser = NonNullable<DefaultSession['user']>;
@@ -28,12 +28,10 @@ export async function getSession(
 }
 
 export async function hashPassword(password: string) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
   return hash(password, 12);
 }
 
 export async function verifyPassword(password?: string, hashedPassword?: string) {
   if (!password || !hashedPassword) return false;
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
   return compare(password, hashedPassword);
 }

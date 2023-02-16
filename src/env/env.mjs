@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-check
 import { z } from "zod";
 
@@ -24,8 +23,9 @@ const formatErrors = (
 ) =>
   Object.entries(errors)
     .map(([name, value]) => {
-      if (value && "_errors" in value)
+      if (value && "_errors" in value) {
         return `${name}: ${value._errors.join(", ")}\n`;
+      }
     })
     .filter(Boolean);
 
@@ -49,10 +49,11 @@ export const env = new Proxy(parsed.data, {
   get(target, prop) {
     if (typeof prop !== "string") return undefined;
     // on the client we only allow NEXT_PUBLIC_ variables
-    if (!isServer && !prop.startsWith("NEXT_PUBLIC_"))
+    if (!isServer && !prop.startsWith("NEXT_PUBLIC_")) {
       throw new Error(
         "❌ Attempted to access serverside environment variable on the client"
       );
+    }
     // @ts-ignore
     return target[prop]; // <-- otherwise, return the value
   },

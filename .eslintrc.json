@@ -3,14 +3,12 @@
     "project": "./tsconfig.json"
   },
   "plugins": [
+    "prettier",
     "unused-imports",
-    "tailwindcss",
-    "prettier"
+    "tailwindcss"
   ],
   "extends": [
     "next/core-web-vitals",
-    "airbnb",
-    "airbnb-typescript",
     "plugin:tailwindcss/recommended"
   ],
   "overrides": [
@@ -20,34 +18,36 @@
         "*.tsx"
       ],
       "rules": {
-        "react/jsx-props-no-spreading": "off",
-        "react/react-in-jsx-scope": "off",
-        "@typescript-eslint/no-throw-literal": "off",
-        "jsx-a11y/label-has-associated-control": [
-          "error",
-          {
-            "required": {
-              "some": [
-                "nesting",
-                "id"
-              ]
-            }
-          }
-        ],
-        "jsx-a11y/label-has-for": [
-          "error",
-          {
-            "required": {
-              "some": [
-                "nesting",
-                "id"
-              ]
-            }
-          }
-        ],
-        "import/extensions": "off",
-        "import/prefer-default-export": "off",
-        "import/no-extraneous-dependencies": "off"
+        // "react/jsx-props-no-spreading": "off",
+        // "react/react-in-jsx-scope": "off",
+        // "@typescript-eslint/no-throw-literal": "off",
+        // "jsx-a11y/label-has-associated-control": [
+        //   "error",
+        //   {
+        //     "required": {
+        //       "some": [
+        //         "nesting",
+        //         "id"
+        //       ]
+        //     }
+        //   }
+        // ],
+        // "jsx-a11y/label-has-for": [
+        //   "error",
+        //   {
+        //     "required": {
+        //       "some": [
+        //         "nesting",
+        //         "id"
+        //       ]
+        //     }
+        //   }
+        // ],
+        // "import/extensions": "off",
+        // "import/prefer-default-export": "off",
+        // "import/no-extraneous-dependencies": "off",
+        // "no-underscore-dangle": "off",
+        // "no-console": "off"
       }
     }
   ]

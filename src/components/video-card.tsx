@@ -1,6 +1,4 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import type { Video } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
