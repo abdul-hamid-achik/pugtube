@@ -89,7 +89,6 @@ export const authOptions: NextAuthOptions = {
             name: maybeUser.name,
           };
         } catch (error) {
-          console.log(error);
           throw error;
         }
       },

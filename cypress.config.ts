@@ -1,12 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { defineConfig } from 'cypress';
+import { defineConfig } from "cypress";
 
 export default defineConfig({
-  projectId: 'jcfv2t',
+  projectId: "jcfv2t",
+  defaultCommandTimeout: 60000,
   e2e: {
     setupNodeEvents(_on, _config) {
-      // console.log('config', config);
       // implement node event listeners here
     },
   },
+
+  component: {
+    devServer: {
+      framework: "next",
+      bundler: "webpack",
+    },
+  },
+
+  env: {
+    NODE_ENV: "test",
+  }
 });

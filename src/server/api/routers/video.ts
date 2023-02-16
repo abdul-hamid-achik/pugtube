@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { getSession } from 'next-auth/react';
 import type { Video } from '@prisma/client';
+import { getSession } from 'next-auth/react';
+import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const videoRouter = createTRPCRouter({
@@ -12,7 +12,7 @@ export const videoRouter = createTRPCRouter({
 
   create: publicProcedure.input(z.object({
     originalUpload: z.object({
-      id: z.string(),
+      id: z.string().uuid(),
     }),
     title: z.string(),
     description: z.string().optional(),

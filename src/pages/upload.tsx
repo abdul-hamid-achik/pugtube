@@ -30,28 +30,29 @@ export default function UploadForm() {
     },
   });
 
-  // const {data: {id: uploadId}} = api.video.upload.useQuery()
-
-  // React.useEffect(() => {
-  //     return () => uppy.close({ reason: 'unmount' })
-  // }, [uppy])
-
   const onSubmit = async (data: FormData) => {
     uppy.setMeta(data);
-    console.log(await uppy.upload());
-    const files = uppy.getFiles();
+    const { successful, failed } = await uppy.upload();
 
-    if (files.length === 0) {
+
+    if (failed.length > 0) {
+      setError('title', { message: 'Upload failed' });
+      return;
+    }
+
+    if (successful.length === 0) {
       setError('title', { message: 'No file uploaded' });
       return;
     }
-    const file = files.pop();
+
+    const file = successful.pop();
     const uploadId = (file as UppyFile & { uploadURL?: string })?.uploadURL?.split('/').pop();
+
     if (!uploadId) {
       setError('title', { message: 'No file uploaded' });
       return;
     }
-    console.log(file, uploadId);
+
     mutate({
       ...data,
       originalUpload: { id: uploadId },

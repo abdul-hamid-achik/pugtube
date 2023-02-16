@@ -4,7 +4,7 @@ import type { Upload, VideoMetadata } from '@prisma/client';
 import { S3Store } from '@tus/s3-store';
 import { Server } from '@tus/server';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
+import { v4 as uuid } from 'uuid';
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata
 }
@@ -51,8 +51,7 @@ const tusServer = new Server({
     return response;
   },
 
-  async onUploadFinish(request, response, upload) {
-    console.log('Upload finished', upload);
+  async onUploadFinish(_request, response, upload) {
     try {
       const newMetadata = await prisma.videoMetadata.create({
         data: {
@@ -65,7 +64,6 @@ const tusServer = new Server({
         },
       });
 
-      console.log('newMetadata', newMetadata);
 
       const newUpload = await prisma.upload.create({
         data: {
@@ -78,8 +76,6 @@ const tusServer = new Server({
         },
       });
 
-      console.log('newUpload', newUpload);
-
       await inngest.send({
         name: 'hls.transcode',
         data: {
@@ -89,11 +85,10 @@ const tusServer = new Server({
 
       return response;
     } catch (error) {
-      console.log(error);
       throw { status_code: 500, body: error };
     }
   },
-  namingFunction: () => `${Date.now()}-${Math.random().toString(36) + Math.random().toString(36)}`,
+  namingFunction: () => uuid(),
   datastore: new S3Store({
     partSize: 8 * 1024 * 1024, // Each uploaded part will have ~8MB,
     s3ClientConfig: {

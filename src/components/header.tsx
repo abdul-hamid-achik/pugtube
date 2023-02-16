@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
 import Auth from './auth';
 
 interface FormData {
@@ -10,14 +9,10 @@ interface FormData {
 }
 
 export default function Header() {
-  const { data: sessionData } = useSession();
+  const { data: _session } = useSession();
   const { register, handleSubmit } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {
-    // send data to the server
-    console.log(data);
-  };
+  const onSubmit = (_data: FormData) => { };
 
-  console.log(sessionData);
 
   return (
     <div className="bg-gray-900 py-2">
