@@ -97,8 +97,11 @@ const tusServer = new Server({
       log.info(`Event sent: post-upload ✅`)
 
       return response;
-    } catch (error) {
-      log.error('Upload failed: ', error)
+    } catch (error: any) {
+      log.error('Upload failed: ', {
+        error: error.message,
+        stack: error.stack,
+      })
       throw { status_code: 500, body: error };
     }
   },
