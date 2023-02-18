@@ -61,31 +61,33 @@ const tusServer = new Server({
   async onUploadFinish(_request, response, upload) {
     try {
       log.info(`Upload finished: ${upload.id}`);
-      const newMetadata = await prisma.videoMetadata.create({
-        data: {
-          relativePath: upload?.metadata?.relativePath || '',
-          name: upload?.metadata?.filename || '',
-          type: upload?.metadata?.type || '',
-          filename: upload?.metadata?.filename || '',
-          filetype: upload?.metadata?.filetype || '',
-          uploadId: upload?.id || '',
-        },
-      });
-
-      log.info(`Metadata created: ${newMetadata.id} ✅`)
+      log.info(`Metadata: ${upload?.metadata?.filename} ${upload?.metadata?.type} ${upload?.metadata?.relativePath}`)
+      log.debug('Upload: ', upload)
 
       const newUpload = await prisma.upload.create({
         data: {
-          ...upload,
-          metadata: {
-            connect: {
-              id: upload.id,
-            },
-          },
-        },
+          id: upload.id,
+          size: upload.size,
+          offset: upload.offset,
+        }
       });
 
       log.info(`Upload created: ${newUpload.id} ✅`)
+
+      const newMetadata = await prisma.videoMetadata.create({
+        data: {
+          filename: upload?.metadata?.filename as string,
+          type: upload?.metadata?.type as string,
+          relativePath: upload?.metadata?.relativePath as string,
+          name: upload?.metadata?.name as string,
+          filetype: upload?.metadata?.filetype as string,
+          uploadId: newUpload.id,
+        }
+      });
+
+
+      log.info(`Metadata created: ${newMetadata.id} ✅`)
+
 
       await inngest.send({
         name: 'post-upload',
@@ -113,7 +115,7 @@ const tusServer = new Server({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
       bucket: process.env.AWS_S3_BUCKET as string,
-      logger: console,
+      logger: log,
     },
   }),
 });
