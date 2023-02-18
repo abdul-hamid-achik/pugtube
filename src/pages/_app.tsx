@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/function-component-definition */
+import { api } from '@/utils/api';
 import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { type AppType } from 'next/app';
 
-import { api } from '@/utils/api';
+export { reportWebVitals } from 'next-axiom';
 
 import '@/styles/globals.css';
 

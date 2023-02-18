@@ -6,8 +6,10 @@
  * We also create a few inference helpers for input and output types
  */
 import { httpBatchLink, loggerLink } from '@trpc/client';
+
 import { createTRPCNext } from '@trpc/next';
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
+// import { log as logger } from 'next-axiom';
 import superjson from 'superjson';
 
 import { type AppRouter } from '@/server/api/root';
@@ -36,6 +38,7 @@ export const api = createTRPCNext<AppRouter>({
        * */
       links: [
         loggerLink({
+          // logger,
           enabled: (opts) => process.env.NODE_ENV === 'development'
             || (opts.direction === 'down' && opts.result instanceof Error),
         }),

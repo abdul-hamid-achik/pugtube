@@ -1,75 +1,51 @@
 import { inngest } from '@/server/background';
-import { prisma } from '@/server/db';
-import { S3 } from '@aws-sdk/client-s3';
-import { createFFmpeg } from '@ffmpeg/ffmpeg';
-import fs from 'fs';
+import transcodeVideo from '@/server/functions/transcode-video';
+import updateMetadata from '@/server/functions/update-metadata';
+import uploadToS3 from '@/server/functions/upload-to-s3';
 import { serve } from 'inngest/next';
-import os from 'os';
-import { Readable } from 'stream';
 
-const s3 = new S3({
-  region: process.env.AWS_REGION,
-});
-
-const transcode = inngest.createFunction('Transcode to HLS', 'hls.transcode', async ({ event }) => {
+const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({ event, step }) => {
+  // Extract the upload ID from the event data
   const { uploadId } = event.data as { uploadId: string };
-  const upload = await prisma.upload.findUnique({
-    where: {
-      id: uploadId,
-    },
-    include: {
-      metadata: true,
-    },
+
+  // Run the transcoding step
+  await step.run('Transcoding video', async () => {
+    return await inngest.send(
+      'hls.transcode',
+      { data: { uploadId } }
+    )
   });
 
-  if (!upload) {
-    throw new Error('Upload not found');
-  }
-
-  const inputDirPath = `${os.tmpdir()}/input`;
-  const outputDirPath = `${os.tmpdir()}/output`;
-
-
-  if (!fs.existsSync(inputDirPath)) {
-    fs.mkdirSync(inputDirPath);
-  }
-
-  if (!fs.existsSync(outputDirPath)) {
-    fs.mkdirSync(outputDirPath);
-  }
-
-  const inputFilePath = `${inputDirPath}/${upload?.metadata?.filename}`;
-
-  // Load FFmpeg
-  const ffmpeg = createFFmpeg({
-    log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+  await step.waitForEvent("hls.transcoded", {
+    timeout: 1000 * 60 * 60,
   });
 
-  await ffmpeg.load();
-
-  const s3Object = await s3.getObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
-    Key: upload.id,
+  // Run the upload to S3 step
+  await step.run('Uploading to S3', async () => {
+    return await inngest.send(
+      'hls.upload',
+      { data: { uploadId } }
+    )
   });
 
-  const readStream = s3Object.Body as Readable;
-  readStream.pipe(fs.createWriteStream(inputFilePath));
+  await step.waitForEvent("hls.uploaded", {
+    timeout: 1000 * 60 * 60,
+  });
 
-  // ffmpeg.FS('writeFile', inputFilePath, await fetchFile(inputFilePath));
+  // Run the update metadata step
+  await step.run('Updating metadata', async () => {
+    return await inngest.send(
+      'hls.metadata',
+      { data: { uploadId } }
+    )
+  });
 
-  console.log('Creating output directory', outputDirPath);
+  await step.waitForEvent("hls.metadata-updated", {
+    timeout: 1000 * 60 * 60,
+  });
 
-  // Transcode the video to HLS format
-  await ffmpeg.run(
-    '-i', inputFilePath,
-    '-codec', 'copy',
-    '-start_number', '0',
-    '-hls_time', '10',
-    '-hls_list_size', '0',
-    '-f', 'hls', `${outputDirPath}/playlist.m3u8`, `${outputDirPath}/segment-%03d.ts`,
-  );
-
-  console.log('Transcoding video', uploadId);
+  // Return the upload ID
+  return uploadId;
 });
 
-export default serve('pugtube', [transcode]);
+export default serve('pugtube', [postUpload, transcodeVideo, uploadToS3, updateMetadata]);

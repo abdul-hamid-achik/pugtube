@@ -1,33 +1,25 @@
 version: '3.7'
 
 services:
-  db:
-    image: planetscale/pscale:latest
-    environment:
-      PLANETSCALE_ORG: pugtube
-      PLANETSCALE_DB: pugtube-dev
-      PLANETSCALE_BRANCH: main
-      PLANETSCALE_TOKEN: your-api-token
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: pugtube-dev
-    ports:
-      - 3306:3306
-    volumes:
-      - db_data:/var/lib/mysql
-
   pugtube:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_CLIENTVAR: "clientvar"
     image: pugtube
     working_dir: /app
     ports:
       - "3000:3000"
-    environment:
-      - DATABASE_URL=mysql://user:password@localhost:3306/database
 
+  s3:
+    image: minio/minio:latest
+    command: server /data
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio
+    volumes:
+      - s3_data:/data
 volumes:
   db_data:
+  s3_data:

@@ -4,7 +4,10 @@ import type { Upload, VideoMetadata } from '@prisma/client';
 import { S3Store } from '@tus/s3-store';
 import { Server } from '@tus/server';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { log as logger } from 'next-axiom';
 import { v4 as uuid } from 'uuid';
+
+
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata
 }
@@ -16,6 +19,8 @@ export const config = {
 };
 
 interface MetadataValidation { ok: boolean, expected: string, received: string }
+
+const log = logger.with({ function: 'tus' });
 
 const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
   const received = upload?.metadata?.filename || '';
@@ -42,9 +47,11 @@ const tusServer = new Server({
   path: '/api/upload',
   async onUploadCreate(_, response, upload) {
     const { ok, expected, received } = validateMetadata(upload as unknown as PatchedUpload);
+    log.info(`Upload created: ${upload.id} ${ok ? '✅' : '❌'}`);
 
     if (!ok) {
       const body = `Expected "${expected}" in "Metadata" but received "${received}"`;
+      log.error(body);
       throw { status_code: 500, body };
     }
 
@@ -53,6 +60,7 @@ const tusServer = new Server({
 
   async onUploadFinish(_request, response, upload) {
     try {
+      log.info(`Upload finished: ${upload.id}`);
       const newMetadata = await prisma.videoMetadata.create({
         data: {
           relativePath: upload?.metadata?.relativePath || '',
@@ -64,27 +72,33 @@ const tusServer = new Server({
         },
       });
 
+      log.info(`Metadata created: ${newMetadata.id} ✅`)
 
       const newUpload = await prisma.upload.create({
         data: {
           ...upload,
           metadata: {
             connect: {
-              id: newMetadata.id,
+              id: upload.id,
             },
           },
         },
       });
 
+      log.info(`Upload created: ${newUpload.id} ✅`)
+
       await inngest.send({
-        name: 'hls.transcode',
+        name: 'post-upload',
         data: {
           uploadId: newUpload.id,
         },
       });
 
+      log.info(`Event sent: post-upload ✅`)
+
       return response;
     } catch (error) {
+      log.error('Upload failed: ', error)
       throw { status_code: 500, body: error };
     }
   },

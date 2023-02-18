@@ -1,4 +1,4 @@
-name: End to End Tests
+name: UI Component Tests
 
 on: [push]
 
@@ -43,6 +43,7 @@ jobs:
         with:
           build: pnpm build
           start: pnpm start
+          component: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
