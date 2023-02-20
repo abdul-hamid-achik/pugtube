@@ -1,15 +1,18 @@
 import { prisma } from '@/server/db';
+import { hashPassword } from '@/utils/auth';
 
 async function main() {
-  // await prisma.video.upsert({
-  // where: {
-  //     id,
-  // },
-  // create: {
-  //     id,
-  // },
-  // update: {},
-  // });
+  await prisma.user.upsert({
+    where: {
+      email: 'abdulachik@icloud.com'
+    },
+    update: {},
+    create: {
+      name: 'Abdul Hamid',
+      email: 'abdulachik@icloud.com',
+      password: await hashPassword('password'),
+    }
+  })
 }
 
 main()

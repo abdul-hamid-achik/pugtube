@@ -112,7 +112,7 @@ export default function Page({ csrfToken, providers }: Props) {
                     id="password"
                     type="password"
                     autoComplete="current-password"
-                    minLength={12}
+                    minLength={8}
                     required
                     {...register('password')}
                     className="w-full appearance-none border-x-0 border-b border-t-0 border-dashed bg-transparent py-3 text-center text-xl font-medium leading-6 outline-none transition duration-150 ease-in-out placeholder:text-gray-500 focus:outline-none focus:placeholder:text-gray-400"

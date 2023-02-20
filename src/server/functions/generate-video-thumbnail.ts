@@ -16,10 +16,8 @@ export default inngest.createFunction(
     'Generate video thumbnail',
     'pugtube/hls.thumbnail',
     async ({ event }) => {
-        await ffmpeg.load();
-
-
         const { uploadId } = event.data as { uploadId: string };
+        await ffmpeg.load();
 
         log.info(`Generating thumbnail for upload ID: ${uploadId}...`)
 
@@ -35,4 +33,14 @@ export default inngest.createFunction(
 
         log.info(`Thumbnail generated for upload ID: ${uploadId}`);
 
+        const thumbnail = await ffmpeg.FS('readFile', outputFilePath);
+
+        await s3.putObject({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: `thumbnails/${uploadId}.png`,
+            Body: thumbnail,
+            ContentType: 'image/png',
+        });
+
+        await inngest.send('pugtube/hls.thumbnail.generated', { data: { uploadId } });
     })

@@ -44,6 +44,19 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
     timeout: 1000 * 60 * 60,
   });
 
+
+  await step.run("Generate video thumbnail", async () => {
+    return await inngest.send(
+      'pugtube/thumbnail.generate',
+      { data: { uploadId } }
+    )
+  });
+
+
+  await step.waitForEvent("pugtube/thumbnail.generated", {
+    timeout: 1000 * 60 * 60,
+  });
+
   // Return the upload ID
   return uploadId;
 });
