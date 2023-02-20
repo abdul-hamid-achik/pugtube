@@ -4,7 +4,7 @@ import { VideoMetadata } from '@prisma/client';
 import { log as logger } from 'next-axiom';
 const log = logger.with({ function: 'Update Metadata' });
 
-export default inngest.createFunction('update video metadata', 'hls.metadata', async ({ event }) => {
+export default inngest.createFunction('Update video metadata', 'pugtube/hls.update', async ({ event }) => {
     log.info('Updating metadata...')
     const { uploadId, metadata } = event.data as { uploadId: string, metadata: VideoMetadata };
 
@@ -26,6 +26,6 @@ export default inngest.createFunction('update video metadata', 'hls.metadata', a
 
     // Log success message
     log.info(`Metadata updated for upload ID: ${uploadId}`);
-    await inngest.send('hls.transcoded', { data: { upload } })
+    await inngest.send('pugtube/hls.updated', { data: { upload } })
     return upload;
 });

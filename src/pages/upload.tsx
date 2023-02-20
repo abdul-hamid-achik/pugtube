@@ -5,6 +5,7 @@ import { api } from '@/utils/api';
 import Uppy, { UppyFile } from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import Tus from '@uppy/tus';
+import { useSession } from 'next-auth/react';
 import router from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,11 +23,17 @@ export default function UploadForm() {
     retryDelays: [0, 1000, 3000, 5000],
   }), []);
 
+  const { data: session } = useSession();
+
   const { register, handleSubmit, setError } = useForm<FormData>();
   const { mutate } = api.video.create.useMutation({
     onSuccess: async (video) => {
       uppy.resetProgress();
-      await router.push(`/video/${video.id}`);
+      await router.push(
+        session?.user?.id ?
+          `/channel/${session.user.id}/watch/${video.id}` :
+          `/watch/${video.id}`
+      );
     },
   });
 

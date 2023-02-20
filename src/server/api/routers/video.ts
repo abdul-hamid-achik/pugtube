@@ -26,8 +26,6 @@ export const videoRouter = createTRPCRouter({
       console.log('User is not authenticated');
     }
 
-    console.log(input);
-
     if (!input.originalUpload.id) {
       throw new Error('No original upload id provided');
     }

@@ -75,7 +75,7 @@ model Video {
     duration     Int?
     thumbnailUrl String?
     category     String?
-    userId       String        @map("user_id")
+    userId       String?       @map("user_id")
     author       User?         @relation(fields: [userId], references: [id])
     comments     Comment[]
     likes        Like[]

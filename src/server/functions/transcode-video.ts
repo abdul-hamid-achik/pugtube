@@ -14,7 +14,7 @@ const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
 });
 
-export default inngest.createFunction('Transcode to HLS', 'hls.transcode', async ({ event }) => {
+export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode', async ({ event }) => {
     log.info('Transcoding video...')
     const { uploadId } = event.data as { uploadId: string };
     // Create temporary directories to store input and output files
@@ -82,5 +82,5 @@ export default inngest.createFunction('Transcode to HLS', 'hls.transcode', async
     })
 
     log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`)
-    await inngest.send('hls.transcoded', { data: { uploadId } })
+    await inngest.send('pugtube/hls.transcoded', { data: { uploadId } })
 });

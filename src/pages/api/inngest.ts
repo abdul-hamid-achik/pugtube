@@ -9,9 +9,9 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
   const { uploadId } = event.data as { uploadId: string };
 
   // Run the transcoding step
-  await step.run('Transcoding video', async () => {
+  await step.run('Transcode video', async () => {
     return await inngest.send(
-      'hls.transcode',
+      'pugtube/hls.transcode',
       { data: { uploadId } }
     )
   });
@@ -23,24 +23,24 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
   // Run the upload to S3 step
   await step.run('Uploading to S3', async () => {
     return await inngest.send(
-      'hls.upload',
+      'pugtube/hls.upload',
       { data: { uploadId } }
     )
   });
 
-  await step.waitForEvent("hls.uploaded", {
+  await step.waitForEvent("pugtube/hls.uploaded", {
     timeout: 1000 * 60 * 60,
   });
 
   // Run the update metadata step
   await step.run('Updating metadata', async () => {
     return await inngest.send(
-      'hls.metadata',
+      'pugtube/hls.update',
       { data: { uploadId } }
     )
   });
 
-  await step.waitForEvent("hls.metadata-updated", {
+  await step.waitForEvent("pugtube/hls.updated", {
     timeout: 1000 * 60 * 60,
   });
 

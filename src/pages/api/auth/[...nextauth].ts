@@ -17,7 +17,8 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signUp: '/sign-up',
+    signUp: '/signup',
+    signIn: '/signin',
   } as Partial<PagesOptions>,
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),

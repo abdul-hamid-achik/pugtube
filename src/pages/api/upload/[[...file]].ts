@@ -85,9 +85,7 @@ const tusServer = new Server({
         }
       });
 
-
       log.info(`Metadata created: ${newMetadata.id} ✅`)
-
 
       await inngest.send({
         name: 'post-upload',

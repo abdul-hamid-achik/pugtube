@@ -10,7 +10,7 @@ const s3 = new S3({
     region: process.env.AWS_REGION,
 });
 
-export default inngest.createFunction("Upload artifacts to s3", 'hls.upload', async ({ event }) => {
+export default inngest.createFunction("Upload artifacts to s3", 'pugtube/hls.upload', async ({ event }) => {
     log.info('Uploading artifacts to S3...')
     const { uploadId } = event.data as { uploadId: string };
 
@@ -29,5 +29,5 @@ export default inngest.createFunction("Upload artifacts to s3", 'hls.upload', as
 
     // Log success message
     log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`);
-    await inngest.send('hls.uploaded', { data: { uploadId } });
+    await inngest.send('pugtube/hls.uploaded', { data: { uploadId } });
 });
