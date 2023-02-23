@@ -116,6 +116,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
                 },
             },
             resolution: '1080p',
+            key: transcodedVideoKey,
             url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${transcodedVideoKey}`,
         },
     });
@@ -149,6 +150,8 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
                     url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
                     segmentNumber: i,
                     resolution: '1080p',
+                    key: segmentKey,
+                    duration: 2.000
                 },
             });
 

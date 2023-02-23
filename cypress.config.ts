@@ -8,6 +8,9 @@ export default defineConfig({
     setupNodeEvents(_on, _config) {
       // implement node event listeners here
     },
+    env: {
+      NODE_ENV: "production",
+    }
   },
 
   component: {
@@ -15,10 +18,9 @@ export default defineConfig({
       framework: "next",
       bundler: "webpack",
     },
-    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}'
+    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
+    env: {
+      NODE_ENV: "test",
+    }
   },
-
-  env: {
-    NODE_ENV: "test",
-  }
 });

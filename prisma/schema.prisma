@@ -94,9 +94,11 @@ model HlsPlaylist {
     videoId    String       @map("video_id")
     resolution String
     url        String
+    key        String
     video      Video        @relation(fields: [videoId], references: [id])
     HlsSegment HlsSegment[]
 
+    @@unique([videoId, resolution, key])
     @@index([videoId])
 }
 
@@ -105,12 +107,14 @@ model HlsSegment {
     videoId       String      @map("video_id")
     segmentNumber Int         @map("segment_number")
     resolution    String
+    key           String
+    duration      Float
     url           String
     video         Video       @relation(fields: [videoId], references: [id])
     playlist      HlsPlaylist @relation(fields: [playlistId], references: [id])
     playlistId    String      @map("playlist_id")
 
-    @@unique([videoId, segmentNumber])
+    @@unique([videoId, segmentNumber, key, resolution])
     @@index([videoId])
     @@index([playlistId])
 }
