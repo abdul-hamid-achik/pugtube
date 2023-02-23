@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const playlistContent = createHlsPlaylist(playlist, signedSegments);
 
-    res.setHeader('Content-Type', 'application/x-mpegURL');
+    res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
     res.setHeader('Content-Length', playlistContent.length.toString());
     res.end(playlistContent);
 }

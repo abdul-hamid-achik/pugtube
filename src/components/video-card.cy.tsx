@@ -13,6 +13,7 @@ describe(
                     duration: null,
                     thumbnailUrl: null,
                     category: null,
+                    createdAt: new Date(),
                     userId: "",
                     originalUploadId: ""
                 }} />);
