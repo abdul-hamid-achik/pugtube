@@ -14,7 +14,6 @@ describe(
                     thumbnailUrl: null,
                     category: null,
                     userId: "",
-                    hlsPlaylist: null,
                     originalUploadId: ""
                 }} />);
             },
