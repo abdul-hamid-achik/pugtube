@@ -1,5 +1,5 @@
 import { inngest } from '@/server/background';
-import generateThumbnail from '@/server/functions/generate-video-thumbnail';
+import generateThumbnail from '@/server/functions/generate-thumbnail';
 import transcodeVideo from '@/server/functions/transcode-video';
 import { serve } from 'inngest/next';
 
@@ -15,12 +15,6 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
     )
   });
 
-  await step.waitForEvent("hls.transcoded", {
-    timeout: 1000 * 60 * 60,
-  });
-
-
-
   await step.run("Generate video thumbnail", async () => {
     return await inngest.send(
       'pugtube/thumbnail.generate',
@@ -28,12 +22,14 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
     )
   });
 
-
-  await step.waitForEvent("pugtube/thumbnail.generated", {
+  await step.waitForEvent("pugtube/hls.transcoded", {
     timeout: 1000 * 60 * 60,
   });
 
-  // Return the upload ID
+  await step.waitForEvent("pugtube/hls.thumbnail.generated", {
+    timeout: 1000 * 60 * 60,
+  });
+
   return uploadId;
 });
 

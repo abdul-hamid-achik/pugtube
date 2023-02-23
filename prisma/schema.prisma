@@ -83,6 +83,7 @@ model Video {
     hlsSegment       HlsSegment[]  @relation
     originalUploadId String        @map("original_upload_id")
     originalUpload   Upload        @relation(fields: [originalUploadId], references: [id])
+    createdAt        DateTime      @default(now()) @updatedAt
 
     @@index([userId])
     @@index([originalUploadId])

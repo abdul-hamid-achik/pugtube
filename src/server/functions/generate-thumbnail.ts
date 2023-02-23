@@ -13,7 +13,7 @@ const ffmpeg = createFFmpeg({
 
 export default inngest.createFunction(
     'Generate video thumbnail',
-    'pugtube/hls.thumbnail',
+    'pugtube/hls.thumbnail.generate',
     async ({ event }) => {
         const { uploadId } = event.data as { uploadId: string };
         await ffmpeg.load();

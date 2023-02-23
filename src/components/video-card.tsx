@@ -16,19 +16,20 @@ export default function VideoCard({ video }: VideoCardProps) {
   return (
     <div className="overflow-hidden rounded-md bg-white shadow-md">
       <Link href={`/watch/${video.id}`}>
-        <Image
+        {video.thumbnailUrl && <Image
           src={video.thumbnailUrl as string}
           alt={video.title}
           onError={onError}
           width={720}
           height={480}
-        />
+        />}
       </Link>
       <div className="p-4">
         <Link className="block text-lg font-medium text-gray-800 hover:text-gray-600" href={`/watch/${video.id}`}>
           {video.title}
         </Link>
         <p className="text-gray-500">{video.description}</p>
+        <p className="text-gray-500">{video.createdAt.toISOString()}</p>
         <div className="mt-2 flex items-center">
           {/* <Image
                 className="w-10 h-10 object-cover rounded-full shadow-sm"

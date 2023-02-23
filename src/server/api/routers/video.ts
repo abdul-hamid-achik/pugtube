@@ -4,11 +4,22 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const videoRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => ctx.prisma.video.findMany({
-    orderBy: {
-      // createdAt: "desc"
-    },
-  })),
+  getAll: publicProcedure.input(
+    z.object({
+      page: z.number().int().optional(),
+      perPage: z.number().int().optional(),
+    }),
+  ).query(({ ctx, input }) => {
+    const page = input.page ?? 1;
+    const perPage = input.perPage ?? 10;
+    return ctx.prisma.video.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: (page - 1) * perPage,
+      take: perPage,
+    });
+  }),
 
   create: publicProcedure.input(z.object({
     originalUpload: z.object({

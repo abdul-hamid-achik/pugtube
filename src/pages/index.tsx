@@ -1,7 +1,15 @@
 import Header from '@/components/header';
+import VideoCard from '@/components/video-card';
+import { api } from '@/utils/api';
 import Head from 'next/head';
 
 export default function Home() {
+  const { data, error, isError, isLoading } = api.video.getAll.useQuery({
+    page: 1,
+    perPage: 10,
+  })
+
+
   return (
     <>
       <Head>
@@ -19,6 +27,9 @@ export default function Home() {
           </section>
           <section className="my-8">
             {/* recommended videos section */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {!isLoading && !isError && data?.map((video) => (<VideoCard key={video.id} video={video} />))}
+            </div>
           </section>
           <section className="my-8">
             {/* subscribed channels section */}
