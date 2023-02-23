@@ -1,7 +1,6 @@
 import { inngest } from '@/server/background';
+import generateThumbnail from '@/server/functions/generate-video-thumbnail';
 import transcodeVideo from '@/server/functions/transcode-video';
-import updateMetadata from '@/server/functions/update-metadata';
-import uploadToS3 from '@/server/functions/upload-to-s3';
 import { serve } from 'inngest/next';
 
 const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({ event, step }) => {
@@ -20,29 +19,6 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
     timeout: 1000 * 60 * 60,
   });
 
-  // Run the upload to S3 step
-  await step.run('Uploading to S3', async () => {
-    return await inngest.send(
-      'pugtube/hls.upload',
-      { data: { uploadId } }
-    )
-  });
-
-  await step.waitForEvent("pugtube/hls.uploaded", {
-    timeout: 1000 * 60 * 60,
-  });
-
-  // Run the update metadata step
-  await step.run('Updating metadata', async () => {
-    return await inngest.send(
-      'pugtube/hls.update',
-      { data: { uploadId } }
-    )
-  });
-
-  await step.waitForEvent("pugtube/hls.updated", {
-    timeout: 1000 * 60 * 60,
-  });
 
 
   await step.run("Generate video thumbnail", async () => {
@@ -61,4 +37,4 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
   return uploadId;
 });
 
-export default serve('pugtube', [postUpload, transcodeVideo, uploadToS3, updateMetadata]);
+export default serve('pugtube', [postUpload, transcodeVideo, generateThumbnail]);

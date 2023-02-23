@@ -69,26 +69,50 @@ model VerificationToken {
 }
 
 model Video {
-    id           String        @id @default(cuid())
-    title        String
-    description  String?
-    duration     Int?
-    thumbnailUrl String?
-    category     String?
-    userId       String?       @map("user_id")
-    author       User?         @relation(fields: [userId], references: [id])
-    comments     Comment[]
-    likes        Like[]
-    hlsPlaylist  String?       @map("hls_playlist")
-    HlsSegment   HlsSegment[]
-    HlsPlaylist  HlsPlaylist[]
-
-    originalUploadId String @map("original_upload_id")
-    originalUpload   Upload @relation(fields: [originalUploadId], references: [id])
+    id               String        @id @default(cuid())
+    title            String
+    description      String?
+    duration         Int?
+    thumbnailUrl     String?
+    category         String?
+    userId           String?       @map("user_id")
+    author           User?         @relation(fields: [userId], references: [id])
+    comments         Comment[]
+    likes            Like[]
+    hlsPlaylist      HlsPlaylist[] @relation
+    hlsSegment       HlsSegment[]  @relation
+    originalUploadId String        @map("original_upload_id")
+    originalUpload   Upload        @relation(fields: [originalUploadId], references: [id])
 
     @@index([userId])
     @@index([originalUploadId])
     @@map("videos")
+}
+
+model HlsPlaylist {
+    id         String       @id @default(cuid())
+    videoId    String       @map("video_id")
+    resolution String
+    url        String
+    video      Video        @relation(fields: [videoId], references: [id])
+    HlsSegment HlsSegment[]
+
+    @@index([videoId])
+}
+
+model HlsSegment {
+    id            String      @id @default(cuid())
+    videoId       String      @map("video_id")
+    segmentNumber Int         @map("segment_number")
+    resolution    String
+    url           String
+    video         Video       @relation(fields: [videoId], references: [id])
+    playlist      HlsPlaylist @relation(fields: [playlistId], references: [id])
+    playlistId    String      @map("playlist_id")
+
+    @@unique([videoId, segmentNumber])
+    @@index([videoId])
+    @@index([playlistId])
 }
 
 model Comment {
@@ -114,31 +138,6 @@ model Like {
     @@index([userId])
     @@index([videoId])
     @@map("likes")
-}
-
-// experimental
-
-model HlsSegment {
-    id            String @id @default(cuid())
-    videoId       String @map("video_id")
-    segmentNumber Int    @map("segment_number")
-    resolution    String
-    url           String
-
-    video Video @relation(fields: [videoId], references: [id])
-
-    @@unique([videoId, segmentNumber])
-}
-
-model HlsPlaylist {
-    id         String @id @default(cuid())
-    videoId    String @map("video_id")
-    resolution String
-    url        String
-
-    video Video @relation(fields: [videoId], references: [id])
-
-    @@index([videoId])
 }
 
 model VideoMetadata {

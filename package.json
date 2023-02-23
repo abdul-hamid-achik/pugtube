@@ -2,9 +2,12 @@
   "name": "pugtube",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=16.19.1"
+  },
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS=--trace-warnings next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "NODE_OPTIONS='-r next-logger' next start",

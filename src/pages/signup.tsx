@@ -60,7 +60,7 @@ export default function Page({ csrfToken }: Props) {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-2 rounded-sm py-8 px-4 sm:px-10">
-            <form className=" text-center " onSubmit={() => handleSubmit(onSubmit)}>
+            <form className="text-center" onSubmit={() => handleSubmit(onSubmit)}>
               <input
                 {...register('csrfToken')}
                 type="hidden"

@@ -1,11 +1,15 @@
 import { inngest } from '@/server/background';
-import { S3 } from '@aws-sdk/client-s3';
+import { prisma } from '@/server/db';
+import { GetObjectCommandOutput, S3 } from '@aws-sdk/client-s3';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log as logger } from 'next-axiom';
 import os from 'os';
 import { Readable } from 'stream';
-const log = logger.with({ function: 'Transcode to HLS' });
+
+const log = logger.with({ function: 'Transcode video to HLS' });
+
 const s3 = new S3({
     region: process.env.AWS_REGION,
 });
@@ -32,16 +36,17 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     }
 
     // Download TUS upload file from S3
-    const upload = await s3.getObject({
+    const upload: GetObjectCommandOutput | Upload = await s3.getObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: uploadId,
     });
 
-    log.info(`uploaded file: ${upload?.Metadata?.originalname}`)
-
-    const inputFilePath = `${inputDirPath}/${upload?.Metadata?.originalname}`
-    const inputStream = upload?.Body as Readable
-
+    const parsedUpload = JSON.parse(upload?.Metadata?.file || '{}') as Upload
+    const parsedUploadMetadata: VideoMetadata = (parsedUpload as any)?.metadata || {}
+    const inputFileName = parsedUploadMetadata.name
+    const inputFilePath = `${inputDirPath}/${inputFileName}`
+    const inputStream = upload?.Body as Readable        // Derive the output file name
+    const outputFileName = `${parsedUpload.id}.m3u8`;
     const writeStream = fs.createWriteStream(inputFilePath)
 
     await new Promise((resolve, reject) => {
@@ -54,33 +59,113 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     log.info(`uploaded file: ${inputFilePath}`)
 
     // Load input file into FFmpeg
-    await ffmpeg.load();
+    if (!ffmpeg.isLoaded()) await ffmpeg.load();
     log.info(`loaded ffmpeg`)
-    await ffmpeg.FS('writeFile', inputFilePath, await fetchFile(inputFilePath))
+    await ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFilePath))
     log.info(`wrote file to ffmpeg`)
+    ffmpeg.FS('mkdir', 'output');
+    log.info(`created output directory`)
 
     // Transcode the video to HLS format
     await ffmpeg.run(
-        '-i', inputFilePath,
+        '-i', inputFileName,
         '-codec', 'copy',
         '-start_number', '0',
-        '-hls_time', '10',
+        '-hls_time', '2',
+        '-hls_flags', 'independent_segments',
+        '-hls_segment_type', 'mpegts',
+        '-hls_segment_filename', `output/segment-%01d.ts`,
+        '-hls_playlist_type', 'vod',
         '-hls_list_size', '0',
-        '-f', 'hls', `${outputDirPath}/playlist.m3u8`, `${outputDirPath}/segment-%03d.ts`,
-    )
+        '-f', 'hls', `output/${outputFileName}`,
+    );
 
-    log.info(`transcoded file: ${outputDirPath}/playlist.m3u8`)
-    const transcodedVideo = fs.readFileSync(`${outputDirPath}/playlist.m3u8`)
+    log.info(`ran ffmpeg`)
+
+    // Upload the transcoded video to S3
+    const transcodedVideo = ffmpeg.FS('readFile', `output/${outputFileName}`);
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;
 
-    log.info(`Uploading transcoded video to S3 for upload ID: ${uploadId}...`)
-
+    // Upload the transcoded video playlist to S3
     await s3.putObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: transcodedVideoKey,
         Body: transcodedVideo,
-    })
+    });
 
-    log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`)
-    await inngest.send('pugtube/hls.transcoded', { data: { uploadId } })
+    const video = await prisma.video.findFirst({
+        where: {
+            originalUploadId: {
+                equals: uploadId,
+            },
+        }
+    });
+
+    if (!video) {
+        throw new Error(`Could not find video for upload ID ${uploadId}`);
+    }
+
+    log.debug(`Found video with ID ${video.id} for upload ID ${uploadId}`, { video })
+
+    // Save the HLS playlist to the database
+    const playlist = await prisma.hlsPlaylist.create({
+        data: {
+            video: {
+                connect: {
+                    id: video.id,
+                },
+            },
+            resolution: '1080p',
+            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${transcodedVideoKey}`,
+        },
+    });
+
+    log.info(`Saved playlist with ID ${playlist.id} for video ${video.id}`);
+
+    try {
+        const segmentFiles = ffmpeg.FS('readdir', 'output').filter((filename) => {
+            return /^segment-\d+\.ts$/.test(filename);
+        });
+
+        const segmentCount = segmentFiles.length;
+
+        for (let i = 0; i < segmentCount; i++) {
+            const segmentPath = `output/segment-${i}.ts`;
+            const segment = ffmpeg.FS('readFile', segmentPath);
+            const segmentKey = `transcoded/${uploadId}/segment-${i}.ts`;
+
+            await prisma.hlsSegment.create({
+                data: {
+                    playlist: {
+                        connect: {
+                            id: playlist.id,
+                        },
+                    },
+                    video: {
+                        connect: {
+                            id: video.id,
+                        }
+                    },
+                    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
+                    segmentNumber: i,
+                    resolution: '1080p',
+                },
+            });
+
+            await s3.putObject({
+                Bucket: process.env.AWS_S3_BUCKET,
+                Key: segmentKey,
+                Body: segment,
+            });
+
+
+            log.info(`Transcoded segment uploaded to S3 for upload ID: ${uploadId} - segment ${i}`);
+        }
+        // Log success message
+        log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`);
+        await inngest.send('pugtube/hls.transcoded', { data: { uploadId } })
+    } catch (error) {
+        log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
+        throw error;
+    }
 });

@@ -2,12 +2,10 @@ import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import type { Upload, VideoMetadata } from '@prisma/client';
 import { S3Store } from '@tus/s3-store';
-import { Server } from '@tus/server';
+import { EVENTS, Server } from '@tus/server';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { log as logger } from 'next-axiom';
-import { v4 as uuid } from 'uuid';
-
-
+import { v4 as uuidv4 } from 'uuid';
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata
 }
@@ -62,7 +60,6 @@ const tusServer = new Server({
     try {
       log.info(`Upload finished: ${upload.id}`);
       log.info(`Metadata: ${upload?.metadata?.filename} ${upload?.metadata?.type} ${upload?.metadata?.relativePath}`)
-      log.debug('Upload: ', upload)
 
       const newUpload = await prisma.upload.create({
         data: {
@@ -87,15 +84,6 @@ const tusServer = new Server({
 
       log.info(`Metadata created: ${newMetadata.id} ✅`)
 
-      await inngest.send({
-        name: 'post-upload',
-        data: {
-          uploadId: newUpload.id,
-        },
-      });
-
-      log.info(`Event sent: post-upload ✅`)
-
       return response;
     } catch (error: any) {
       log.error('Upload failed: ', {
@@ -105,17 +93,29 @@ const tusServer = new Server({
       throw { status_code: 500, body: error };
     }
   },
-  namingFunction: () => uuid(),
+  namingFunction: () => uuidv4(),
   datastore: new S3Store({
-    partSize: 8 * 1024 * 1024, // Each uploaded part will have ~8MB,
+    partSize: 50 * 1024 * 1024,
     s3ClientConfig: {
       region: process.env.AWS_REGION as string,
       accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
       bucket: process.env.AWS_S3_BUCKET as string,
-      logger: log,
     },
   }),
+});
+
+tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
+  log.info(`Event received: post-finish`, upload);
+
+  await inngest.send({
+    name: 'post-upload',
+    data: {
+      uploadId: upload.id,
+    },
+  });
+
+  log.info(`Event sent: post-upload ✅`)
 });
 
 export default function handler(request: NextApiRequest, response: NextApiResponse) {
