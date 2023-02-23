@@ -1,4 +1,4 @@
-import { DeleteObjectCommand, PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
 import { Hash } from "@aws-sdk/hash-node";
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
@@ -6,8 +6,10 @@ import { parseUrl } from "@aws-sdk/url-parser";
 import { formatUrl } from "@aws-sdk/util-format-url";
 import axios from 'axios';
 import fs from "fs";
+import { log as logger } from 'next-axiom';
 import os from "os";
 
+const log = logger.with({ function: 'S3' });
 const s3 = new S3Client({
     region: process.env.AWS_REGION
 });
@@ -16,11 +18,11 @@ export async function putObject(input: PutObjectCommandInput) {
     try {
         const result = await s3.send(new PutObjectCommand(input));
 
-        console.log(`Uploaded to S3: ${input.Key}`);
+        log.info(`Uploaded to S3: ${input.Key}`);
 
         return result
     } catch (error) {
-        console.error(`Error uploading to S3: ${input.Key}`, error);
+        log.error(`Error uploading to S3: ${input.Key}`, error as { [key: string]: any; });
     }
 };
 
@@ -58,6 +60,18 @@ function parseS3ObjectUrl(s3ObjectUrl: string) {
     };
 }
 
+export async function getObject(input: GetObjectCommandInput) {
+    try {
+        const result = await s3.send(new GetObjectCommand(input));
+
+        log.info(`Downloaded from S3: ${input.Key}`);
+
+        return result
+    } catch (error) {
+        log.error(`Error downloading from S3: ${input.Key}`, error as { [key: string]: any; });
+    }
+}
+
 export async function downloadObject(objectUrl: string): Promise<string> {
     const objectKey = objectUrl.split('/').slice(3).join('/');
     const filePath = `${os.tmpdir()}/output/${objectKey}`;
@@ -87,10 +101,10 @@ export async function deleteObject(objectUrl: string) {
             Key: key
         }));
 
-        console.log(`Deleted from S3: ${objectUrl}`);
+        log.info(`Deleted from S3: ${objectUrl}`);
 
         return result
     } catch (error) {
-        console.error(`Error deleting from S3: ${objectUrl}`, error);
+        log.error(`Error deleting from S3: ${objectUrl}`, error as { [key: string]: any; });
     }
 }

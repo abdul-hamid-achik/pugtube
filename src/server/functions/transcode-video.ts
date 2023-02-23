@@ -1,6 +1,7 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
-import { GetObjectCommandOutput, S3 } from '@aws-sdk/client-s3';
+import { getObject, putObject } from '@/utils/s3';
+import { S3 } from '@aws-sdk/client-s3';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
@@ -36,7 +37,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     }
 
     // Download TUS upload file from S3
-    const upload: GetObjectCommandOutput | Upload = await s3.getObject({
+    const upload = await getObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: uploadId,
     });
@@ -87,7 +88,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;
 
     // Upload the transcoded video playlist to S3
-    await s3.putObject({
+    await putObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: transcodedVideoKey,
         Body: transcodedVideo,
@@ -155,7 +156,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
                 },
             });
 
-            await s3.putObject({
+            await putObject({
                 Bucket: process.env.AWS_S3_BUCKET,
                 Key: segmentKey,
                 Body: segment,
