@@ -53,6 +53,7 @@ specifiers:
   eslint-plugin-tailwindcss: ^3.8.3
   eslint-plugin-unused-imports: ^2.0.0
   hls.js: ^1.3.3
+  husky: ^8.0.0
   inngest: ^1.1.0
   lodash: ^4.17.21
   next: 13.1.2
@@ -140,6 +141,7 @@ devDependencies:
   eslint-plugin-react-hooks: 4.6.0_eslint@8.32.0
   eslint-plugin-tailwindcss: 3.8.3_tailwindcss@3.2.4
   eslint-plugin-unused-imports: 2.0.0_efvzgobb4ehfcu2vjpj4b4xs5a
+  husky: 8.0.3
   postcss: 8.4.21
   prettier: 2.8.3
   prettier-plugin-tailwindcss: 0.2.2_prettier@2.8.3
@@ -3870,6 +3872,12 @@ packages:
   /human-signals/2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
+    dev: true
+
+  /husky/8.0.3:
+    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /ieee754/1.1.13:
