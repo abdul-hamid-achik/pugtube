@@ -7,6 +7,7 @@ specifiers:
   '@aws-sdk/protocol-http': ^3.272.0
   '@aws-sdk/s3-request-presigner': ^3.276.0
   '@aws-sdk/url-parser': ^3.272.0
+  '@aws-sdk/util-create-request': ^3.272.0
   '@aws-sdk/util-format-url': ^3.272.0
   '@ffmpeg/core': ^0.11.0
   '@ffmpeg/ffmpeg': ^0.11.6
@@ -91,6 +92,7 @@ dependencies:
   '@aws-sdk/protocol-http': 3.272.0
   '@aws-sdk/s3-request-presigner': 3.276.0
   '@aws-sdk/url-parser': 3.272.0
+  '@aws-sdk/util-create-request': 3.272.0
   '@aws-sdk/util-format-url': 3.272.0
   '@ffmpeg/core': 0.11.0
   '@ffmpeg/ffmpeg': 0.11.6

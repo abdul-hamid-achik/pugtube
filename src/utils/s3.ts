@@ -2,8 +2,8 @@ import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObject
 import { Hash } from "@aws-sdk/hash-node";
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
-import { parseUrl } from "@aws-sdk/url-parser";
-import { formatUrl } from "@aws-sdk/util-format-url";
+import { parseUrl } from '@aws-sdk/url-parser';
+import { formatUrl } from '@aws-sdk/util-format-url';
 import axios from 'axios';
 import fs from "fs";
 import { log as logger } from 'next-axiom';
@@ -40,12 +40,14 @@ export async function getSignedUrl(s3ObjectUrl: string) {
 
     // Create a GET request from S3 url.
     const signedUrl = await presigner.presign(
-        new HttpRequest(parseUrl(s3ObjectUrl))
+        new HttpRequest(parseUrl(s3ObjectUrl)),
+        {
+            expiresIn: 60,
+        }
     );
 
     return formatUrl(signedUrl);
 }
-
 function parseS3ObjectUrl(s3ObjectUrl: string) {
     const match = s3ObjectUrl.match(
         /^https:\/\/(.+)\.s3\.(.+)\.amazonaws.com\/(.+)$/
