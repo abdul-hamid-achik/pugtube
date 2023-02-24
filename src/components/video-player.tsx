@@ -20,11 +20,11 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
         liveBackBufferLength: 0,
         debug: true
       });
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        videoRef.current?.play();
+      });
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         hls.loadSource(src);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          videoRef.current?.play();
-        });
       });
       hls.attachMedia(videoRef.current);
     } else if (videoRef.current) {
@@ -35,8 +35,9 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
   return (
     <video
       ref={videoRef}
-      controls
+      src={src}
       style={{ maxWidth: '100%' }}
+      controls
     />
   );
 }
