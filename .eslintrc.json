@@ -19,6 +19,9 @@
         "*.ts",
         "*.tsx"
       ],
+      "excludedFiles": [
+        "cypress/downloads/*.ts",
+      ],
       "rules": {}
     }
   ]
