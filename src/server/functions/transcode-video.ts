@@ -1,27 +1,54 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
-import { getObject, putObject } from '@/utils/s3';
-import { S3 } from '@aws-sdk/client-s3';
+import { deleteObject, getObject, putObject } from '@/utils/s3';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log as logger } from 'next-axiom';
 import os from 'os';
 import { Readable } from 'stream';
+// @ts-ignore
+import { Parser } from 'm3u8-parser';
 
 const log = logger.with({ function: 'Transcode video to HLS' });
 
-const s3 = new S3({
-    region: process.env.AWS_REGION,
-});
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
 });
 
+type ParsedSegment = {
+    byterange: {
+        length: number,
+        offset: number
+    },
+    duration: number,
+    attributes: {},
+    discontinuity: number,
+    uri: string,
+    timeline: number,
+    key: {
+        method: string,
+        uri: string,
+        iv: string
+    },
+    map: {
+        uri: string,
+        byterange: {
+            length: number,
+            offset: number
+        }
+    },
+    'cue-out': string,
+    'cue-out-cont': string,
+    'cue-in': string,
+    custom: {}
+}
+
 export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode', async ({ event }) => {
     log.info('Transcoding video...')
     const { uploadId } = event.data as { uploadId: string };
+    const playlistParser = new Parser();
     // Create temporary directories to store input and output files
     const inputDirPath = `${os.tmpdir()}/input`;
     const outputDirPath = `${os.tmpdir()}/output`;
@@ -72,7 +99,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
         '-i', inputFileName,
         '-codec', 'copy',
         '-start_number', '0',
-        '-hls_time', '2',
+        '-hls_time', '4',
         '-hls_flags', 'independent_segments',
         '-hls_segment_type', 'mpegts',
         '-hls_segment_filename', `output/segment-%01d.ts`,
@@ -86,6 +113,12 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     // Upload the transcoded video to S3
     const transcodedVideo = ffmpeg.FS('readFile', `output/${outputFileName}`);
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;
+
+    playlistParser.push(transcodedVideo.toString())
+    playlistParser.end()
+    const parsedPlaylist = playlistParser.manifest
+
+    log.info(`parsed playlist`, { parsedPlaylist })
 
     // Upload the transcoded video playlist to S3
     await putObject({
@@ -116,57 +149,88 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
                     id: video.id,
                 },
             },
-            resolution: '1080p',
             key: transcodedVideoKey,
             url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${transcodedVideoKey}`,
+            allowCache: parsedPlaylist.allowCache,
+            discontinuitySequence: parsedPlaylist.discontinuitySequence,
+            endList: parsedPlaylist.endList,
+            mediaSequence: parsedPlaylist.mediaSequence,
+            playlistType: parsedPlaylist.playlistType,
+            targetDuration: parsedPlaylist.targetDuration,
+            totalDuration: parsedPlaylist.totalDuration,
+            discontinuityStarts: (parsedPlaylist.discontinuityStarts as number[]).join(','),
         },
     });
 
     log.info(`Saved playlist with ID ${playlist.id} for video ${video.id}`);
 
     try {
-        const segmentFiles = ffmpeg.FS('readdir', 'output').filter((filename) => {
-            return /^segment-\d+\.ts$/.test(filename);
-        });
+        await Promise.all(parsedPlaylist.segments.map(
+            async (parsedSegment: ParsedSegment, index: number) => {
+                const segmentPath = `output/segment-${index}.ts`;
+                const segment = ffmpeg.FS('readFile', segmentPath);
+                const segmentKey = `transcoded/${uploadId}/segment-${index}.ts`;
 
-        const segmentCount = segmentFiles.length;
-
-        for (let i = 0; i < segmentCount; i++) {
-            const segmentPath = `output/segment-${i}.ts`;
-            const segment = ffmpeg.FS('readFile', segmentPath);
-            const segmentKey = `transcoded/${uploadId}/segment-${i}.ts`;
-
-            await prisma.hlsSegment.create({
-                data: {
-                    playlist: {
-                        connect: {
-                            id: playlist.id,
+                await prisma.hlsSegment.create({
+                    data: {
+                        playlist: {
+                            connect: {
+                                id: playlist.id,
+                            },
                         },
+                        video: {
+                            connect: {
+                                id: video.id,
+                            }
+                        },
+                        url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
+                        segmentNumber: index,
+                        resolution: parsedPlaylist.resolution,
+                        key: segmentKey,
+                        duration: parsedSegment.duration,
+                        byterangeOffset: parsedSegment.byterange?.offset,
+                        byterangeLength: parsedSegment.byterange?.length,
+                        discontinuity: parsedSegment.discontinuity,
+                        uri: parsedSegment.uri,
+                        timeline: parsedSegment.timeline,
+                        keyMethod: parsedSegment.key?.method,
+                        keyUri: parsedSegment.key?.uri,
+                        keyIv: parsedSegment.key?.iv,
+                        mapUri: parsedSegment.map?.uri,
+                        mapByterangeOffset: parsedSegment.map?.byterange?.offset,
+                        mapByterangeLength: parsedSegment.map?.byterange?.length,
+                        cueOut: parsedSegment['cue-out'],
+                        cueOutCont: parsedSegment['cue-out-cont'],
+                        cueIn: parsedSegment['cue-in'],
+                        custom: parsedSegment.custom,
                     },
-                    video: {
-                        connect: {
-                            id: video.id,
-                        }
-                    },
-                    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
-                    segmentNumber: i,
-                    resolution: '1080p',
-                    key: segmentKey,
-                    duration: 2.000
-                },
-            });
+                });
 
-            await putObject({
-                Bucket: process.env.AWS_S3_BUCKET,
-                Key: segmentKey,
-                Body: segment,
-            });
+                await putObject({
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: segmentKey,
+                    Body: segment,
+                });
 
 
-            log.info(`Transcoded segment uploaded to S3 for upload ID: ${uploadId} - segment ${i}`);
-        }
-        // Log success message
+                log.info(`Transcoded segment uploaded to S3 for upload ID: ${uploadId} - segment ${index}`);
+
+            }
+        ))
+
         log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`);
+
+        await putObject({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: `originals/${uploadId}/${parsedUploadMetadata.filename}`,
+            Body: await fetchFile(inputFilePath),
+        });
+        log.info('Original video uploaded to S3', { uploadId });
+        log.info('Deleting original video from S3', { uploadId });
+
+        await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadId}`);
+        await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadId}.info`);
+        log.info(`Deleted original video from S3 for upload ID: ${uploadId}`);
         await inngest.send('pugtube/hls.transcoded', { data: { uploadId } })
     } catch (error) {
         log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });

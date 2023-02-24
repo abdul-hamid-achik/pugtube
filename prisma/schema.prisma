@@ -91,33 +91,58 @@ model Video {
 }
 
 model HlsPlaylist {
-    id         String       @id @default(cuid())
-    videoId    String       @map("video_id")
-    resolution String
-    url        String
-    key        String
-    video      Video        @relation(fields: [videoId], references: [id])
-    HlsSegment HlsSegment[]
+    id                    String       @id @default(uuid())
+    video                 Video        @relation(fields: [videoId], references: [id])
+    videoId               String
+    key                   String
+    resolution            String?
+    url                   String?
+    createdAt             DateTime     @default(now())
+    updatedAt             DateTime     @updatedAt
+    segments              HlsSegment[]
+    allowCache            Boolean?
+    endList               Boolean?
+    mediaSequence         Int?
+    discontinuitySequence Int?
+    playlistType          String?
+    targetDuration        Int?
+    totalDuration         Int?
+    discontinuityStarts   String?
 
-    @@unique([videoId, resolution, key])
     @@index([videoId])
 }
 
 model HlsSegment {
-    id            String      @id @default(cuid())
-    videoId       String      @map("video_id")
-    segmentNumber Int         @map("segment_number")
-    resolution    String
-    key           String
-    duration      Float
-    url           String
-    video         Video       @relation(fields: [videoId], references: [id])
-    playlist      HlsPlaylist @relation(fields: [playlistId], references: [id])
-    playlistId    String      @map("playlist_id")
+    id                 String      @id @default(uuid())
+    playlist           HlsPlaylist @relation(fields: [playlistId], references: [id])
+    playlistId         String
+    video              Video       @relation(fields: [videoId], references: [id])
+    videoId            String
+    key                String
+    url                String?
+    resolution         String?
+    duration           Float?
+    segmentNumber      Int
+    createdAt          DateTime    @default(now())
+    updatedAt          DateTime    @updatedAt
+    byterangeOffset    Int?
+    byterangeLength    Int?
+    discontinuity      Int?
+    uri                String?
+    timeline           Int?
+    keyMethod          String?
+    keyUri             String?
+    keyIv              String?
+    mapUri             String?
+    mapByterangeOffset Int?
+    mapByterangeLength Int?
+    cueOut             String?
+    cueOutCont         String?
+    cueIn              String?
+    custom             Json?
 
-    @@unique([videoId, segmentNumber, key, resolution])
-    @@index([videoId])
     @@index([playlistId])
+    @@index([videoId])
 }
 
 model Comment {

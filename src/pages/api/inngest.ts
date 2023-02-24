@@ -22,13 +22,13 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
     )
   });
 
-  await step.waitForEvent("pugtube/hls.transcoded", {
-    timeout: 1000 * 60 * 60,
-  });
+  // await step.waitForEvent("pugtube/hls.transcoded", {
+  //   timeout: 1000 * 60 * 60,
+  // });
 
-  await step.waitForEvent("pugtube/hls.thumbnail.generated", {
-    timeout: 1000 * 60 * 60,
-  });
+  // await step.waitForEvent("pugtube/hls.thumbnail.generated", {
+  //   timeout: 1000 * 60 * 60,
+  // });
 
   return uploadId;
 });
