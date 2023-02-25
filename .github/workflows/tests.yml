@@ -12,8 +12,8 @@ on:
       - develop
 
 jobs:
-
   e2e:
+    needs: component
     runs-on: ubuntu-latest
     steps:
       - name: Install `Xvfb` for testing in CI/CD simulations
@@ -44,7 +44,6 @@ jobs:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            ELECTRON_RUN_AS_NODE: 1
 
   component:
     runs-on: ubuntu-latest
@@ -78,4 +77,3 @@ jobs:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            ELECTRON_RUN_AS_NODE: 1
