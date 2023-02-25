@@ -8,6 +8,6 @@
 <% segments.forEach((segment, index) => { %>
 #EXTINF:<%= segment.duration %>,no desc
 #EXT-X-BYTERANGE:<%= segment.byteRangeLength %>@<%= segment.byteRangeOffset %>
-<%= segment.url %>
+<%- segment.url %>
 <% }); %>
 #EXT-X-ENDLIST

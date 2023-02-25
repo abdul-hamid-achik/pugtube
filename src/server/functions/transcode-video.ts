@@ -115,7 +115,6 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
     const decoder = new TextDecoder();
     const transcodedVideoString = decoder.decode(transcodedVideo);
 
-    console.log(transcodedVideoString)
     const playlistParser = new Parser();
     playlistParser.push(transcodedVideoString)
     playlistParser.end()

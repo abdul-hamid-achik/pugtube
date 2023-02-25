@@ -1,5 +1,5 @@
-import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
-import { Hash } from "@aws-sdk/hash-node";
+import { Sha256 } from "@aws-crypto/sha256-browser";
+import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, PutObjectCommandInput, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from '@aws-sdk/url-parser';
@@ -11,13 +11,12 @@ import os from "os";
 
 const log = logger.with({ function: 'S3' });
 const s3 = new S3Client({
-    region: process.env.AWS_REGION
-});
+    region: process.env.AWS_REGION as string,
+} as S3ClientConfig);
 
 export async function putObject(input: PutObjectCommandInput) {
     try {
         const result = await s3.send(new PutObjectCommand(input));
-
         log.info(`Uploaded to S3: ${input.Key}`);
 
         return result
@@ -27,6 +26,8 @@ export async function putObject(input: PutObjectCommandInput) {
 };
 
 export async function getSignedUrl(s3ObjectUrl: string) {
+
+    // method 1
     const { bucket, region, key } = parseS3ObjectUrl(s3ObjectUrl);
 
     const presigner = new S3RequestPresigner({
@@ -35,19 +36,23 @@ export async function getSignedUrl(s3ObjectUrl: string) {
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
         },
         region: region as string,
-        sha256: Hash.bind(null, "sha256"),
+        sha256: Sha256,
     });
-
+    //https://pugtube.s3.us-west-1.amazonaws.com/transcoded/ace9dbbd-78c2-4dd3-9776-84a9cc227d38/segment-0.ts?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHkaCXVzLWVhc3QtMSJHMEUCIBxYbGXEwxRD8R1irb%2FET4i%2BFNwZhcaUuPbCV7yxEfG1AiEAzeAtgY2MuGgIoJKXC9AF4tL%2BKd65ZGbZtqCLblDim2oq6AIIIhADGgw3MTAwNzg3MTQ4MTciDPc19Hd80dEvIiwApirFAn7SDukz%2BB7Ke1dDE%2B1ZiaKSjLFR0Lj3%2FWCGyBVwGznwGnFEeQcqhH%2FbK0PCOavlCFh63kMO%2BRJuZ%2BelCueoKGkkT8VBmDhTnoQ10vqMbp1N2uI3LvyyeBwl3iGf27%2F32yYks8OvkmdhF4qE%2F%2FpwQG%2FwH0XkRf6tQJJs%2FYEuUGbjJXwhkPp84bmpMz144M0iq9DPpor5O2Uk2ub7Xkp8zhQ3cwdCFmFwFCe9WfIdN0vAvBymD4WJuS5iRAbTXIHg9xOuywCdgy6XgN8aaZWrlNCG6IhtCR5crbJNEzOBgBVF%2BSR8bfzXjXSmBTI1USMQXFA2N6D0HxiyMQixxkH5DbFQB2Vso8u4JEy4HteCJpa6mDfEDvflFpzOvgcUNP0SPf1INCMYF%2Fu1ZVXEE4oZws7Mu0gphNi9SdvYvkAlb8HlGrwuv0ow%2B7DlnwY6swKfm%2BHWdRtAgYDvys%2BAt9uzFoOUldlIUF0w5K5OR%2BxncGtwnY5KkS2LNE5zls6VzqFSXg5ueicl0TWXlogB7MatSCS3VoQLweqaMBVmtYmdU%2Bh06ZlXd0dUHZtViXYFhX6Tgi4B%2BeFv%2BVdUjx80MIIufLp%2FrwJg%2Bqt0Qo5ZraHmCqsxztCjVP8k4gyx3ynbp9Kkv16CiAarxPJAWQiGhxjya228ThImWFbR%2FkLhpNUcMGhVCKKt%2FO7ugYHtZadeF8K0kaYXaFH4N8d9ayDzLm6WUCAdEQYdqUoq9FfWoAMugBDnv%2BlFtLN5l%2FcU9cHsO9aV566gqliZJ2fQLUoERTrrfzSm6Oca5FBefhwkwqTVl6%2FOHGLLP8lmTQkkVTrZPQwZKvXCbtscq3AdzGUH7GCEobK%2B&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230225T065358Z&X-Amz-SignedHeaders=host&X-Amz-Expires=900&X-Amz-Credential=ASIA2KU75KPA4JWCIL6C%2F20230225%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Signature=afff917dac723f1f5133850b3922996a5d2ca6a35323f415b5a38d6a77a0d985
     // Create a GET request from S3 url.
+    const request = new HttpRequest(parseUrl(s3ObjectUrl))
+
     const signedUrl = await presigner.presign(
-        new HttpRequest(parseUrl(s3ObjectUrl)),
+        request,
         {
-            expiresIn: 60,
+
+            expiresIn: 3600, // 1 hour
         }
     );
 
-    return formatUrl(signedUrl);
+    return formatUrl(signedUrl)
 }
+
 function parseS3ObjectUrl(s3ObjectUrl: string) {
     const match = s3ObjectUrl.match(
         /^https:\/\/(.+)\.s3\.(.+)\.amazonaws.com\/(.+)$/

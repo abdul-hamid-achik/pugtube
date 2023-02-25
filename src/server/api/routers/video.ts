@@ -34,7 +34,6 @@ export const videoRouter = createTRPCRouter({
     const session = await getSession();
     if (!session) {
       // throw new Error("User is not authenticated");
-      console.log('User is not authenticated');
     }
 
     if (!input.originalUpload.id) {
@@ -56,8 +55,6 @@ export const videoRouter = createTRPCRouter({
         originalUpload: true,
       },
     });
-
-    console.log(video);
 
     return video;
   }),

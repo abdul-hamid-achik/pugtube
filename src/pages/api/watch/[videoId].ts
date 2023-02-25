@@ -6,7 +6,6 @@ import fs from 'fs';
 import { NextApiHandler } from 'next';
 
 const watchHandler: NextApiHandler = async (req, res) => {
-    console.log('watchHandler')
     const { videoId } = req.query as { videoId: string };
     const playlist = await prisma.hlsPlaylist.findFirst({
         where: { videoId },
@@ -34,9 +33,7 @@ const watchHandler: NextApiHandler = async (req, res) => {
         return maxDuration;
     }, 0);
 
-    console.log(targetDuration)
     const playlistTemplate = fs.readFileSync('./src/pages/api/watch/playlist.m3u8.ejs', 'utf-8');
-    console.log(playlistTemplate)
     const renderedPlaylist = ejs.render(playlistTemplate, {
         targetDuration,
         playlist,
@@ -46,8 +43,6 @@ const watchHandler: NextApiHandler = async (req, res) => {
             url: await getSignedUrl(segment.url as string),
         }))),
     });
-
-    console.log(renderedPlaylist);
 
     res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
     res.status(200).send(renderedPlaylist);

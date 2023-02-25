@@ -42,7 +42,6 @@ export default function UploadForm() {
     const { successful, failed } = await uppy.upload();
     const file = successful.pop();
     const uploadId = (file as UppyFile & { uploadURL?: string })?.uploadURL?.split('/').pop();
-    console.log('successful', successful, file)
 
     if (!uploadId) {
       setError('title', { message: 'could not parse upload Id' });
@@ -55,7 +54,6 @@ export default function UploadForm() {
       duration: 0,
     }, {
       onSuccess: async (video) => {
-        console.log(video)
         uppy.resetProgress();
         await router.push(
           session?.user?.id ?
