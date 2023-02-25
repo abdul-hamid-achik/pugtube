@@ -50,7 +50,7 @@ export default function UploadForm() {
 
     mutate({
       ...data,
-      originalUpload: { id: uploadId },
+      upload: { id: uploadId },
       duration: 0,
     }, {
       onSuccess: async (video) => {

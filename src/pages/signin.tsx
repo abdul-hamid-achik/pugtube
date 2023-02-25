@@ -1,16 +1,13 @@
-import type { GetServerSidePropsContext } from 'next';
-import {
-  getSession,
-  getCsrfToken,
-  signIn,
-  getProviders,
-} from 'next-auth/react';
 import { filter } from 'lodash';
+import type { GetServerSidePropsContext } from 'next';
 import type { ClientSafeProvider } from 'next-auth/react';
+import {
+  getCsrfToken, getProviders, getSession, signIn
+} from 'next-auth/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import Link from 'next/link';
 
 const MINIMUM_ACTIVITY_TIMEOUT = 850;
 type LoginFormValues = {
@@ -71,7 +68,7 @@ export default function Page({ csrfToken, providers }: Props) {
           <div className="mx-2 rounded-sm py-8 px-4 sm:px-10">
             <form
               className="my-12 text-center"
-              onSubmit={() => handleSubmit(onSubmit)}
+              onSubmit={handleSubmit(onSubmit)}
             >
               <input
                 {...register('csrfToken')}
@@ -134,29 +131,31 @@ export default function Page({ csrfToken, providers }: Props) {
                 </button>
               </div>
             </form>
-            <section className="mt-8 text-center">
-              <div className="mb-3 flex flex-col">
-                <hr className="mt-1 h-0 border-t" />
-                <div className="-mt-3 text-center text-sm">
-                  <span className="bg-white px-2">Or with</span>
+            {providers.length > 0 && (
+              <section className="mt-8 text-center">
+                <div className="mb-3 flex flex-col">
+                  <hr className="mt-1 h-0 border-t" />
+                  <div className="-mt-3 text-center text-sm">
+                    <span className="bg-white px-2">Or with</span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                {providers.map((provider) => (
-                  <button
-                    key={provider.id}
-                    type="button"
-                    onClick={() => {
-                      handleProviderSignIn(provider).catch((error) => console.error(error));
-                    }}
-                    className="inline-flex space-x-2"
-                  >
-                    <p>{provider.name}</p>
-                  </button>
-                ))}
-              </div>
-            </section>
+                <div className="grid grid-cols-2 gap-6">
+                  {providers.map((provider) => (
+                    <button
+                      key={provider.id}
+                      type="button"
+                      onClick={() => {
+                        handleProviderSignIn(provider).catch((error) => console.error(error));
+                      }}
+                      className="inline-flex space-x-2"
+                    >
+                      <p>{provider.name}</p>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </div>

@@ -23,20 +23,21 @@ export default function Page({ csrfToken }: Props) {
   const [isSubmitting, setSubmitting] = React.useState(false);
 
   const { register, handleSubmit } = useForm<LoginFormValues>();
-  const { mutate } = api.users.signup.useMutation({
-    onSuccess: async (data) => {
-      await signIn('app-login', {
-        callbackUrl: '/',
-        email: data.email,
-        password: data.password,
-      });
-    },
-  });
+  const { mutate } = api.users.signup.useMutation({});
 
   const onSubmit = (data: LoginFormValues) => {
     setSubmitting(true);
     try {
-      mutate(data);
+      mutate(data, {
+        onSuccess: async () => {
+
+          await signIn('app-login', {
+            callbackUrl: '/',
+            email: data.email,
+            password: data.password,
+          });
+        }
+      });
       setTimeout(() => {
         setSubmitting(false);
       }, MINIMUM_ACTIVITY_TIMEOUT);
@@ -60,7 +61,7 @@ export default function Page({ csrfToken }: Props) {
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-2 rounded-sm py-8 px-4 sm:px-10">
-            <form className="text-center" onSubmit={() => handleSubmit(onSubmit)}>
+            <form className="text-center" onSubmit={handleSubmit(onSubmit)}>
               <input
                 {...register('csrfToken')}
                 type="hidden"

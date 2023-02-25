@@ -13,13 +13,13 @@ const ffmpeg = createFFmpeg({
 
 export default inngest.createFunction(
     'Generate video thumbnail',
-    'pugtube/hls.thumbnail.generate',
+    'pugtube/hls.thumbnail',
     async ({ event }) => {
         const { uploadId } = event.data as { uploadId: string };
         await ffmpeg.load();
         const video = await prisma.video.findFirst({
             where: {
-                originalUploadId: uploadId,
+                uploadId,
             },
         });
 
@@ -62,7 +62,6 @@ export default inngest.createFunction(
         });
 
         log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
-
-        await inngest.send('pugtube/hls.thumbnail.generated', { data: { uploadId } });
+        await inngest.send('pugtube/hls.thumbnailed', { data: { uploadId } });
     }
 );

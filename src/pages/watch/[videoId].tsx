@@ -3,6 +3,7 @@ import { prisma } from '@/server/db';
 import { GetServerSideProps, NextPage } from 'next';
 interface WatchPageProps {
     playlistUrl: string;
+    uploadId: string | undefined;
 }
 
 
@@ -18,21 +19,36 @@ const WatchPage: NextPage<WatchPageProps> = ({ playlistUrl }) => {
 
 export const getServerSideProps: GetServerSideProps<WatchPageProps> = async ({ params }) => {
     const { videoId } = params as { videoId: string };
+    const video = await prisma.video.findFirst({
+        where: { id: String(videoId) },
+        include: {
+            upload: true,
+        },
+    });
+
     const playlist = await prisma.hlsPlaylist.findFirst({
         where: { videoId: String(videoId) },
     });
 
-    if (!playlist) {
+    const isVideoReady = video?.upload?.transcoded;
+
+
+    if (isVideoReady) {
         return {
-            notFound: true,
+            props: {
+                uploadId: video?.upload?.id,
+                playlistUrl: `/api/watch/${videoId}.m3u8`,
+            }
+        };
+    } else {
+        return {
+            props: {
+                uploadId: video?.upload?.id,
+                playlistUrl: '',
+            }
         };
     }
 
-    return {
-        props: {
-            playlistUrl: `/api/watch/${videoId}`,
-        },
-    };
 };
 
 export default WatchPage;

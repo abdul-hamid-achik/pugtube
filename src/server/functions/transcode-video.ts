@@ -131,7 +131,7 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
 
     const video = await prisma.video.findFirst({
         where: {
-            originalUploadId: {
+            uploadId: {
                 equals: uploadId,
             },
         }

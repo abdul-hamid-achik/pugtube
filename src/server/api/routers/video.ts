@@ -22,7 +22,7 @@ export const videoRouter = createTRPCRouter({
   }),
 
   create: publicProcedure.input(z.object({
-    originalUpload: z.object({
+    upload: z.object({
       id: z.string().uuid(),
     }),
     title: z.string(),
@@ -36,7 +36,7 @@ export const videoRouter = createTRPCRouter({
       // throw new Error("User is not authenticated");
     }
 
-    if (!input.originalUpload.id) {
+    if (!input.upload.id) {
       throw new Error('No original upload id provided');
     }
 
@@ -45,14 +45,14 @@ export const videoRouter = createTRPCRouter({
     const video: Video = await ctx.prisma.video.create({
       data: {
         ...input,
-        originalUpload: {
+        upload: {
           connect: {
-            id: input.originalUpload.id,
+            id: input.upload.id,
           },
         },
       },
       include: {
-        originalUpload: true,
+        upload: true,
       },
     });
 

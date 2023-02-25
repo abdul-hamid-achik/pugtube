@@ -15,7 +15,7 @@ describe(
                     category: null,
                     createdAt: new Date(),
                     userId: "",
-                    originalUploadId: ""
+                    uploadId: ""
                 }} />);
             },
         );

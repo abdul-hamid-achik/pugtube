@@ -69,24 +69,24 @@ model VerificationToken {
 }
 
 model Video {
-    id               String        @id @default(cuid())
-    title            String
-    description      String?
-    duration         Int?
-    thumbnailUrl     String?
-    category         String?
-    userId           String?       @map("user_id")
-    author           User?         @relation(fields: [userId], references: [id])
-    comments         Comment[]
-    likes            Like[]
-    hlsPlaylist      HlsPlaylist[] @relation
-    hlsSegment       HlsSegment[]  @relation
-    originalUploadId String        @map("original_upload_id")
-    originalUpload   Upload        @relation(fields: [originalUploadId], references: [id])
-    createdAt        DateTime      @default(now()) @updatedAt
+    id           String        @id @default(cuid())
+    title        String
+    description  String?
+    duration     Int?
+    thumbnailUrl String?
+    category     String?
+    userId       String?       @map("user_id")
+    author       User?         @relation(fields: [userId], references: [id])
+    comments     Comment[]
+    likes        Like[]
+    hlsPlaylist  HlsPlaylist[] @relation
+    hlsSegment   HlsSegment[]  @relation
+    uploadId     String        @unique @map("upload_id")
+    upload       Upload        @relation(fields: [uploadId], references: [id])
+    createdAt    DateTime      @default(now()) @updatedAt
 
     @@index([userId])
-    @@index([originalUploadId])
+    @@index([uploadId])
     @@map("videos")
 }
 
@@ -192,7 +192,7 @@ model Upload {
     metadata      VideoMetadata? @relation(fields: [metadataId], references: [id])
     transcoded    Boolean        @default(false)
     metadataId    String?        @unique
-    videos        Video[]
+    video         Video?
 
     @@map("uploads")
 }

@@ -17,18 +17,18 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
 
   await step.run("Generate video thumbnail", async () => {
     return await inngest.send(
-      'pugtube/thumbnail.generate',
+      'pugtube/hls.thumbnail',
       { data: { uploadId } }
     )
   });
 
-  // await step.waitForEvent("pugtube/hls.transcoded", {
-  //   timeout: 1000 * 60 * 60,
-  // });
+  await step.waitForEvent("pugtube/hls.thumbnailed", {
+    timeout: 5 * 60 * 1000, // 5 minute
+  });
 
-  // await step.waitForEvent("pugtube/hls.thumbnail.generated", {
-  //   timeout: 1000 * 60 * 60,
-  // });
+  await step.waitForEvent("pugtube/hls.transcoded", {
+    timeout: 5 * 60 * 1000, // 5 minute
+  });
 
   return uploadId;
 });

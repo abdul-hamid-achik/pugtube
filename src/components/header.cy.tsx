@@ -1,3 +1,4 @@
+import { SessionProvider } from 'next-auth/react';
 import Header from "./header";
 
 describe(
@@ -6,7 +7,11 @@ describe(
         it(
             "should render correctly",
             () => {
-                cy.mount(<Header />);
+                cy.mount(
+                    <SessionProvider>
+                        <Header />
+                    </SessionProvider>
+                );
             },
         );
     },

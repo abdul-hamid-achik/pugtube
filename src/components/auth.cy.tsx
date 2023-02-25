@@ -1,3 +1,4 @@
+import { SessionProvider } from 'next-auth/react';
 import Auth from './auth';
 
 describe(
@@ -6,7 +7,11 @@ describe(
         it(
             'should render correctly',
             () => {
-                cy.mount(<Auth />);
+                cy.mount(
+                    <SessionProvider>
+                        <Auth />
+                    </SessionProvider>
+                );
             },
         );
     },
