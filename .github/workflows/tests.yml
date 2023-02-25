@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Tests
 
 on:
@@ -11,7 +12,41 @@ on:
       - develop
 
 jobs:
-  tests:
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install `Xvfb` for testing in CI/CD simulations
+        if: ${{ env.ACT }}
+        run: sudo apt-get update -y && sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 7
+
+      - name: Cypress
+        uses: cypress-io/github-action@v5
+        with:
+          build: pnpm build
+          start: pnpm start
+          install: pnpm install
+          wait-on: 'http://localhost:3000'
+        env:
+            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            CYPRESS_BASE_URL: http://localhost:3000
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ELECTRON_RUN_AS_NODE: 1
+
+  component:
     runs-on: ubuntu-latest
     steps:
       - name: Install `Xvfb` for testing in CI/CD simulations
@@ -38,8 +73,6 @@ jobs:
           start: pnpm start
           install: pnpm install
           component: true
-          e2e: true
-          headless: true
           wait-on: 'http://localhost:3000'
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
