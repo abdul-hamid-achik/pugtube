@@ -1,4 +1,4 @@
-# PugTube
+# PugTube [![Tests](https://github.com/sicksid/pugtube/actions/workflows/tests.yml/badge.svg)](https://github.com/sicksid/pugtube/actions/workflows/tests.yml)
 
 PugTube is a video sharing platform where users can upload, watch and interact with videos. This project is built with the [T3 stack](https://create.t3.app/) which includes the following technologies:
 
