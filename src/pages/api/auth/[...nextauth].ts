@@ -175,8 +175,8 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
   jwt: {
     encode(params) {
       if (
-        req.query.nextauth?.includes("callback") &&
-        req.query.nextauth?.includes("credentials") &&
+        req.query?.nextauth?.includes("callback") &&
+        req.query?.nextauth?.includes("credentials") &&
         req.method === "POST"
       ) {
         const cookies = new Cookies(req, res)
@@ -189,8 +189,8 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
     },
     async decode(params) {
       if (
-        req.query.nextauth?.includes("callback") &&
-        req.query.nextauth?.includes("credentials") &&
+        req.query?.nextauth?.includes("callback") &&
+        req.query?.nextauth?.includes("credentials") &&
         req.method === "POST"
       ) {
         return null
