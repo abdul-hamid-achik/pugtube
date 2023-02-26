@@ -6,10 +6,9 @@ import { parseUrl } from '@aws-sdk/url-parser';
 import { formatUrl } from '@aws-sdk/util-format-url';
 import axios from 'axios';
 import fs from "fs";
-import { log as logger } from 'next-axiom';
+import { log } from 'next-axiom';
 import os from "os";
 
-const log = logger.with({ function: 'S3' });
 const s3 = new S3Client({
     region: process.env.AWS_REGION as string,
 } as S3ClientConfig);

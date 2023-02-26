@@ -2,10 +2,8 @@ import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { downloadObject, putObject } from '@/utils/s3';
 import { createFFmpeg } from '@ffmpeg/ffmpeg';
-import { log as logger } from 'next-axiom';
+import { log } from 'next-axiom';
 import os from 'os';
-
-const log = logger.with({ function: 'Generate video thumbnail' });
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',

@@ -4,7 +4,7 @@ import type { Upload, VideoMetadata } from '@prisma/client';
 import { S3Store } from '@tus/s3-store';
 import { EVENTS, Server } from '@tus/server';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { log as logger } from 'next-axiom';
+import { log } from 'next-axiom';
 import { v4 as uuidv4 } from 'uuid';
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata
@@ -17,8 +17,6 @@ export const config = {
 };
 
 interface MetadataValidation { ok: boolean, expected: string, received: string }
-
-const log = logger.with({ function: 'tus' });
 
 const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
   const received = upload?.metadata?.filename || '';

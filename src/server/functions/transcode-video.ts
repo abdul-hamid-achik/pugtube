@@ -4,13 +4,12 @@ import { deleteObject, getObject, putObject } from '@/utils/s3';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
-import { log as logger } from 'next-axiom';
+import { log } from 'next-axiom';
 import os from 'os';
 import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
 
-const log = logger.with({ function: 'Transcode video to HLS' });
 
 
 const ffmpeg = createFFmpeg({

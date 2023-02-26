@@ -1,12 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import Hls from 'hls.js';
-import { log as logger } from 'next-axiom';
+import { log } from 'next-axiom';
 import { useEffect, useRef } from 'react';
-
-const log = logger.with({
-  component: 'VideoPlayer'
-})
-
 interface VideoPlayerProps {
   src: string;
 }
