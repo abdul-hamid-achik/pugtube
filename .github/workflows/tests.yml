@@ -33,13 +33,14 @@ jobs:
         with:
           version: 7
 
-      - name: Cypress
+      - name: Testing
         uses: cypress-io/github-action@v5
         with:
           build: pnpm build
           start: pnpm start
           install: pnpm install
           wait-on: 'http://localhost:3000'
+          record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             CYPRESS_BASE_URL: http://localhost:3000
@@ -51,6 +52,9 @@ jobs:
             SECRET: secret
             NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
             SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+            SENTRY_ORG: pugtube
+            SENTRY_PROJECT: pugtube
+            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -76,14 +80,14 @@ jobs:
         with:
           version: 7
 
-      - name: Cypress
+      - name: Testing
         uses: cypress-io/github-action@v5
         with:
           build: pnpm build
           start: pnpm start
           install: pnpm install
-          component: true
           wait-on: 'http://localhost:3000'
+          component: true
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
