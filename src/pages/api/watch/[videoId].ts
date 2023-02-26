@@ -2,7 +2,6 @@ import { prisma } from '@/server/db';
 import { getSignedUrl } from '@/utils/s3';
 import { HlsSegment } from '@prisma/client';
 import ejs from 'ejs';
-import fs from 'fs';
 import { NextApiHandler } from 'next';
 
 const watchHandler: NextApiHandler = async (req, res) => {
@@ -33,7 +32,21 @@ const watchHandler: NextApiHandler = async (req, res) => {
         return maxDuration;
     }, 0);
 
-    const playlistTemplate = fs.readFileSync('./src/pages/api/watch/playlist.m3u8.ejs', 'utf-8');
+    const playlistTemplate = `
+        #EXTM3U
+        #EXT-X-VERSION:6
+        #EXT-X-MEDIA-SEQUENCE:0
+        #EXT-X-ALLOW-CACHE:YES
+        #EXT-X-TARGETDURATION:<%= targetDuration %>
+        #EXT-X-PLAYLIST-TYPE:VOD
+        #EXT-X-INDEPENDENT-SEGMENTS
+        <% segments.forEach((segment, index) => { %>
+        #EXTINF:<%= segment.duration %>,no desc
+        #EXT-X-BYTERANGE:<%= segment.byteRangeLength %>@<%= segment.byteRangeOffset %>
+        <%- segment.url %>
+        <% }); %>
+        #EXT-X-ENDLIST
+    `;
     const renderedPlaylist = ejs.render(playlistTemplate, {
         targetDuration,
         playlist,
