@@ -2,6 +2,7 @@ import NextAuth, { type NextAuthOptions, type PagesOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import * as Sentry from "@sentry/browser";
 
 import { prisma } from '@/server/db';
 import { hashPassword, verifyPassword } from '@/utils/auth';
@@ -84,11 +85,15 @@ export const authOptions: NextAuthOptions = {
             }
           }
 
-          return {
+          const user = {
             id: maybeUser.id,
-            email: maybeUser.email,
-            name: maybeUser.name,
+            email: maybeUser.email as string,
+            name: maybeUser.name as string,
           };
+
+          Sentry.setUser(user);
+
+          return user;
         } catch (error) {
           throw error;
         }
