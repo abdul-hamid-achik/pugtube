@@ -19,6 +19,7 @@
 import * as Sentry from '@sentry/nextjs';
 import NextErrorComponent from 'next/error';
 
+// @ts-ignore
 const CustomErrorComponent = props => {
   // If you're using a Nextjs version prior to 12.2.1, uncomment this to
   // compensate for https://github.com/vercel/next.js/issues/8592
@@ -27,6 +28,7 @@ const CustomErrorComponent = props => {
   return <NextErrorComponent statusCode={props.statusCode} />;
 };
 
+// @ts-ignore
 CustomErrorComponent.getInitialProps = async contextData => {
   // In case this is running in a serverless function, await this in order to give Sentry
   // time to send the error before the lambda exits
