@@ -59,7 +59,9 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION: ${{ secrets.AWS_REGION }}
             AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-            
+            INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
+            INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
+
   component:
     runs-on: ubuntu-latest
     steps:
@@ -107,3 +109,5 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION: ${{ secrets.AWS_REGION }}
             AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+            INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
+            INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
