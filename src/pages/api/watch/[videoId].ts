@@ -32,21 +32,21 @@ const watchHandler: NextApiHandler = async (req, res) => {
         return maxDuration;
     }, 0);
 
-    const playlistTemplate = `
-        #EXTM3U
-        #EXT-X-VERSION:6
-        #EXT-X-MEDIA-SEQUENCE:0
-        #EXT-X-ALLOW-CACHE:YES
-        #EXT-X-TARGETDURATION:<%= targetDuration %>
-        #EXT-X-PLAYLIST-TYPE:VOD
-        #EXT-X-INDEPENDENT-SEGMENTS
-        <% segments.forEach((segment, index) => { %>
-        #EXTINF:<%= segment.duration %>,no desc
-        #EXT-X-BYTERANGE:<%= segment.byteRangeLength %>@<%= segment.byteRangeOffset %>
-        <%- segment.url %>
-        <% }); %>
-        #EXT-X-ENDLIST
-    `;
+    const playlistTemplate = [
+        "#EXTM3U",
+        "#EXT-X-VERSION:6",
+        "#EXT-X-MEDIA-SEQUENCE:0",
+        "#EXT-X-ALLOW-CACHE:YES",
+        "#EXT-X-TARGETDURATION:<%= targetDuration %>",
+        "#EXT-X-PLAYLIST-TYPE:VOD",
+        "#EXT-X-INDEPENDENT-SEGMENTS",
+        "<% segments.forEach((segment, index) => { %>",
+        "#EXTINF:<%= segment.duration %>,no desc",
+        "#EXT-X-BYTERANGE:<%= segment.byteRangeLength %>@<%= segment.byteRangeOffset %>",
+        "<%- segment.url %>",
+        "<% }); %>",
+        "#EXT-X-ENDLIST"
+    ].join('\n');
     const renderedPlaylist = ejs.render(playlistTemplate, {
         targetDuration,
         playlist,
