@@ -5,6 +5,7 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
+import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
 
 /** @type {import("next").NextConfig} */
@@ -16,5 +17,22 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  sentry: {
+    // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
+    // for client-side builds. (This will be the default starting in
+    // `@sentry/nextjs` version 8.0.0.) See
+    // https://webpack.js.org/configuration/devtool/ and
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
+    // for more information.
+    hideSourceMaps: true,
+  },
 };
-export default withAxiom(config);
+
+export default withSentryConfig(withAxiom(config), {
+  silent: true,
+});
+
+// This file sets a custom webpack configuration to use your Next.js app
+// with Sentry.
+// https://nextjs.org/docs/api-reference/next.config.js/introduction
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/

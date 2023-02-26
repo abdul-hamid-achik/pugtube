@@ -43,3 +43,6 @@ yarn-error.log*
 cypress/downloads/*
 cypress/videos/*
 cypress/screenshots/*
+# Sentry
+.sentryclirc
+sentry.properties
