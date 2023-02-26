@@ -5,18 +5,40 @@ import * as Sentry from "@sentry/browser";
 import Cookies from 'cookies';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { SessionStrategy, type NextAuthOptions, type PagesOptions } from 'next-auth';
+import { decode, encode } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GitHubProvider from 'next-auth/providers/github';
 import { v4 as uuid } from 'uuid';
+
 
 const session = {
   strategy: "jwt" as SessionStrategy,
   maxAge: 30 * 24 * 60 * 60, // 30 days
   updateAge: 24 * 60 * 60, // 24 hours
 }
+
+const adapter = PrismaAdapter(prisma)
+
 export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuthOptions => ({
   session,
+  secret: process.env.NEXTAUTH_SECRET as string,
   // Include user.id on session
+  events: {
+    async signOut({ token }) {
+      res.setHeader("Set-Cookie", "cookieName=deleted;Max-Age=0;path=/;Domain=.pugtube.dev;");
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -26,30 +48,27 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
     },
 
     async signIn({ user }) {
-      if (user && "id" in user) {
-        const sessionToken = uuid()
-        const sessionExpiry = new Date(Date.now() + session.maxAge * 1000)
+      if (
+        req.query.nextauth?.includes("callback") &&
+        req.query.nextauth?.includes("credentials") &&
+        req.method === "POST"
+      ) {
+        if (user && "id" in user) {
+          const sessionToken = uuid()
+          const sessionExpiry = new Date(Date.now() + session.maxAge * 1000)
+          const cookies = Cookies(req, res)
 
-        await prisma.session.create({
-          data: {
-            expires: sessionExpiry,
+          await adapter.createSession({
             sessionToken: sessionToken,
-            // userAgent: req.headers["user-agent"] ?? null,
-            user: {
-              connect: {
-                id: user.id,
-              },
-            },
-          },
-        })
+            userId: user.id,
+            expires: sessionExpiry,
+          });
 
-        const cookies = Cookies(req, res)
-
-        cookies.set("next-auth.session-token", sessionToken, {
-          expires: sessionExpiry,
-        })
+          cookies.set("next-auth.session-token", sessionToken, {
+            expires: sessionExpiry,
+          })
+        }
       }
-
       return true
     },
   },
@@ -58,7 +77,8 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
     signIn: '/signin',
   } as Partial<PagesOptions>,
   // Configure one or more authentication providers
-  adapter: PrismaAdapter(prisma),
+  adapter,
+
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
@@ -152,6 +172,33 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  jwt: {
+    encode(params) {
+      if (
+        req.query.nextauth?.includes("callback") &&
+        req.query.nextauth?.includes("credentials") &&
+        req.method === "POST"
+      ) {
+        const cookies = new Cookies(req, res)
+        const cookie = cookies.get("next-auth.session-token")
+        if (cookie) return cookie
+        else return ""
+      }
+      // Revert to default behaviour when not in the credentials provider callback flow
+      return encode(params)
+    },
+    async decode(params) {
+      if (
+        req.query.nextauth?.includes("callback") &&
+        req.query.nextauth?.includes("credentials") &&
+        req.method === "POST"
+      ) {
+        return null
+      }
+      // Revert to default behaviour when not in the credentials provider callback flow
+      return decode(params)
+    },
+  },
 });
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
