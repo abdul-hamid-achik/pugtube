@@ -33,6 +33,7 @@ specifiers:
   '@types/ejs': ^3.1.2
   '@types/lodash': ^4.14.191
   '@types/node': ^18.11.18
+  '@types/node-media-server': ^2.3.3
   '@types/prettier': ^2.7.2
   '@types/react': ^18.0.26
   '@types/react-dom': ^18.0.10
@@ -161,6 +162,7 @@ devDependencies:
   '@types/ejs': 3.1.2
   '@types/lodash': 4.14.191
   '@types/node': 18.11.18
+  '@types/node-media-server': 2.3.3
   '@types/prettier': 2.7.2
   '@types/react': 18.0.27
   '@types/react-dom': 18.0.10
@@ -4012,6 +4014,10 @@ packages:
 
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
+    dev: true
+
+  /@types/node-media-server/2.3.3:
+    resolution: {integrity: sha512-ARmMxfYIryHlAK85XvnCcqWRWREEw49LG9ZHQIMrxxKdIIVA+tP4XhyNW1hXddmOswURcNKdip582BG16TxdoQ==}
     dev: true
 
   /@types/node/14.18.33:
