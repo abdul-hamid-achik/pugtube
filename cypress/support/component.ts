@@ -20,6 +20,7 @@ import './commands'
 // require('./commands')
 
 import { mount } from 'cypress/react18'
+import '../src/styles/globals.css'
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
