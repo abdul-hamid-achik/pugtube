@@ -20,6 +20,7 @@ export const serverSchema = z.object({
     process.env.VERCEL ? z.string() : z.string().url()
   ),
   SENTRY_DSN: z.string().url(),
+  INNGEST_EVENT_KEY: z.string().optional(),
 });
 
 /**
@@ -33,6 +34,7 @@ export const serverEnv = {
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   SENTRY_DSN: process.env.SENTRY_DSN,
+  INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
 };
 
 /**
