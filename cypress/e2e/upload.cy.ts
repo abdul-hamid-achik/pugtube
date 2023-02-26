@@ -1,6 +1,10 @@
 import { faker } from "@faker-js/faker";
 
 describe('Upload', () => {
+  beforeEach(() => {
+    cy.signIn("demo@pugtube.dev", "password");
+  });
+
   it('should redirect to watch after uploading a video', () => {
     cy.visit('/upload');
     cy.get('input[name="title"]').type(faker.lorem.sentence());

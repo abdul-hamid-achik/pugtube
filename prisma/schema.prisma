@@ -75,15 +75,15 @@ model Video {
     duration     Int?
     thumbnailUrl String?
     category     String?
-    userId       String?       @map("user_id")
-    author       User?         @relation(fields: [userId], references: [id])
+    userId       String        @map("user_id")
+    author       User          @relation(fields: [userId], references: [id])
     comments     Comment[]
     likes        Like[]
     hlsPlaylist  HlsPlaylist[] @relation
-    hlsSegment   HlsSegment[]  @relation
     uploadId     String        @unique @map("upload_id")
     upload       Upload        @relation(fields: [uploadId], references: [id])
     createdAt    DateTime      @default(now()) @updatedAt
+    HlsSegment   HlsSegment[]
 
     @@index([userId])
     @@index([uploadId])

@@ -30,6 +30,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       mount: typeof mount
+      signIn: (email: string, password: string) => Cypress.Chainable<unknown>
     }
   }
 }

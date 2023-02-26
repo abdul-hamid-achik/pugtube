@@ -30,8 +30,7 @@ export default function Page({ csrfToken }: Props) {
     try {
       mutate(data, {
         onSuccess: async () => {
-
-          await signIn('app-login', {
+          await signIn('credentials', {
             callbackUrl: '/',
             email: data.email,
             password: data.password,
@@ -54,7 +53,11 @@ export default function Page({ csrfToken }: Props) {
         <title>Setup</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="py-12 text-center sm:mx-auto sm:w-full sm:max-w-md" />
+      <div className="py-12 text-center sm:mx-auto sm:w-full sm:max-w-md">
+        <h1 className="text-xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
+          Sign Up
+        </h1>
+      </div>
       <div className=" mt-8 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="text-center sm:mx-auto sm:w-full sm:max-w-md ">
           <p>Get started by creating an account to setup.</p>

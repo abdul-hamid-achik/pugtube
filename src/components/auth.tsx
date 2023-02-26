@@ -1,15 +1,18 @@
-import React from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { signIn, signOut, useSession } from 'next-auth/react';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import React from 'react';
 
 export default function Auth() {
   const { data: session } = useSession();
 
   return (
     <div>
-      {session && session.user ? (
+      {session && session.user ? (<>
+        <Link href="/upload">
+          Upload
+        </Link>
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button className="flex items-center">
@@ -58,6 +61,7 @@ export default function Auth() {
             </Menu.Items>
           </Transition>
         </Menu>
+      </>
       ) : (
         <button
           type="button"

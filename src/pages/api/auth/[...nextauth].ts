@@ -16,6 +16,10 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+
+    async signIn({ user, account, profile, email, credentials }) {
+      return true
+    }
   },
   pages: {
     signUp: '/signup',
@@ -25,8 +29,8 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
-      id: 'app-login',
-      name: 'App Login',
+      id: 'credentials',
+      name: 'Account Credentials',
       credentials: {
         email: {
           label: 'Email Address',
@@ -56,6 +60,7 @@ export const authOptions: NextAuthOptions = {
               name: true,
             },
           });
+
 
           if (!maybeUser) {
             if (!credentials?.password || !credentials?.email) {
@@ -90,6 +95,7 @@ export const authOptions: NextAuthOptions = {
             email: maybeUser.email as string,
             name: maybeUser.name as string,
           };
+
 
           Sentry.setUser(user);
 

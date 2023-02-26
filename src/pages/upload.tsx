@@ -1,11 +1,13 @@
 import '@uppy/core/dist/style.css';
 import '@uppy/dashboard/dist/style.css';
 
+import { getServerAuthSession } from '@/server/auth';
 import { api } from '@/utils/api';
 import Uppy, { UppyFile } from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import Tus from '@uppy/tus';
-import { useSession } from 'next-auth/react';
+import { GetServerSidePropsContext } from 'next';
+import { getCsrfToken, useSession } from 'next-auth/react';
 import router from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -16,7 +18,28 @@ interface FormData {
   category: string;
 }
 
-export default function UploadForm() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const csrfToken = await getCsrfToken(context);
+  const session = await getServerAuthSession(context);
+
+  if (!session?.user) {
+    return {
+      redirect: {
+        destination: '/signin',
+        permanent: false,
+      },
+      props: { session }
+    };
+  }
+  return {
+    props: {
+      session,
+      csrfToken,
+    },
+  };
+}
+
+export default function Upload() {
   const uppy = React.useMemo(() => new Uppy().use(Tus, {
     id: 'uppy-tus',
     endpoint: '/api/upload',

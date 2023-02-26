@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "es2017",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -32,9 +32,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@cypress/*": [
-        "./cypress/*"
-      ]
     }
   },
   "include": [
@@ -42,7 +39,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
+    "**/*.mjs",
+    "prisma/seed.ts"
   ],
   "exclude": [
     "node_modules",

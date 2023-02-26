@@ -32,7 +32,7 @@ export default function Page({ csrfToken, providers }: Props) {
   const onSubmit = async (data: LoginFormValues) => {
     setSubmitting(true);
     try {
-      await signIn('app-login', {
+      await signIn('credentials', {
         callbackUrl: '/',
         email: data?.email,
         password: data?.password,
@@ -43,7 +43,6 @@ export default function Page({ csrfToken, providers }: Props) {
       }, MINIMUM_ACTIVITY_TIMEOUT);
     } catch (error) {
       console.error(error);
-      //   setError(error)
       setSubmitting(false);
     }
   };
@@ -62,7 +61,11 @@ export default function Page({ csrfToken, providers }: Props) {
           <h1 className="text-xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
             Sign In
           </h1>
-          <h2>Sign in with an existing account, or create new account.</h2>
+          <h2>
+            Sign in with an existing account, or <Link href="/signup">
+              create new account.
+            </Link>
+          </h2>
         </div>
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="mx-2 rounded-sm py-8 px-4 sm:px-10">
@@ -159,7 +162,7 @@ export default function Page({ csrfToken, providers }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
