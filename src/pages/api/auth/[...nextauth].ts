@@ -1,13 +1,20 @@
-import NextAuth, { type NextAuthOptions, type PagesOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-// Prisma adapter for NextAuth, optional and can be removed
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import * as Sentry from "@sentry/browser";
-
 import { prisma } from '@/server/db';
 import { hashPassword, verifyPassword } from '@/utils/auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import * as Sentry from "@sentry/browser";
+import { NextApiRequest, NextApiResponse } from 'next';
+import NextAuth, { SessionStrategy, type NextAuthOptions, type PagesOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import GitHubProvider from 'next-auth/providers/github';
+import { v4 as uuid } from 'uuid';
 
-export const authOptions: NextAuthOptions = {
+const session = {
+  strategy: "jwt" as SessionStrategy,
+  maxAge: 30 * 24 * 60 * 60, // 30 days
+  updateAge: 24 * 60 * 60, // 24 hours
+}
+export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuthOptions => ({
+  session,
   // Include user.id on session
   callbacks: {
     session({ session, user }) {
@@ -17,9 +24,34 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user }) {
+      if (user && "id" in user) {
+        const sessionToken = uuid()
+        const sessionExpiry = new Date(Date.now() + session.maxAge * 1000)
+
+        await prisma.session.create({
+          data: {
+            expires: sessionExpiry,
+            sessionToken: sessionToken,
+            // userAgent: req.headers["user-agent"] ?? null,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        })
+        // @ts-ignore
+        const cookies = res.headers['set-cookie']
+
+        res.setHeader('Set-Cookie', cookies)
+        cookies.set("next-auth.session-token", sessionToken, {
+          expires: sessionExpiry,
+        })
+      }
+
       return true
-    }
+    },
   },
   pages: {
     signUp: '/signup',
@@ -28,6 +60,10 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string
+    }),
     CredentialsProvider({
       id: 'credentials',
       name: 'Account Credentials',
@@ -116,6 +152,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-};
+});
 
-export default NextAuth(authOptions);
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  // Do whatever you want here, before the request is passed down to `NextAuth`
+  return await NextAuth(req, res, authOptions(req, res))
+}

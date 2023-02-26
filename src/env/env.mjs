@@ -6,6 +6,8 @@ export const server = z.object({
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_S3_BUCKET: z.string(),
+  GITHUB_ID: z.string(),
+  GITHUB_SECRET: z.string(),
 });
 
 export const client = z.object({});
@@ -15,6 +17,8 @@ export const processEnv = {
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+  GITHUB_ID: process.env.GITHUB_ID,
+  GITHUB_SECRET: process.env.GITHUB_SECRET,
 };
 
 const formatErrors = (
