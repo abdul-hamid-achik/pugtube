@@ -2,6 +2,7 @@ import { prisma } from '@/server/db';
 import { hashPassword, verifyPassword } from '@/utils/auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import * as Sentry from "@sentry/browser";
+import Cookies from 'cookies';
 import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { SessionStrategy, type NextAuthOptions, type PagesOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -41,10 +42,9 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
             },
           },
         })
-        // @ts-ignore
-        const cookies = res.headers['set-cookie']
 
-        res.setHeader('Set-Cookie', cookies)
+        const cookies = Cookies(req, res)
+
         cookies.set("next-auth.session-token", sessionToken, {
           expires: sessionExpiry,
         })
