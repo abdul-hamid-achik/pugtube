@@ -7,6 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth, { SessionStrategy, type NextAuthOptions, type PagesOptions } from 'next-auth';
 import { decode, encode } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
+import DiscordProvider from 'next-auth/providers/discord';
 import GitHubProvider from 'next-auth/providers/github';
 import { v4 as uuid } from 'uuid';
 
@@ -83,6 +84,10 @@ export const authOptions = (req: NextApiRequest, res: NextApiResponse): NextAuth
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_ID as string,
+      clientSecret: process.env.DISCORD_SECRET as string
     }),
     CredentialsProvider({
       id: 'credentials',
