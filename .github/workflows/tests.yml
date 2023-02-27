@@ -33,6 +33,9 @@ jobs:
         with:
           version: 7
 
+      - name: Installing secrets
+        run: pnpx vercel env pull --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
@@ -43,22 +46,7 @@ jobs:
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            NODE_ENV: test
-            SECRET: secret
-            NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
-            SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-            SENTRY_ORG: pugtube
-            SENTRY_PROJECT: pugtube
-            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
-            AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-            INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
-            INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
 
   component:
     runs-on: ubuntu-latest
@@ -80,30 +68,19 @@ jobs:
         with:
           version: 7
 
+      - name: Installing secrets
+        run: pnpx vercel env pull --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
           build: pnpm build
           start: pnpm start
           install: pnpm install
-          wait-on: 'http://localhost:3000'
+          wait-on: http://localhost:3000
+          base-url: http://localhost:3000
           component: true
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            NODE_ENV: test
-            SECRET: secret
-            NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
-            SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-            SENTRY_ORG: pugtube
-            SENTRY_PROJECT: pugtube
-            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
-            AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-            INNGEST_EVENT_KEY: ${{ secrets.INNGEST_EVENT_KEY }}
-            INNGEST_SIGNING_KEY: ${{ secrets.INNGEST_SIGNING_KEY }}
