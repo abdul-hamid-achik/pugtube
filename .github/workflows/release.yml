@@ -43,3 +43,4 @@ jobs:
           SENTRY_PROJECT: pugtube
         with:
           environment: production
+          ignore_empty: true
