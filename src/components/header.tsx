@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { UserButton } from '@clerk/nextjs';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
-
-import { UserButton } from '@clerk/nextjs';
 
 interface FormData {
   query: string
