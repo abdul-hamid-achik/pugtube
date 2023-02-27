@@ -1,15 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
-import Auth from './auth';
+
+import { UserButton } from '@clerk/nextjs';
 
 interface FormData {
   query: string
 }
 
 export default function Header() {
-  const { data: _session } = useSession();
   const { register, handleSubmit } = useForm<FormData>();
   const onSubmit = (_data: FormData) => { };
 
@@ -46,7 +45,7 @@ export default function Header() {
           </form>
         </div>
         <div className="ml-auto">
-          <Auth />
+          <UserButton />
         </div>
       </div>
     </div>

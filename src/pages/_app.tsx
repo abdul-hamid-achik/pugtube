@@ -1,21 +1,20 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/function-component-definition */
 import { api } from '@/utils/api';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/react';
-import { type Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
-import { type AppType } from 'next/app';
+import { type AppProps, type AppType } from 'next/app';
 export { reportWebVitals } from 'next-axiom';
 
 import '@/styles/globals.css';
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<AppProps> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps,
 }) => (<>
-  <SessionProvider session={session}>
+  <ClerkProvider {...pageProps} >
     <Component {...pageProps} />
-  </SessionProvider>
+  </ClerkProvider>
   <Analytics />
 </>
 );

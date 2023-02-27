@@ -1,15 +1,12 @@
 import Header from '@/components/header';
 import VideoCard from '@/components/video-card';
-import { getServerAuthSession } from '@/server/auth';
 import { api } from '@/utils/api';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
   return {
     props: {
-      session
     }
   }
 }

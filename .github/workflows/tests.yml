@@ -46,8 +46,6 @@ jobs:
             CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            NEXTAUTH_URL: http://localhost:3000
-            NEXTAUTH_SECRET: secret
             NODE_ENV: test
             SECRET: secret
             NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
@@ -96,8 +94,6 @@ jobs:
             CYPRESS_BASE_URL: http://localhost:3000
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             DATABASE_URL: ${{ secrets.DATABASE_URL }}
-            NEXTAUTH_URL: http://localhost:3000
-            NEXTAUTH_SECRET: secret
             NODE_ENV: test
             SECRET: secret
             NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}

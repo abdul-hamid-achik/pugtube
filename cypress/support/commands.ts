@@ -1,11 +1,23 @@
 /// <reference types="cypress" />
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
-import { signIn } from 'next-auth/react';
 
-Cypress.Commands.add('signIn', (email: string, password: string) => {
-    cy.log(`🔐 Sign in as ${email}`)
-    return cy.wrap(signIn('credentials', { redirect: false, email, password }))
-})
+Cypress.Commands.add(`signIn`, (email: string, password: string) => {
+    cy.log(`Initializing auth state.`);
 
+    cy.visit(`/`);
+
+    cy.window()
+        .should((window) => {
+            expect(window).to.not.have.property(`Clerk`, undefined);
+            expect(window.Clerk.isReady()).to.eq(true);
+        })
+        .then(async (window) => {
+            await window.Clerk.signOut();
+            await window.Clerk.client.signIn.create({
+                identifier: email,
+                password,
+            });
+        });
+});
 export { };

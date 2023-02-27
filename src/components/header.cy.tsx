@@ -1,4 +1,4 @@
-import { SessionProvider } from 'next-auth/react';
+import { ClerkProvider } from '@clerk/nextjs';
 import Header from "./header";
 
 describe(
@@ -8,9 +8,9 @@ describe(
             "should render correctly",
             () => {
                 cy.mount(
-                    <SessionProvider>
+                    <ClerkProvider>
                         <Header />
-                    </SessionProvider>
+                    </ClerkProvider>
                 );
             },
         );

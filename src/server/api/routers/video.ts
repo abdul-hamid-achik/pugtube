@@ -1,5 +1,4 @@
 import type { Video } from '@prisma/client';
-import { getSession } from 'next-auth/react';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
@@ -31,13 +30,12 @@ export const videoRouter = createTRPCRouter({
     duration: z.number().optional(),
     thumbnailUrl: z.string().optional(),
   })).mutation(async ({ ctx, input }) => {
-    const session = await getSession();
 
     if (!input.upload.id) {
       throw new Error('No original upload id provided');
     }
 
-    const userId = session?.user?.id;
+    const userId = ctx.auth.userId;
 
     const video: Video = await ctx.prisma.video.create({
       data: {
@@ -61,17 +59,13 @@ export const videoRouter = createTRPCRouter({
     return video;
   }),
 
-  update: publicProcedure.input(z.object({
+  update: protectedProcedure.input(z.object({
     id: z.string().uuid(),
     title: z.string(),
     duration: z.number(),
   })).mutation(async ({ ctx, input }) => {
-    const session = await getSession();
-    if (!session) {
-      throw new Error('User is not authenticated');
-    }
+    const userId = ctx.auth?.user?.id;
 
-    const userId = session?.user?.id;
     const video = await ctx.prisma.video.update({
       where: {
         id: input.id,

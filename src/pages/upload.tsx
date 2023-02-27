@@ -1,13 +1,12 @@
 import '@uppy/core/dist/style.css';
 import '@uppy/dashboard/dist/style.css';
 
-import { getServerAuthSession } from '@/server/auth';
 import { api } from '@/utils/api';
+import { useAuth } from '@clerk/nextjs';
 import Uppy, { UppyFile } from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import Tus from '@uppy/tus';
 import { GetServerSidePropsContext } from 'next';
-import { getCsrfToken, useSession } from 'next-auth/react';
 import router from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -19,22 +18,9 @@ interface FormData {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const csrfToken = await getCsrfToken(context);
-  const session = await getServerAuthSession(context);
 
-  if (!session?.user) {
-    return {
-      redirect: {
-        destination: '/signin',
-        permanent: false,
-      },
-      props: { session }
-    };
-  }
   return {
     props: {
-      session,
-      csrfToken,
     },
   };
 }
@@ -47,15 +33,15 @@ export default function Upload() {
     chunkSize: 50 * 1024 * 1024,
   }), []);
 
-  const { data: session } = useSession();
+  const { userId } = useAuth();
 
   const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
   const { mutate } = api.video.create.useMutation({
     onSuccess: async (video) => {
       uppy.resetProgress();
       await router.push(
-        session?.user?.id ?
-          `/channel/${session.user.id}/watch/${video.id}` :
+        userId ?
+          `/channel/${userId}/watch/${video.id}` :
           `/watch/${video.id}`
       );
     },
@@ -79,8 +65,8 @@ export default function Upload() {
       onSuccess: async (video) => {
         uppy.resetProgress();
         await router.push(
-          session?.user?.id ?
-            `/channel/${session.user.id}/watch/${video.id}` :
+          userId ?
+            `/channel/${userId}/watch/${video.id}` :
             `/watch/${video.id}`
         );
       },
