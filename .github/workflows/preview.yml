@@ -34,3 +34,13 @@ jobs:
 
       - name: Deploy Project Artifacts to Vercel
         run: pnpx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: pugtube
+          SENTRY_PROJECT: pugtube
+        with:
+          environment: preview
