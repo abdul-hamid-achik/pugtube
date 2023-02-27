@@ -30,26 +30,15 @@ export const videoRouter = createTRPCRouter({
     duration: z.number().optional(),
     thumbnailUrl: z.string().optional(),
   })).mutation(async ({ ctx, input }) => {
-
-    if (!input.upload.id) {
-      throw new Error('No original upload id provided');
-    }
-
-    const userId = ctx.auth.userId;
-
     const video: Video = await ctx.prisma.video.create({
       data: {
         ...input,
+        userId: ctx.auth.userId as string,
         upload: {
           connect: {
             id: input.upload.id,
           },
         },
-        author: {
-          connect: {
-            id: userId,
-          },
-        }
       },
       include: {
         upload: true,
@@ -64,7 +53,6 @@ export const videoRouter = createTRPCRouter({
     title: z.string(),
     duration: z.number(),
   })).mutation(async ({ ctx, input }) => {
-    const userId = ctx.auth?.user?.id;
 
     const video = await ctx.prisma.video.update({
       where: {
@@ -72,11 +60,7 @@ export const videoRouter = createTRPCRouter({
       },
       data: {
         ...input,
-        author: {
-          connect: {
-            id: userId,
-          },
-        },
+        userId: ctx.auth?.userId as string,
       },
     });
 
