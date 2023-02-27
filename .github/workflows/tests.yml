@@ -11,6 +11,16 @@ on:
       - main
       - dev
 
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACT: ${{ github.event_name == 'pull_request' }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  NODE_ENV: test
+
 jobs:
   e2e:
     needs: component
@@ -33,8 +43,11 @@ jobs:
         with:
           version: 7
 
-      - name: Installing secrets
-        run: pnpx vercel env pull --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull Vercel Environment Information
+        run: pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Pull Environment Secrets
+        run: pnpx vercel env pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Testing
         uses: cypress-io/github-action@v5
@@ -68,8 +81,11 @@ jobs:
         with:
           version: 7
 
-      - name: Installing secrets
-        run: pnpx vercel env pull --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull Vercel Environment Information
+        run: pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Pull Environment Secrets
+        run: pnpx vercel env pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Testing
         uses: cypress-io/github-action@v5

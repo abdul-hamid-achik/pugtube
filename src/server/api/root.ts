@@ -1,6 +1,5 @@
-import { createTRPCRouter } from './trpc';
-import { usersRouter } from './routers/users';
 import { videoRouter } from './routers/video';
+import { createTRPCRouter } from './trpc';
 
 /**
  * This is the primary router for your server.
@@ -8,7 +7,6 @@ import { videoRouter } from './routers/video';
  * All routers added in /api/routers should be manually added here
  */
 export const appRouter = createTRPCRouter({
-  users: usersRouter,
   video: videoRouter,
 });
 
