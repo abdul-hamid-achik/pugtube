@@ -7,7 +7,7 @@ on:
     branches:
       - main
 jobs:
-  Deploy-Production:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +21,6 @@ jobs:
         name: Install pnpm
         with:
           version: 7
-          install: false
 
       - name: Install Vercel CLI
         run: pnpm install --global vercel@latest
