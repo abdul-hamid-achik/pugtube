@@ -1,4 +1,5 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import MockRouter from '@cypress/utils/mock-router';
 import Header from "./header";
 
 describe(
@@ -8,9 +9,11 @@ describe(
             "should render correctly",
             () => {
                 cy.mount(
-                    <ClerkProvider>
-                        <Header />
-                    </ClerkProvider>
+                    <MockRouter>
+                        <ClerkProvider>
+                            <Header />
+                        </ClerkProvider>
+                    </MockRouter>
                 );
             },
         );

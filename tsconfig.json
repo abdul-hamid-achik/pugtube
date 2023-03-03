@@ -32,6 +32,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@cypress/*": [
+        "./cypress/*"
+      ],
     }
   },
   "include": [
