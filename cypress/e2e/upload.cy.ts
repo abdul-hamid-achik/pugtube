@@ -16,7 +16,7 @@ describe('Upload', () => {
       cy.get('button[type="submit"]').click();
     });
 
-    cy.location('pathname').should('match', /\/watch\/[a-zA-Z0-9]+/);
+    cy.location('pathname').should('match', /\/processing/);
   });
 });
 
