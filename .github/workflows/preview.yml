@@ -10,12 +10,12 @@ jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 16
 
       - uses: pnpm/action-setup@v2
         name: Install pnpm
@@ -34,7 +34,6 @@ jobs:
 
       - name: Deploy Project Artifacts to Vercel
         run: pnpx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
