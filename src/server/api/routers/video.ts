@@ -27,7 +27,7 @@ export const videoRouter = createTRPCRouter({
       skip: (page - 1) * perPage,
       take: perPage,
     }).then(
-      (videos) => videos.map((video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? getSignedUrl(video.thumbnailUrl as string) : null }))
+      (videos) => videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null }))
     );
   }),
 
