@@ -17,18 +17,18 @@ export const videoRouter = createTRPCRouter({
       page: z.number().int().optional(),
       perPage: z.number().int().optional(),
     }),
-  ).query(({ ctx, input }) => {
+  ).query(async ({ ctx, input }) => {
     const page = input.page ?? 1;
     const perPage = input.perPage ?? 10;
-    return ctx.prisma.video.findMany({
+    const videos = await ctx.prisma.video.findMany({
       orderBy: {
         createdAt: 'desc',
       },
       skip: (page - 1) * perPage,
       take: perPage,
-    }).then(
-      (videos) => videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null }))
-    );
+    })
+
+    return videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null }));
   }),
 
   create: protectedProcedure.input(z.object({
