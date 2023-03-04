@@ -45,8 +45,8 @@ jobs:
 
       - name: Pull Vercel Environment Information
         run: |
-          pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-          cp .vercel/.env.production.local .env
+          pnpx vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.development.local .env
 
       - name: Testing
         uses: cypress-io/github-action@v5
@@ -82,8 +82,8 @@ jobs:
 
       - name: Pull Vercel Environment Information
         run: |
-          pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-          cp .vercel/.env.production.local .env
+          pnpx vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.development.local .env
 
       - name: Testing
         uses: cypress-io/github-action@v5
