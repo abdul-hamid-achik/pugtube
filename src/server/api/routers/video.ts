@@ -28,7 +28,7 @@ export const videoRouter = createTRPCRouter({
       take: perPage,
     })
 
-    return videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null }));
+    return Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
   }),
 
   create: protectedProcedure.input(z.object({
