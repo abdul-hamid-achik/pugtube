@@ -1,3 +1,4 @@
+import { getSignedUrl } from '@/utils/s3';
 import type { Video } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
@@ -25,7 +26,9 @@ export const videoRouter = createTRPCRouter({
       },
       skip: (page - 1) * perPage,
       take: perPage,
-    });
+    }).then(
+      (videos) => videos.map((video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? getSignedUrl(video.thumbnailUrl as string) : null }))
+    );
   }),
 
   create: protectedProcedure.input(z.object({

@@ -1,6 +1,6 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
-import { deleteObject, getObject, putObject } from '@/utils/s3';
+import { getObject, putObject } from '@/utils/s3';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
@@ -233,12 +233,6 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
             Body: await fetchFile(inputFilePath),
         });
         log.info('Original video uploaded to S3', { uploadId });
-        log.info('Deleting original video from S3', { uploadId });
-
-        await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadId}`);
-        await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadId}.info`);
-
-        log.info(`Deleted original video from S3 for upload ID: ${uploadId}`);
 
         await prisma.upload.update({
             where: {
