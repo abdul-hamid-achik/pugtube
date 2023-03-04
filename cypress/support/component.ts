@@ -31,6 +31,7 @@ declare global {
     interface Chainable {
       mount: typeof mount
       signIn: (email: string, password: string) => Cypress.Chainable<void>
+      signOut: () => Cypress.Chainable<void>
     }
   }
   interface Window {

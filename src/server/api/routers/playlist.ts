@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const playlistRouter = createTRPCRouter({
-    getSegmentsByUploadId: publicProcedure.input(z.string().uuid()).query(async ({ ctx, input }) => {
+    getSegmentsByUploadId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
         const video = await ctx.prisma.video.findUniqueOrThrow({
             where: {
                 uploadId: input,

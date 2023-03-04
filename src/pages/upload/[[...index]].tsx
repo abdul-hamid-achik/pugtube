@@ -39,7 +39,7 @@ export default function Upload() {
     const { mutate } = api.video.create.useMutation({
         onSuccess: async (video) => {
             uppy.resetProgress();
-            await router.push(`/upload/processing?uploadId=${video.uploadId}`);
+            await router.push(`/upload/status?uploadId=${video.uploadId}`);
         },
     });
 
@@ -58,14 +58,6 @@ export default function Upload() {
             upload: { id: uploadId },
             duration: 0,
         }, {
-            onSuccess: async (video) => {
-                uppy.resetProgress();
-                await router.push(
-                    userId ?
-                        `/channel/${userId}/watch/${video.id}` :
-                        `/watch/${video.id}`
-                );
-            },
             onError: (error) => {
                 setError('title', { message: error.message });
             }

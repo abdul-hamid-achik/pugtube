@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 export const videoRouter = createTRPCRouter({
-  getByUploadId: publicProcedure.input(z.string().uuid()).query(({ ctx, input }) => {
+  getByUploadId: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.video.findUniqueOrThrow({
       where: {
         uploadId: input,
