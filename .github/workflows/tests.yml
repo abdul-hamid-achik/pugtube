@@ -88,8 +88,8 @@ jobs:
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
-          build: pnpm build
-          start: pnpm start
+          build: false
+          start: pnpm dev
           install: pnpm install
           wait-on: http://localhost:3000
           component: true

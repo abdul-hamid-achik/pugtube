@@ -36,7 +36,7 @@ export default function Home() {
           <section className="my-8">
             {/* recommended videos section */}
             <div className="flex h-full flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
-              {!isLoading && !isError && data?.map((video) => (<VideoCard key={video.id} video={video} />))}
+              {!isLoading && !isError && data?.map(({ video, author }) => (<VideoCard key={video.id} video={video} author={author} />))}
             </div>
           </section>
           <section className="my-8">
