@@ -6,7 +6,9 @@ PugTube is a video sharing platform where users can upload, watch and interact w
 - React
 - Next.js
 - Prisma
-- PostgreSQL
+- Planetscale
+- Clerkjs
+- Inngest
 
 ## Getting Started
 
@@ -18,6 +20,13 @@ pnpm dev
 ```
 
 This will install the dependencies and start the development server.
+
+## How do i develop with this?
+
+```
+pnpm e2e # i do all my tests here first and then this runs cypress and my tests and it reloads when i change the code, its very nice
+pnpm background # this adds the inngest dev server, you need this for the transcoding and thumbnailing and more
+```
 
 ## Usage
 
