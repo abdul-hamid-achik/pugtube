@@ -39,15 +39,19 @@ const config = {
       },
       {
         protocol: "https",
+        hostname: "www.gravatar.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+      },
+      {
+        protocol: "https",
         hostname: "pugtube.s3.us-west-1.amazonaws.com",
       },
       {
         protocol: "https",
         hostname: "pugtube-dev.s3.us-west-1.amazonaws.com",
-      },
-      {
-        protocol: "https",
-        hostname: "www.gravatar.com",
       },
     ],
   },
