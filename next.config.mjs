@@ -26,6 +26,31 @@ const config = {
     // for more information.
     hideSourceMaps: true,
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "loremflickr.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cloudflare-ipfs.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pugtube.s3.us-west-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pugtube-dev.s3.us-west-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+      },
+    ],
+  },
 };
 
 export default withSentryConfig(withAxiom(config), {

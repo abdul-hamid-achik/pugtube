@@ -1,4 +1,5 @@
 import { getSignedUrl } from '@/utils/s3';
+import { clerkClient } from '@clerk/nextjs/server';
 import type { Video } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
@@ -20,15 +21,25 @@ export const videoRouter = createTRPCRouter({
   ).query(async ({ ctx, input }) => {
     const page = input.page ?? 1;
     const perPage = input.perPage ?? 10;
-    const videos = await ctx.prisma.video.findMany({
+    let videos = await ctx.prisma.video.findMany({
       orderBy: {
         createdAt: 'desc',
       },
       skip: (page - 1) * perPage,
       take: perPage,
     })
+    videos = await Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
 
-    return Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
+    const authors = await clerkClient.users.getUserList({
+      userId: videos.map((video) => video.userId),
+    });
+
+    const videosWithAuthor = videos.map((video) => ({
+      video,
+      author: authors.find((author) => author.id === video.userId)!,
+    }));
+
+    return videosWithAuthor;
   }),
 
   create: protectedProcedure.input(z.object({
