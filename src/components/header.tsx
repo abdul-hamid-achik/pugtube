@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { UserButton } from '@clerk/nextjs';
+import { RedirectToSignIn, RedirectToSignUp, UserButton, useUser } from '@clerk/nextjs';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
 
@@ -8,6 +8,7 @@ interface FormData {
 }
 
 export default function Header() {
+  const { isSignedIn } = useUser();
   const { register, handleSubmit } = useForm<FormData>();
   const onSubmit = (_data: FormData) => { };
 
@@ -44,7 +45,10 @@ export default function Header() {
           </form>
         </div>
         <div className="ml-auto">
-          <UserButton />
+          {isSignedIn ? <UserButton /> : <>
+            <RedirectToSignIn />
+            <RedirectToSignUp />
+          </>}
         </div>
       </div>
     </div>
