@@ -26,8 +26,8 @@ specifiers:
   '@trpc/next': ^10.8.1
   '@trpc/react-query': ^10.8.1
   '@trpc/server': ^10.8.1
-  '@tus/s3-store': 1.0.0-beta.3
-  '@tus/server': 1.0.0-beta.4
+  '@tus/s3-store': ^1.0.0-beta.3
+  '@tus/server': ^1.0.0-beta.5
   '@types/bcryptjs': ^2.4.2
   '@types/cookies': ^0.7.7
   '@types/ejs': ^3.1.2
@@ -119,8 +119,8 @@ dependencies:
   '@trpc/next': 10.9.0_agcdofckp5bsojf5gpkxjg6zzq
   '@trpc/react-query': 10.9.0_22wgxldzdfxutowffn2dykkd3i
   '@trpc/server': 10.9.0
-  '@tus/s3-store': 1.0.0-beta.3_@tus+server@1.0.0-beta.4
-  '@tus/server': 1.0.0-beta.4
+  '@tus/s3-store': 1.0.0-beta.3_@tus+server@1.0.0-beta.5
+  '@tus/server': 1.0.0-beta.5
   '@uppy/core': 3.0.4
   '@uppy/dashboard': 3.2.0_@uppy+core@3.0.4
   '@uppy/drag-drop': 3.0.1_@uppy+core@3.0.4
@@ -3946,21 +3946,21 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@tus/s3-store/1.0.0-beta.3_@tus+server@1.0.0-beta.4:
+  /@tus/s3-store/1.0.0-beta.3_@tus+server@1.0.0-beta.5:
     resolution: {integrity: sha512-I/RWOjJJ2RsrTf03m8iDHMKNlNYyPHMDoOKSIWYAG14quWUVoSQY2+uup7DNqf/wCGj6HPyyxuEPkPtGECu8cg==}
     engines: {node: '>=16'}
     peerDependencies:
       '@tus/server': ^1.0.0-beta.4
     dependencies:
-      '@tus/server': 1.0.0-beta.4
+      '@tus/server': 1.0.0-beta.5
       aws-sdk: 2.1315.0
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@tus/server/1.0.0-beta.4:
-    resolution: {integrity: sha512-sl7io5DDy5ynxGu0q2NZ3tt+9VZfW2gVkJtOT5WdnRsbn+obfdXJS6jsl01SR/tEOZ0aYwiMSVbmQy6F92xbvA==}
+  /@tus/server/1.0.0-beta.5:
+    resolution: {integrity: sha512-mOyLDJJTC7lpO0OEgl8t2RS/aN9lfz4Auw/vrKQyb1JBC16Tqd6Efhy4KUPcBy/nWLN6/RlO0NQKqdvcSZ6P6w==}
     engines: {node: '>=16'}
     dependencies:
       debug: 4.3.4
