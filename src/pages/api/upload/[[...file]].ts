@@ -41,6 +41,7 @@ const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
 
 const tusServer = new Server({
   path: '/api/upload',
+  respectForwardedHeaders: true,
   async onUploadCreate(_, response, upload) {
     const { ok, expected, received } = validateMetadata(upload as unknown as PatchedUpload);
     log.info(`Upload created: ${upload.id} ${ok ? '✅' : '❌'}`);
