@@ -51,7 +51,7 @@ jobs:
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
-          start: pnpm start
+          start: pnpm dev
           install: pnpm install
           wait-on: 'http://localhost:3000'
           record: true
