@@ -65,9 +65,9 @@ export default function Upload() {
     };
 
     return (
-        <div className="bg-gray-100">
+        <div className="bg-gray-900 ">
             <div className="mx-auto max-w-screen-lg px-6 py-8">
-                <h1 className="mb-4 text-2xl font-medium">Upload Video</h1>
+                <h1 className="mb-4 text-2xl font-medium text-white">Upload Video</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-8 rounded-lg bg-white p-6 shadow">
                         <div className="mb-6">
@@ -85,15 +85,16 @@ export default function Upload() {
                             {errors.category && <p className="text-xs italic text-red-500">{errors.category.message}</p>}
                             <input {...register('category', { required: true })} className=" w-full rounded-lg border py-2 px-3 leading-tight text-gray-700 focus:outline-none" />
                         </div>
-                        <div className="mb-6 text-center">
-                            <Dashboard id="upload" uppy={uppy} plugins={['Tus']} hideUploadButton />
+                        <div className="mb-6 flex justify-center">
+                            {/* @ts-ignore */}
+                            <Dashboard id="upload" uppy={uppy} plugins={['Tus']} hideUploadButton showAddFilesPanel={false} />
                         </div>
 
                         <div>
                             <button type="submit" className={
-                                `rounded ${errors.title || errors.category || errors.description ? 'bg-red-500' : 'bg-blue-500'
+                                `rounded ${errors.title || errors.category || errors.description ? 'bg-red-500' : 'bg-gray-700'
                                 } py-2 px-4 font-bold text-white ${errors.title || errors.category || errors.description ?
-                                    'bg-red-500' : 'hover:bg-blue-700'
+                                    'bg-red-500' : 'hover:bg-gray-500'
                                 } focus:outline-none`}>Upload</button>
                         </div>
                     </div>

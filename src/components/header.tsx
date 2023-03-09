@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { RedirectToSignIn, RedirectToSignUp, UserButton, useUser } from '@clerk/nextjs';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
 interface FormData {
@@ -18,7 +19,7 @@ export default function Header() {
       <div className="flex items-center">
         <div className="grow">
           <form onSubmit={() => handleSubmit(onSubmit)}>
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
               <div className="flex grow items-center space-x-2 rounded-lg bg-gray-800 px-3 py-2">
                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                 <label htmlFor="search" className="sr-only">
@@ -45,6 +46,11 @@ export default function Header() {
           </form>
         </div>
         <div className="ml-auto">
+          <Link href="/upload" className="ml-3 rounded bg-gray-600 px-3 py-2 text-white">
+            Upload
+          </Link>
+        </div>
+        <div className="ml-auto  px-3 py-2">
           {isSignedIn ? <UserButton /> : <>
             <RedirectToSignIn />
             <RedirectToSignUp />
