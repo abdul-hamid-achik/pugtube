@@ -118,7 +118,5 @@ tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
 });
 
 export default function handler(request: NextApiRequest, response: NextApiResponse) {
-  log.info(`Request received: ${request.method} ${request.url}`);
-  log.info(`Request headers: ${JSON.stringify(request.headers)}`);
   return tusServer.handle(request, response);
 }
