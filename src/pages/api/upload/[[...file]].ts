@@ -94,7 +94,7 @@ const tusServer = new Server({
   },
   namingFunction: () => uuidv4(),
   datastore: new S3Store({
-    partSize: 50 * 1024 * 1024,
+    partSize: 2 * 1024 * 1024,
     s3ClientConfig: {
       region: process.env.AWS_REGION as string,
       accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
