@@ -6,8 +6,7 @@ import Head from 'next/head';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
-    props: {
-    }
+    props: {}
   }
 }
 
