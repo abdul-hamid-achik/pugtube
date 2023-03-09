@@ -25,8 +25,8 @@ export default function Home() {
         <meta name="description" content="A free video sharing service" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="bg-white">
-        <header className="bg-white p-4">
+      <div className="bg-gray-900 py-2">
+        <header className="bg-gray-900 p-4">
           <Header />
         </header>
         <main className="container mx-auto max-w-screen-xl px-4">
@@ -43,7 +43,7 @@ export default function Home() {
             {/* subscribed channels section */}
           </section>
         </main>
-        <footer className="bg-white p-4">
+        <footer className="bg-gray-900 py-2">
           {/* footer content */}
         </footer>
       </div>
