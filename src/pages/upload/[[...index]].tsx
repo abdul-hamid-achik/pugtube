@@ -30,7 +30,7 @@ export default function Upload() {
         id: 'uppy-tus',
         endpoint: '/api/upload',
         retryDelays: [0, 1000, 3000, 5000],
-        chunkSize: 50 * 1024 * 1024,
+        chunkSize: 2 * 1024 * 1024,
     }), []);
 
     const { userId } = useAuth();
