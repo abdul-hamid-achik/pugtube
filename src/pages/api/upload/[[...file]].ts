@@ -41,7 +41,7 @@ const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
 
 const tusServer = new Server({
   path: '/api/upload',
-  respectForwardedHeaders: true,
+  respectForwardedHeaders: false,
   async onUploadCreate(_, response, upload) {
     const { ok, expected, received } = validateMetadata(upload as unknown as PatchedUpload);
     log.info(`Upload created: ${upload.id} ${ok ? '✅' : '❌'}`);
@@ -118,5 +118,7 @@ tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
 });
 
 export default function handler(request: NextApiRequest, response: NextApiResponse) {
+  log.info(`Request received: ${request.method} ${request.url}`);
+  log.info(`Request headers: ${JSON.stringify(request.headers)}`);
   return tusServer.handle(request, response);
 }
