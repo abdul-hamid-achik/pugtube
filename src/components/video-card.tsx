@@ -44,7 +44,7 @@ export default function VideoCard({ video, author }: VideoCardProps) {
               width={40}
               height={40}
             />
-            <Link href={`/channel/${author?.id}`}
+            <Link href={`/channel/${author?.username}`}
               className="ml-2 font-medium text-gray-800 hover:text-gray-600">
               {author?.username}
             </Link>
