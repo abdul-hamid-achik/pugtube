@@ -30,7 +30,6 @@ const WatchPage: NextPage<WatchPageProps> = ({ playlistUrl, ...props }) => {
             <div className="flex justify-between px-4">
                 <div>
                     <p className="mb-4 text-lg text-white">{props?.category}</p>
-                    <p className="mb-4 text-lg text-white">{props?.author}</p>
                     {props?.author &&
                         <div className="mt-2 flex items-center">
                             <Image
@@ -41,7 +40,7 @@ const WatchPage: NextPage<WatchPageProps> = ({ playlistUrl, ...props }) => {
                                 height={40}
                             />
                             <Link href={`/channel/${props?.author}`}
-                                className="ml-2 font-medium text-gray-800 hover:text-gray-600">
+                                className="ml-2 font-medium text-white hover:text-gray-200">
                                 {props?.author}
                             </Link>
                         </div>}

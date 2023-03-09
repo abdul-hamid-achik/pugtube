@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import Hls from 'hls.js';
-import { log } from 'next-axiom';
 import { useEffect, useRef } from 'react';
 interface VideoPlayerProps {
   src: string;
@@ -32,6 +31,7 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
       ref={videoRef}
       src={src}
       style={{ maxWidth: '100%' }}
+      width="100%"
       controls
     />
   );
