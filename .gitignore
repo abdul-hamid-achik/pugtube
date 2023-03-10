@@ -45,7 +45,7 @@ cypress/videos/*
 cypress/screenshots/*
 
 # tauri
-out
+.tauri
 src-tauri/target
 # Sentry
 .sentryclirc

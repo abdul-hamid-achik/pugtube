@@ -4,7 +4,7 @@
     "beforeBuildCommand": "pnpm build",
     "beforeDevCommand": "pnpm dev",
     "devPath": "http://localhost:3000",
-    "distDir": "../out"
+    "distDir": "../.tauri"
   },
   "package": {
     "productName": "pugtube",
