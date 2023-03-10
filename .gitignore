@@ -43,6 +43,10 @@ yarn-error.log*
 cypress/downloads/*
 cypress/videos/*
 cypress/screenshots/*
+
+# tauri
+out
+src-tauri/target
 # Sentry
 .sentryclirc
 sentry.properties
