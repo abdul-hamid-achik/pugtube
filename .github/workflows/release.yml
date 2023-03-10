@@ -69,7 +69,9 @@ jobs:
         run: pnpm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.production.local .env
 
       - name: get version
         run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
@@ -115,7 +117,10 @@ jobs:
         run: pnpm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          pnpx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          cp .vercel/.env.production.local .env
+
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
