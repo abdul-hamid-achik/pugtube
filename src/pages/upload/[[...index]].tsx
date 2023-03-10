@@ -3,12 +3,13 @@ import '@uppy/dashboard/dist/style.css';
 
 import { api } from '@/utils/api';
 import { useAuth } from '@clerk/nextjs';
+import { invoke } from "@tauri-apps/api/tauri";
 import Uppy, { UppyFile } from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import Tus from '@uppy/tus';
 import { GetServerSidePropsContext } from 'next';
 import router from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface FormData {
@@ -31,12 +32,9 @@ export default function Upload() {
         endpoint: '/api/upload',
         retryDelays: [0, 1000, 3000, 5000],
         chunkSize: 10_485_760, // 10 MB
-        // chunkSize: 5_242_880, // 5 MB
-        // chunkSize: 4_718_592, // 4.5 MB
     }), []);
 
     const { userId } = useAuth();
-
     const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
     const { mutate } = api.video.create.useMutation({
         onSuccess: async (video) => {
@@ -44,6 +42,13 @@ export default function Upload() {
             await router.push(`/upload/status?uploadId=${video.uploadId}`);
         },
     });
+
+    useEffect(() => {
+        invoke('greet', { name: 'World' })
+            .then(console.log)
+            .catch(console.error)
+    }, []);
+
 
     const onSubmit = async (data: FormData) => {
         const { successful, failed } = await uppy.upload();
