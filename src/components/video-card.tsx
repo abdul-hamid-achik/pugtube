@@ -9,17 +9,18 @@ import { useState } from 'react';
 
 interface VideoCardProps {
   video: Video;
-  author: User
+  author: User;
+  channel?: boolean;
 }
 
-export default function VideoCard({ video, author }: VideoCardProps) {
+export default function VideoCard({ video, author, channel }: VideoCardProps) {
   const [failedToLoad, setFailedToLoad] = useState(false);
 
   const onError = (event: React.SyntheticEvent<HTMLImageElement>) => setFailedToLoad(true);
 
   return (
-    <div className="overflow-hidden rounded-md bg-white shadow-md">
-      <Link href={`/watch/${video.id}`}>
+    <div className="max-h-fit rounded-md bg-white shadow-md">
+      <Link href={channel ? `/channel/${author.username}/video/${video.id}` : `/watch/${video.id}`}>
         {video.thumbnailUrl && !failedToLoad ? <Image
           src={video.thumbnailUrl as string}
           alt={video.title}
@@ -28,15 +29,15 @@ export default function VideoCard({ video, author }: VideoCardProps) {
           height={480}
         /> : <Image src="/images/video-placeholder.jpg" alt={video.title} width={720} height={480} />}
       </Link>
-      <div className="p-4">
-        <Link className="block text-lg font-medium text-gray-800 hover:text-gray-600" href={`/watch/${video.id}`}>
-          {video.title}
-        </Link>
-        <p className="text-gray-500">{video.description}</p>
-        <p className="text-gray-500">{DateTime.fromISO(video.createdAt.toISOString()).toRelative()}</p>
-
+      <div className="flex flex-row justify-between">
+        <div className="flex-1 p-4">
+          <Link className="block text-lg font-medium text-gray-800 hover:text-gray-600" href={`/watch/${video.id}`}>
+            {video.title}
+          </Link>
+          <p className="text-gray-400">{DateTime.fromISO(typeof video?.createdAt === "object" ? video.createdAt.toISOString() : video.createdAt).toRelative()}</p>
+        </div>
         {author &&
-          <div className="mt-2 flex items-center">
+          <div className="flex flex-col items-end p-4">
             <Image
               className="h-10 w-10 rounded-full object-cover shadow-sm"
               src={author?.profileImageUrl as string}
@@ -45,8 +46,8 @@ export default function VideoCard({ video, author }: VideoCardProps) {
               height={40}
             />
             <Link href={`/channel/${author?.username}`}
-              className="ml-2 font-medium text-gray-800 hover:text-gray-600">
-              {author?.username}
+              className="ml-2 text-sm text-gray-400 hover:text-gray-600">
+              @{author?.username}
             </Link>
           </div>}
       </div>
