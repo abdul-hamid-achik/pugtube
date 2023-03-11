@@ -1,4 +1,5 @@
 import Header from '@/components/header';
+import Spinner from '@/components/spinner';
 import VideoCard from '@/components/video-card';
 import { api } from '@/utils/api';
 import { GetServerSidePropsContext } from 'next';
@@ -13,7 +14,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 export default function Home() {
   const { data, isError, isLoading } = api.video.getAll.useQuery({
     page: 1,
-    perPage: 10,
+    perPage: 9,
   })
 
 
@@ -24,7 +25,7 @@ export default function Home() {
         <meta name="description" content="A free video sharing service" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="bg-gray-900 py-2">
+      <div className="overflow-auto bg-gray-900 py-2">
         <header className="bg-gray-900 p-4">
           <Header />
         </header>
@@ -34,7 +35,8 @@ export default function Home() {
           </section>
           <section className="my-8">
             {/* recommended videos section */}
-            <div className="flex h-full flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex h-screen w-full flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+              {isLoading && <Spinner />}
               {!isLoading && !isError && data?.map(({ video, author }) => (<VideoCard key={video.id} video={video} author={author} />))}
             </div>
           </section>
