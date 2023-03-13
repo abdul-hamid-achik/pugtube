@@ -12,10 +12,10 @@ interface ChannelPageProps {
 
 }
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const { userName } = context.params as { userName: string }
+    const { username } = context.params as { username: string }
 
     const users = await clerkClient.users.getUserList({
-        username: [userName]
+        username: [username]
     })
 
     if (users.length === 0) {
@@ -52,5 +52,3 @@ export default function ChannelPage(props: ChannelPageProps) {
         </div>
     )
 }
-
-// Path: src/pages/channel/[id].tsx
