@@ -25,17 +25,21 @@ export default function Home() {
         <meta name="description" content="A free video sharing service" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="overflow-auto bg-gray-900 py-2">
-        <header className="bg-gray-900 p-4">
+      <div className="h-full bg-gray-900 py-2">
+        <div className="sticky top-0 z-10 bg-gray-900 pl-4">
           <Header />
-        </header>
-        <main className="container mx-auto max-w-screen-xl px-4">
+        </div>
+        <div className="container relative mx-auto max-w-screen-xl px-4">
           <section className="my-8">
             {/* hero section */}
+            <div className="flex flex-col gap-4">
+              <h1 className="text-4xl font-bold text-white">Pugtube</h1>
+              <p className="text-gray-300">A free video sharing service</p>
+            </div>
           </section>
-          <section className="my-8">
+          <section className="my-8 min-h-screen">
             {/* recommended videos section */}
-            <div className="flex h-screen w-full flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex h-full w-full flex-col gap-4 overflow-y-auto md:grid md:grid-cols-2 lg:grid-cols-3">
               {isLoading && <Spinner />}
               {!isLoading && !isError && data?.map(({ video, author }) => (<VideoCard key={video.id} video={video} author={author} />))}
             </div>
@@ -43,12 +47,8 @@ export default function Home() {
           <section className="my-8">
             {/* subscribed channels section */}
           </section>
-        </main>
-        <footer className="bg-gray-900 py-2">
-          {/* footer content */}
-        </footer>
+        </div>
       </div>
     </>
   );
 }
-

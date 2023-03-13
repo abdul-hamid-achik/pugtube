@@ -1,5 +1,6 @@
 import VideoCard from '@/components/video-card';
 import { prisma } from '@/server/db';
+import { getSignedUrl } from '@/utils/s3';
 import type { User } from '@clerk/nextjs/api';
 import { clerkClient } from "@clerk/nextjs/server";
 import { Video } from '@prisma/client';
@@ -35,7 +36,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     return {
         props: {
-            videos: JSON.parse(JSON.stringify(videos)),
+            videos: JSON.parse(JSON.stringify(videos.map((video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? getSignedUrl(video.thumbnailUrl as string) : null })))),
             user: JSON.parse(JSON.stringify(user))
         }
     }

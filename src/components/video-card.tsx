@@ -19,7 +19,7 @@ export default function VideoCard({ video, author, channel }: VideoCardProps) {
   const onError = (event: React.SyntheticEvent<HTMLImageElement>) => setFailedToLoad(true);
 
   return (
-    <div className="max-h-fit rounded-md bg-white shadow-md">
+    <div className="h-fit rounded-md bg-white shadow-md">
       <Link href={channel ? `/channel/${author.username}/video/${video.id}` : `/watch/${video.id}`}>
         {video.thumbnailUrl && !failedToLoad ? <Image
           src={video.thumbnailUrl as string}
@@ -30,14 +30,14 @@ export default function VideoCard({ video, author, channel }: VideoCardProps) {
         /> : <Image src="/images/video-placeholder.jpg" alt={video.title} width={720} height={480} />}
       </Link>
       <div className="flex flex-row justify-between">
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 pr-0">
           <Link className="block text-lg font-medium text-gray-800 hover:text-gray-600" href={`/watch/${video.id}`}>
             {video.title}
           </Link>
           <p className="text-gray-400">{DateTime.fromISO(typeof video?.createdAt === "object" ? video.createdAt.toISOString() : video.createdAt).toRelative()}</p>
         </div>
         {author &&
-          <div className="flex flex-col items-end p-4">
+          <div className="flex flex-col items-end p-4 pl-0">
             <Image
               className="h-10 w-10 rounded-full object-cover shadow-sm"
               src={author?.profileImageUrl as string}

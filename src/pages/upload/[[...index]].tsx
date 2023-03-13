@@ -72,7 +72,7 @@ export default function Upload() {
     };
 
     return (
-        <div className="bg-gray-900 ">
+        <div className="max-h-screen overflow-y-auto bg-gray-900">
             <div className="mx-auto max-w-screen-lg px-6 py-8">
                 <h1 className="mb-4 text-2xl font-medium text-white">Upload Video</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
