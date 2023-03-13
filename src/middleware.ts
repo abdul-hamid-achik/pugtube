@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 // Set the paths that don't require the user to be signed in
-const publicPaths = ['/', '/sign-in*', '/sign-up*', '/watch*', '/terms-of-service', '/privacy-policy', '/api*', '/_next*']
+const publicPaths = ['/', '/sign-in*', '/sign-up*', '/watch*', '/terms-of-service', '/privacy-policy', '/api*', '/channel*']
 
 const isPublic = (path: string) => {
 
@@ -13,10 +13,6 @@ const isPublic = (path: string) => {
 }
 
 export default withClerkMiddleware((request: NextRequest) => {
-    if (request.nextUrl.pathname.startsWith("/_next/")) {
-        return NextResponse.next();
-    }
-
     if (isPublic(request.nextUrl.pathname)) {
         return NextResponse.next()
     }
