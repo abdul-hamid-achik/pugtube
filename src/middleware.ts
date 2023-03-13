@@ -6,12 +6,17 @@ import { NextResponse } from 'next/server'
 const publicPaths = ['/', '/sign-in*', '/sign-up*', '/watch*', '/terms-of-service', '/privacy-policy', '/api*', '/_next*']
 
 const isPublic = (path: string) => {
+
     return publicPaths.find(x =>
         path.match(new RegExp(`^${x}$`.replace('*$', '($|/)')))
     )
 }
 
 export default withClerkMiddleware((request: NextRequest) => {
+    if (request.nextUrl.pathname.startsWith("/_next/")) {
+        return NextResponse.next();
+    }
+
     if (isPublic(request.nextUrl.pathname)) {
         return NextResponse.next()
     }
