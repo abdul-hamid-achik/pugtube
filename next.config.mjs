@@ -26,7 +26,6 @@ const config = {
     // for more information.
     hideSourceMaps: true,
   },
-
   images: {
     remotePatterns: [
       {
