@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <meta name="description" content="A free video sharing service" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <div className="h-screen overflow-y-auto bg-gray-900">
+        <div className="h-screen max-h-screen overflow-y-auto bg-gray-900">
             <div className="sticky top-0 z-10 bg-gray-900 pl-4">
                 <Header />
             </div>
