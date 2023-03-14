@@ -5,7 +5,14 @@ import ejs from 'ejs';
 import { NextApiHandler } from 'next';
 
 const watchHandler: NextApiHandler = async (req, res) => {
-    const { videoId } = req.query as { videoId: string };
+    let { videoId } = req.query as { videoId: string[] | string };
+
+    videoId = videoId[0] || ''
+
+    if (videoId && videoId.endsWith('.m3u8')) {
+        videoId = videoId.replace('.m3u8', '');
+    }
+
     const playlist = await prisma.hlsPlaylist.findFirst({
         where: { videoId },
         include: {

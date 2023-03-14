@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps<WatchPageProps> = async ({ p
     return {
         props: {
             uploadId: video?.upload?.id,
-            playlistUrl: isVideoReady ? `/api/watch/${videoId}` : '',
+            playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : '',
             title: video?.title || 'Unavailable',
             description: video?.description || '',
             category: video?.category || 'Uncategorized',
