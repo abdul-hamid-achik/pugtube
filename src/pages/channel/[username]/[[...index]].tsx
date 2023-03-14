@@ -1,16 +1,20 @@
+import Layout from '@/components/layout';
 import VideoCard from '@/components/video-card';
+import { NextPageWithLayout } from '@/pages/_app';
 import { prisma } from '@/server/db';
 import { getSignedUrl } from '@/utils/s3';
 import type { User } from '@clerk/nextjs/api';
 import { clerkClient } from "@clerk/nextjs/server";
 import { Video } from '@prisma/client';
 import { GetServerSidePropsContext } from 'next';
+import { ReactElement } from 'react';
 
-interface ChannelPageProps {
+interface PageProps {
     videos: Video[]
     user: User
 
 }
+
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const { username } = context.params as { username: string }
 
@@ -42,9 +46,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
 }
 
-export default function ChannelPage(props: ChannelPageProps) {
+const Page: NextPageWithLayout<PageProps> = (props) => {
     return (
-        <div className="m-0 h-screen w-screen overflow-y-auto bg-gray-700">
+        <div className="m-0 w-full bg-gray-700">
             <h1 className="p-4 text-white">@{props.user.username} - Channel Page:</h1>
             <div className="flex h-screen w-full flex-col gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
                 {props.videos.map((video) => (<VideoCard key={video.id} video={video} author={props.user} channel />))}
@@ -52,3 +56,15 @@ export default function ChannelPage(props: ChannelPageProps) {
         </div>
     )
 }
+
+
+
+Page.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
+export default Page;

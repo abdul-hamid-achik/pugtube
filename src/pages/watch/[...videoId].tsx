@@ -1,11 +1,14 @@
+import Layout from '@/components/layout';
 import VideoPlayer from '@/components/video-player';
+import { NextPageWithLayout } from '@/pages/_app';
 import { prisma } from '@/server/db';
 import { clerkClient } from '@clerk/nextjs/server';
 import { DateTime } from 'luxon';
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-interface WatchPageProps {
+import { ReactElement } from 'react';
+interface PageProps {
     playlistUrl: string;
     uploadId: string | undefined;
     title: string;
@@ -18,9 +21,9 @@ interface WatchPageProps {
 
 
 
-const WatchPage: NextPage<WatchPageProps> = ({ playlistUrl, ...props }) => {
+const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, ...props }) => {
     return (
-        <div className="m-0 h-screen w-screen bg-gray-700">
+        <div className="m-0 h-full w-full bg-gray-700">
             <div className="px-4">
                 <h1 className="mb-4 text-xl text-white">{props?.title}</h1>
             </div>
@@ -54,7 +57,7 @@ const WatchPage: NextPage<WatchPageProps> = ({ playlistUrl, ...props }) => {
     );
 };
 
-export const getServerSideProps: GetServerSideProps<WatchPageProps> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
     const { videoId } = params as { videoId: string };
     const video = await prisma.video.findFirst({
         where: { id: String(videoId) },
@@ -79,4 +82,13 @@ export const getServerSideProps: GetServerSideProps<WatchPageProps> = async ({ p
 
 };
 
-export default WatchPage;
+
+Page.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
+export default Page;
