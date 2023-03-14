@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { RedirectToSignIn, RedirectToSignUp, UserButton, useUser } from '@clerk/nextjs';
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -45,15 +45,23 @@ export default function Header() {
             </div>
           </form>
         </div>
-        <div className="ml-auto">
+        {isSignedIn && <div className="ml-auto">
           <Link href="/upload" className="ml-3 rounded bg-gray-600 px-3 py-2 text-white">
             Upload
           </Link>
-        </div>
-        <div className="ml-auto  px-3 py-2">
+        </div>}
+        <div className="ml-auto flex justify-center px-3 py-2">
           {isSignedIn ? <UserButton /> : <>
-            <RedirectToSignIn />
-            <RedirectToSignUp />
+            <SignInButton>
+              <p className="cursor-pointer px-3 py-2 text-white">
+                Sign In
+              </p>
+            </SignInButton>
+            <SignUpButton>
+              <p className="cursor-pointer px-3 py-2 text-white">
+                Don&apos;t have an account?
+              </p>
+            </SignUpButton>
           </>}
         </div>
       </div>
