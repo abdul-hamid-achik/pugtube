@@ -13,20 +13,21 @@ export const videoRouter = createTRPCRouter({
     })
   }),
 
-  getAll: publicProcedure.input(
-    z.object({
-      page: z.number().int().optional(),
-      perPage: z.number().int().optional(),
-    }),
+  feed: publicProcedure.input(z.object({
+    limit: z.number().min(1).max(100).nullish(),
+    cursor: z.string().nullish(),
+    skip: z.number().optional()
+  })
   ).query(async ({ ctx, input }) => {
-    const page = input.page ?? 1;
-    const perPage = input.perPage ?? 10;
+    const limit = input.limit ?? 9;
+    const { cursor, skip } = input;
     let videos = await ctx.prisma.video.findMany({
+      take: limit + 1,
+      skip,
+      cursor: cursor ? { id: cursor } : undefined,
       orderBy: {
         createdAt: 'desc',
       },
-      skip: (page - 1) * perPage,
-      take: perPage,
     })
     videos = await Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
 
@@ -34,12 +35,22 @@ export const videoRouter = createTRPCRouter({
       userId: videos.map((video) => video.userId),
     });
 
-    const videosWithAuthor = videos.map((video) => ({
+    const items = videos.map((video) => ({
       video,
       author: authors.find((author) => author.id === video.userId)!,
     }));
 
-    return videosWithAuthor;
+    let nextCursor: typeof cursor | undefined = undefined;
+    if (items.length > limit) {
+      const nextItem = items.pop()
+      nextCursor = nextItem!.video!.id;
+    }
+
+    return {
+      items,
+      nextCursor,
+    };
+
   }),
 
   create: protectedProcedure.input(z.object({
