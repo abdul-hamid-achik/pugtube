@@ -11,6 +11,7 @@ import { withAxiom } from "next-axiom";
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  output: "standalone",
   /* If trying out the experimental appDir, comment the i18n config out
    * @see https://github.com/vercel/next.js/issues/41980 */
   i18n: {

@@ -1,0 +1,50 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '--build-arg'
+  - 'VERCEL_TOKEN=$_VERCEL_TOKEN'
+  - '--build-arg'
+  - 'VERCEL_ORG_ID=$_VERCEL_ORG_ID'
+  - '--build-arg'
+  - 'VERCEL_PROJECT_ID=$_VERCEL_PROJECT_ID'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/pugtube:$TAG_NAME'
+  - '--cache-from'
+  - 'gcr.io/$PROJECT_ID/pugtube:latest'
+  - '.'
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'tag'
+  - 'gcr.io/$PROJECT_ID/pugtube:$TAG_NAME'
+  - 'gcr.io/$PROJECT_ID/pugtube:latest'
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/pugtube:$TAG_NAME'
+- name: 'hashicorp/terraform:1.4.0'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - 'terraform init'
+- name: 'hashicorp/terraform:1.4.0'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - 'terraform apply -auto-approve -var tag_name=$TAG_NAME -var vercel_token=$_VERCEL_TOKEN -var vercel_org_id=$_VERCEL_ORG_ID -var vercel_project_id=$_VERCEL_PROJECT_ID'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'pugtube'
+  - '--image'
+  - 'gcr.io/$PROJECT_ID/pugtube:$TAG_NAME'
+  - '--platform'
+  - 'managed'
+  - '--region'
+  - 'us-central1'
+  - '--allow-unauthenticated'
+
+images:
+- 'gcr.io/$PROJECT_ID/pugtube:$TAG_NAME'

@@ -51,3 +51,8 @@ src-tauri/target
 # Sentry
 .sentryclirc
 sentry.properties
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.hcl
+*.info
