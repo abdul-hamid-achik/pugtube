@@ -12,30 +12,26 @@ COPY prisma ./
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml\* ./
 
-RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
+ENV CYPRESS_INSTALL_BINARY 0
+RUN yarn global add pnpm && pnpm i
 
 ##### BUILDER
 
 FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
-ARG DATABASE_URL
-ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN \
-    if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
-    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
+ARG VERCEL_TOKEN
+ARG VERCEL_ORG_ID
+ARG VERCEL_PROJECT_ID
+ENV VERCEL_TOKEN=$VERCEL_TOKEN
+ENV VERCEL_ORG_ID=$VERCEL_ORG_ID
+ENV VERCEL_PROJECT_ID=$VERCEL_PROJECT_ID
+ENV SKIP_ENV_VALIDATION 1 
+RUN yarn global add pnpm vercel
+RUN pnpx vercel pull --yes --environment=production --token=$VERCEL_TOKEN && cp .vercel/.env.production.local .env
+RUN pnpm run build
 
 ##### RUNNER
 
