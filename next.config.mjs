@@ -7,7 +7,6 @@
 
 import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
-import webpack from "webpack";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -17,19 +16,6 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
-  },
-  webpack(config, options) {
-    config.plugins = [
-      ...(config.plugins || []),
-      // @ts-ignore
-      new webpack.NormalModuleReplacementPlugin(
-        /node:/,
-        (/** @type {{ request: string; }} */ resource) => {
-          resource.request = resource.request.replace(/^node:/, "");
-        }
-      ),
-    ];
-    return config;
   },
   sentry: {
     // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`

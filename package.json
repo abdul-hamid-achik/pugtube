@@ -90,7 +90,6 @@
     "superjson": "1.9.1",
     "tus-js-client": "^3.0.1",
     "uuid": "^9.0.0",
-    "webpack": "^5.76.2",
     "zod": "^3.20.2"
   },
   "devDependencies": {
