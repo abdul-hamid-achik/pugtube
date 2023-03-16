@@ -9,12 +9,13 @@ import os from 'os';
 import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
+// @ts-ignore
+import { getCreateFFmpegCore } from '@ffmpeg/core';
 
-
+console.log(getCreateFFmpegCore)
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
-    corePath: 'https://pugtube.dev/api/ffmpeg-core',
 });
 
 type ParsedSegment = {
