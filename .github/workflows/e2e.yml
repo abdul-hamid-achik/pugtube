@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Tests
+name: End to end tests
 
 on:
   deployment_status:
@@ -39,7 +39,6 @@ jobs:
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
-          install: pnpm install
           wait-on: ${{ github.event.deployment_status.target_url }}
           record: true
         env:
