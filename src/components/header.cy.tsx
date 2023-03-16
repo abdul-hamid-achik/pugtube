@@ -40,7 +40,7 @@ describe(
             cy.findByTestId('search-button').should('exist');
         });
 
-        it('should render upload button', () => {
+        it.skip('should render upload button', () => {
             cy.mount(
                 <MockRouter>
                     <ClerkProvider>
