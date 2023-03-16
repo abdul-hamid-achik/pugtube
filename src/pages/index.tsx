@@ -19,6 +19,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     orderBy: {
       createdAt: 'desc',
     },
+    where: {
+      upload: {
+        transcoded: true
+      }
+    }
   })
 
   videos = await Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
