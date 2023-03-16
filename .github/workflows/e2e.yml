@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: End to end tests
+name: End to End Tests
 
 on:
   deployment_status:
@@ -15,7 +15,7 @@ env:
   NODE_ENV: test
 
 jobs:
-  e2e:
+  test-on-deployment:
     if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,9 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           record: true
+          wait-on: ${{ github.event.deployment_status.target_url }}
         env:
+            # CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
+            CYPRESS_BASE_URL: https://pugtube.dev
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
