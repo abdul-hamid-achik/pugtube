@@ -10,7 +10,27 @@ import os from 'os';
 
 
 const ffmpeg = createFFmpeg({
-    log: true
+    log: true,
+    logger: ({ type, message }) => {
+        switch (type) {
+            case 'info':
+                log.info(message)
+                break;
+            case 'fferr':
+                log.error(message)
+                break;
+            case 'ffout':
+                log.debug(message)
+                break;
+            default:
+                log.warn(message)
+                break;
+        }
+    },
+    progress: ({ ratio }) => {
+        log.info(`progress: %${Math.floor(ratio * 100)}`)
+    },
+    corePath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.js'
 });
 
 export default inngest.createFunction(
