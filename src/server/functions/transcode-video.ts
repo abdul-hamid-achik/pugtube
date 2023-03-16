@@ -9,14 +9,12 @@ import os from 'os';
 import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
-// @ts-ignore
-import createFFmpegCore from '@ffmpeg/core';
 
 
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
-    corePath: createFFmpegCore
+    corePath: '/api/ffmpeg-core',
 });
 
 type ParsedSegment = {
