@@ -9,9 +9,10 @@ import fs from "fs";
 import { log } from 'next-axiom';
 import os from "os";
 
-const s3 = new S3Client({
+export const s3 = new S3Client({
     region: process.env.AWS_REGION as string,
 } as S3ClientConfig);
+
 
 export async function putObject(input: PutObjectCommandInput) {
     try {

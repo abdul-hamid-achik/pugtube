@@ -3,13 +3,15 @@ import '@uppy/dashboard/dist/style.css';
 
 import { api } from '@/utils/api';
 import { useAuth } from '@clerk/nextjs';
+import { Popover, Switch } from '@headlessui/react';
 import { invoke } from "@tauri-apps/api/tauri";
+import AwsS3Multipart from '@uppy/aws-s3-multipart';
 import Uppy, { UppyFile } from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import Tus from '@uppy/tus';
 import { GetServerSidePropsContext } from 'next';
 import router from 'next/router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface FormData {
@@ -19,20 +21,89 @@ interface FormData {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-
     return {
-        props: {
-        },
+        props: {},
     };
 }
 
 export default function Upload() {
-    const uppy = React.useMemo(() => new Uppy().use(Tus, {
-        id: 'uppy-tus',
-        endpoint: '/api/upload',
-        retryDelays: [0, 1000, 3000, 5000],
-        chunkSize: 10_485_760, // 10 MB
-    }), []);
+    const [isResumable, setIsResumable] = useState(false);
+
+    const uppy = React.useMemo(() => {
+        const uppyInstance = new Uppy();
+
+        if (isResumable) {
+            uppyInstance.use(Tus, {
+                id: 'uppy-tus',
+                endpoint: '/api/upload',
+                retryDelays: [0, 1000, 3000, 5000],
+                chunkSize: 10_485_760, // 10 MB
+            });
+        } else {
+            uppyInstance.use(AwsS3Multipart, {
+                id: 'uppy-s3-multipart',
+                companionUrl: '/api',
+                createMultipartUpload(file) {
+                    return fetch('/api/get-signed-url', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            filename: file.name,
+                            filetype: file.type,
+                            type: file.type,
+                            contentType: file.type,
+                            size: file.size,
+                            operation: 'createMultipartUpload',
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            return { uploadId: data.uploadId, key: data.key };
+                        });
+                },
+                signPart(file, partData) {
+                    return fetch('/api/get-signed-url', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            ...partData,
+                            operation: 'prepareUploadPart',
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            return { url: data.url };
+                        });
+                },
+                completeMultipartUpload(file, data) {
+                    return fetch('/api/get-signed-url', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            key: data.key,
+                            uploadId: data.uploadId,
+                            parts: data.parts,
+                            size: file.size,
+                            filename: file.name,
+                            contentType: file.type,
+                            operation: 'completeMultipartUpload',
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            return { location: data.location };
+                        });
+                },
+            });
+        }
+        return uppyInstance;
+    }, [isResumable]);
 
     const { userId } = useAuth();
     const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
@@ -44,11 +115,10 @@ export default function Upload() {
     });
 
     useEffect(() => {
-        invoke('greet', { name: 'World' })
+        invoke?.('greet', { name: 'World' })
             .then(console.log)
-            .catch(console.error)
+            .catch(console.error);
     }, []);
-
 
     const onSubmit = async (data: FormData) => {
         const { successful, failed } = await uppy.upload();
@@ -77,6 +147,7 @@ export default function Upload() {
                 <h1 className="mb-4 text-2xl font-medium text-white">Upload Video</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-8 rounded-lg bg-white p-6 shadow">
+
                         <div className="mb-6">
                             <label htmlFor="title" className="mb-2 block font-medium text-gray-700">Title</label>
                             {errors.title && <p className="text-xs italic text-red-500">{errors.title.message}</p>}
@@ -92,11 +163,37 @@ export default function Upload() {
                             {errors.category && <p className="text-xs italic text-red-500">{errors.category.message}</p>}
                             <input {...register('category', { required: true })} className=" w-full rounded-lg border py-2 px-3 leading-tight text-gray-700 focus:outline-none" />
                         </div>
-                        <div className="mb-6 flex justify-center">
-                            {/* @ts-ignore */}
-                            <Dashboard id="upload" uppy={uppy} plugins={['Tus']} hideUploadButton showAddFilesPanel={false} />
+
+
+                        <div className="mb-4">
+                            <div className="flex items-center justify-between">
+                                <Popover className="relative inline-block">
+                                    <Popover.Button>
+                                        <span className="cursor-pointer text-gray-600">Resumable Uploads</span>
+                                    </Popover.Button>
+                                    <Popover.Panel className="absolute z-10 mt-1 rounded-md bg-gray-800 p-2 text-sm text-gray-700 shadow-md">
+                                        Resumable uploads may not work at the moment, but you can try them if you want.
+                                    </Popover.Panel>
+                                </Popover>
+
+                                <Switch
+                                    checked={isResumable}
+                                    onChange={setIsResumable}
+                                    className={`${isResumable ? 'bg-blue-600' : 'bg-gray-200'
+                                        } relative inline-flex h-6 w-11 items-center rounded-full`}
+                                >
+                                    <span
+                                        className={`${isResumable ? 'translate-x-6' : 'translate-x-1'
+                                            } inline-block h-4 w-4 rounded-full bg-white`}
+                                    />
+                                </Switch>
+                            </div>
                         </div>
 
+                        <div className="mb-6 flex justify-center">
+                            {/* @ts-ignore */}
+                            <Dashboard id="upload" uppy={uppy} plugins={['Tus', 'AwsS3Multipart']} hideUploadButton showAddFilesPanel={false} />
+                        </div>
                         <div>
                             <button type="submit" className={
                                 `rounded ${errors.title || errors.category || errors.description ? 'bg-red-500' : 'bg-gray-700'
@@ -106,7 +203,7 @@ export default function Upload() {
                         </div>
                     </div>
                 </form>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 }
