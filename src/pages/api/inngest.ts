@@ -50,6 +50,7 @@ export const config = {
   runtime: "edge",
   unstable_allowDynamic: [
     './node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js',
+    'node:crypto',
   ]
 };
 
