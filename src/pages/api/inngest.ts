@@ -46,5 +46,10 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
 
 export default serve('pugtube', [postUpload, transcodeVideo, generateThumbnail, clearUploadArtifacts]);
 
-export const config = { runtime: "edge", };
+export const config = {
+  runtime: "edge",
+  unstable_allowDynamic: [
+    './node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js',
+  ]
+};
 
