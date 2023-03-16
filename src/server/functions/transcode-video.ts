@@ -1,8 +1,6 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { getObject, putObject } from '@/utils/s3';
-// @ts-ignore
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg/dist/ffmpeg.min.js';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
@@ -10,6 +8,7 @@ import os from 'os';
 import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 
 
