@@ -14,7 +14,7 @@ import { Parser } from 'm3u8-parser';
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
-    corePath: '/api/ffmpeg-core',
+    corePath: 'https://pugtube.dev/api/ffmpeg-core',
 });
 
 type ParsedSegment = {
