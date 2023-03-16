@@ -10,9 +10,9 @@ import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
 
+
 const ffmpeg = createFFmpeg({
-    log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
-    corePath: "/ffmpeg-core/ffmpeg-core.js",
+    log: true
 });
 
 type ParsedSegment = {

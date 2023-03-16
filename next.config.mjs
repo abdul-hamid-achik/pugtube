@@ -14,8 +14,25 @@ const config = {
   /* If trying out the experimental appDir, comment the i18n config out
    * @see https://github.com/vercel/next.js/issues/41980 */
   i18n: {
-    locales: ["en"],
+    locales: ["en", "es"],
     defaultLocale: "en",
+  },
+  async headers() {
+    return [
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "require-corp",
+          },
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+        ],
+      },
+    ];
   },
   sentry: {
     // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
