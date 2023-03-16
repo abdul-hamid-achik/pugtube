@@ -28,6 +28,7 @@ const config = {
     //     }
     //   ),
     // ];
+    config.externals["node:fs"]
     return config;
   },
   sentry: {
