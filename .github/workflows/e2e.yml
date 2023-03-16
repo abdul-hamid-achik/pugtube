@@ -2,14 +2,7 @@
 name: Tests
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-  pull_request:
-    branches:
-      - main
-      - dev
+  deployment_status:
 
 defaults:
   run:
@@ -22,7 +15,8 @@ env:
   NODE_ENV: test
 
 jobs:
-  component:
+  e2e:
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Install `Xvfb` for testing in CI/CD simulations
@@ -51,7 +45,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           install: pnpm install
-          component: true
+          wait-on: ${{ github.event.deployment_status.target_url }}
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
