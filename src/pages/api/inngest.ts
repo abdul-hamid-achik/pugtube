@@ -45,3 +45,6 @@ const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({
 });
 
 export default serve('pugtube', [postUpload, transcodeVideo, generateThumbnail, clearUploadArtifacts]);
+
+export const config = { runtime: "experimental-edge", };
+

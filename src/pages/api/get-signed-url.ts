@@ -116,3 +116,6 @@ export default async function handler(
         res.status(status.METHOD_NOT_ALLOWED).json({ message: "Method not allowed" });
     }
 };
+
+export const config = { runtime: "experimental-edge", };
+

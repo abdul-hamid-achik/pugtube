@@ -69,3 +69,6 @@ const watchHandler: NextApiHandler = async (req, res) => {
 };
 
 export default watchHandler;
+
+export const config = { runtime: "experimental-edge", };
+

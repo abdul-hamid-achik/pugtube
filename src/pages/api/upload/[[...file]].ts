@@ -14,7 +14,9 @@ export const config = {
   api: {
     bodyParser: false,
   },
+  runtime: "experimental-edge"
 };
+
 
 interface MetadataValidation { ok: boolean, expected: string, received: string }
 
@@ -122,3 +124,4 @@ tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
 export default function handler(request: NextApiRequest, response: NextApiResponse) {
   return tusServer.handle(request, response);
 }
+
