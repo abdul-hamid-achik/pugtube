@@ -7,7 +7,6 @@
 
 import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
-import webpack from "webpack";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -19,16 +18,16 @@ const config = {
     defaultLocale: "en",
   },
   webpack(config, options) {
-    config.plugins = [
-      ...(config.plugins || []),
-      // @ts-ignore
-      new webpack.NormalModuleReplacementPlugin(
-        /node:/,
-        (/** @type {{ request: string; }} */ resource) => {
-          resource.request = resource.request.replace(/^node:/, "");
-        }
-      ),
-    ];
+    // config.plugins = [
+    //   ...(config.plugins || []),
+    //   // @ts-ignore
+    //   new webpack.NormalModuleReplacementPlugin(
+    //     /node:/,
+    //     (/** @type {{ request: string; }} */ resource) => {
+    //       resource.request = resource.request.replace(/^node:/, "");
+    //     }
+    //   ),
+    // ];
     return config;
   },
   sentry: {
