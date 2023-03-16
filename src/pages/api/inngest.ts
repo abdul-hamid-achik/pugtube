@@ -49,8 +49,7 @@ export default serve('pugtube', [postUpload, transcodeVideo, generateThumbnail, 
 export const config = {
   runtime: "edge",
   unstable_allowDynamic: [
-    './node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js',
-    'node:crypto',
+    './node_modules/.pnpm/@ffmpeg/ffmpeg/dist/ffmpeg.min.js',
   ]
 };
 
