@@ -30,7 +30,9 @@ const ffmpeg = createFFmpeg({
     progress: ({ ratio }) => {
         log.info(`progress: %${Math.floor(ratio * 100)}`)
     },
-    corePath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.js'
+    corePath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.js',
+    workerPath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.worker.js',
+    wasmPath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.wasm',
 });
 
 export default inngest.createFunction(
