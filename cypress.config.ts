@@ -7,7 +7,7 @@ export default defineConfig({
   projectId: "jcfv2t",
   defaultCommandTimeout: 60000,
   e2e: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
     setupNodeEvents(_on, _config) {
       // implement node event listeners here
     },

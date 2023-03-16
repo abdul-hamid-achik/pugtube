@@ -39,7 +39,6 @@ jobs:
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
-          wait-on: ${{ github.event.deployment_status.target_url }}
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
