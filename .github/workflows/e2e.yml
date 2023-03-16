@@ -43,4 +43,5 @@ jobs:
           record: true
         env:
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
