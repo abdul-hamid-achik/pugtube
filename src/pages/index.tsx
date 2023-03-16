@@ -4,7 +4,8 @@ import VideoCard from '@/components/video-card';
 import { NextPageWithLayout } from '@/pages/_app';
 import { api } from '@/utils/api';
 import { GetServerSidePropsContext } from 'next';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
@@ -13,45 +14,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export const Page: NextPageWithLayout = () => {
-  const [page, setPage] = useState(0);
   const { data, error, isError, isLoading, fetchNextPage } = api.video.feed.useInfiniteQuery({
     limit: 10,
   }, {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     // initialCursor: 1
   });
-  const loaderRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isLoading) return;
+  const hasNextPage = data?.pages.some((page) => !!page.nextCursor) || false;
 
-    let current = loaderRef.current;
-    const options = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 1.0,
-    };
-
-    const observer = new IntersectionObserver((entries = []) => {
-      if (entries.length > 0 && entries[0]!.isIntersecting) {
-        setPage((prevPage) => prevPage + 1);
-      }
-    }, options);
-
-    if (current) {
-      observer.observe(current);
+  const fetchMoreData = () => {
+    if (hasNextPage) {
+      fetchNextPage();
     }
+  };
 
-    return () => {
-      if (current) {
-        observer.unobserve(current);
-      }
-    };
-  }, [loaderRef, isLoading]);
-
-  useEffect(() => {
-    fetchNextPage();
-  }, [page, fetchNextPage]);
+  const items = data?.pages.flatMap((page) => page.items) || [];
 
   return (
     <section className="">
@@ -63,14 +41,25 @@ export const Page: NextPageWithLayout = () => {
         </div>
       )}
       {isLoading && <Spinner />}
-      <div className="w-full flex-col items-center justify-center gap-4 overflow-y-auto md:grid md:grid-cols-2 lg:grid-cols-3">
-        {!isLoading &&
-          !isError &&
-          data?.pages[page]?.items.map(({ video, author }) => (
-            <VideoCard key={video.id} video={video} author={author} />
-          ))}
-        <div ref={loaderRef}></div>
-      </div>
+      <InfiniteScroll
+        dataLength={items.length}
+        next={fetchMoreData}
+        hasMore={hasNextPage}
+        loader={<Spinner />}
+        endMessage={
+          <p className="text-center">
+            <b>End of content</b>
+          </p>
+        }
+      >
+        <div className="w-full flex-col items-center justify-center gap-4 overflow-y-auto md:grid md:grid-cols-2 lg:grid-cols-3">
+          {!isLoading &&
+            !isError &&
+            items.map(({ video, author }) => (
+              <VideoCard key={video.id} video={video} author={author} />
+            ))}
+        </div>
+      </InfiniteScroll>
     </section>
   );
 };

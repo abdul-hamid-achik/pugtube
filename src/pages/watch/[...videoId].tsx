@@ -5,6 +5,7 @@ import { prisma } from '@/server/db';
 import { clerkClient } from '@clerk/nextjs/server';
 import { DateTime } from 'luxon';
 import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactElement } from 'react';
@@ -22,38 +23,38 @@ interface PageProps {
 
 
 const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, ...props }) => {
-    return (
-        <div className="m-0 h-full w-full bg-gray-700">
-            <div className="px-4">
-                <h1 className="mb-4 text-xl text-white">{props?.title}</h1>
-            </div>
+    return (<>
+        <Head>
+            <title>{props?.title}</title>
+        </Head>
+        <div className="m-0 h-fit w-full bg-gray-700">
             <div className="mx-4 pt-4">
                 <VideoPlayer src={playlistUrl} />
             </div>
-            <div className="flex justify-between px-4">
-                <div>
-                    <p className="mb-4 text-lg text-white">{props?.category}</p>
-                    {props?.author &&
-                        <div className="mt-2 flex items-center">
-                            <Image
-                                className="h-10 w-10 rounded-full object-cover shadow-sm"
-                                src={props?.authorProfileImageUrl as string}
-                                alt={props?.author as string}
-                                width={40}
-                                height={40}
-                            />
-                            <Link href={`/channel/${props?.author}`}
-                                className="ml-2 font-medium text-white hover:text-gray-200">
-                                {props?.author}
-                            </Link>
-                        </div>}
-                    <p className="mb-4 text-lg text-white">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
-                </div>
+            <div className="flex flex-col p-4">
+                <h1 className="pt-2 text-xl text-white">{props?.title}</h1>
+                <p className="pt-2 text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
+                {props?.author &&
+                    <div className="flex items-center py-2">
+                        <Image
+                            className="h-10 w-10 rounded-full object-cover shadow-sm"
+                            src={props?.authorProfileImageUrl as string}
+                            alt={props?.author as string}
+                            width={40}
+                            height={40}
+                        />
+                        <Link href={`/channel/${props?.author}`}
+                            className="ml-2 font-medium text-gray-300 hover:text-gray-200">
+                            @{props?.author}
+                        </Link>
+                    </div>}
             </div>
-            <div className="px-4">
+
+            {/* <div className="px-4">
                 <p className="mb-4 text-lg text-white">{props?.description}</p>
-            </div>
+            </div> */}
         </div>
+    </>
     );
 };
 

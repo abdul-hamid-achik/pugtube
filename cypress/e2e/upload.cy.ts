@@ -10,7 +10,7 @@ describe('Upload', () => {
   it('should redirect to watch after uploading a video', () => {
     cy.visit('/upload');
     cy.get('input[name="title"]').type(faker.lorem.sentence(3));
-    cy.get('textarea[name="description"]').type(faker.lorem.paragraph(1).slice(0, 255));
+    cy.get('textarea[name="description"]').type(faker.lorem.paragraph(1).slice(0, 128));
     cy.get('input[name="category"]').type(faker.lorem.word({
       length: {
         min: 3,
