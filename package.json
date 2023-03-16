@@ -42,7 +42,7 @@
     "@aws-sdk/util-create-request": "^3.272.0",
     "@aws-sdk/util-format-url": "^3.272.0",
     "@clerk/nextjs": "^4.11.1",
-    "@ffmpeg/core": "^0.11.6",
+    "@ffmpeg/core": "^0.11.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
     "@ffprobe-installer/ffprobe": "^2.0.0",
     "@headlessui/react": "^1.7.7",

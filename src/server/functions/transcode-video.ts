@@ -1,7 +1,8 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { getObject, putObject } from '@/utils/s3';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+// @ts-ignore
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg/dist/ffmpeg.min';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
