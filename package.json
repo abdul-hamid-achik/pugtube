@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "private": true,
   "engines": {
-    "node": ">=16.19.1"
+    "node": "~=16.19.1"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -13,7 +13,6 @@
     "build": "next build",
     "export": "next export",
     "start": "next start",
-    "tauri": "tauri",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "type-check": "tsc --noEmit",
@@ -53,7 +52,6 @@
     "@sentry/browser": "^7.38.0",
     "@sentry/nextjs": "^7.38.0",
     "@tanstack/react-query": "^4.20.0",
-    "@tauri-apps/api": "^1.2.0",
     "@trpc/client": "^10.8.1",
     "@trpc/next": "^10.8.1",
     "@trpc/react-query": "^10.8.1",
@@ -97,7 +95,6 @@
   "devDependencies": {
     "@checkly/cli": "^0.4.4",
     "@faker-js/faker": "^7.6.0",
-    "@tauri-apps/cli": "^1.2.3",
     "@testing-library/cypress": "^9.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/cookies": "^0.7.7",

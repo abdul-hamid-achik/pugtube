@@ -24,6 +24,7 @@ describe('Upload', () => {
     });
 
     cy.location('pathname').should('match', /\/upload\/status/g);
+    cy.location('search').should('contain', 'uploadId=');
   });
 });
 
