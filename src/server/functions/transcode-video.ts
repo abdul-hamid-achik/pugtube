@@ -1,6 +1,7 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { getObject, putObject } from '@/utils/s3';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
@@ -8,12 +9,14 @@ import os from 'os';
 import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+// @ts-ignore
+import createFFmpegCore from '@ffmpeg/core';
 
 
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
+    corePath: createFFmpegCore
 });
 
 type ParsedSegment = {

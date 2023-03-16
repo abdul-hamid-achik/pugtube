@@ -1,6 +1,8 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { getObject, putObject } from '@/utils/s3';
+// @ts-ignore
+import createFFmpegCore from '@ffmpeg/core';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
@@ -9,6 +11,8 @@ import os from 'os';
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
+    corePath: createFFmpegCore,
+
 });
 
 export default inngest.createFunction(
