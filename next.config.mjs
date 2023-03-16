@@ -7,7 +7,7 @@
 
 import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
-import { webpack } from "webpack";
+import webpack from "webpack";
 
 /** @type {import("next").NextConfig} */
 const config = {
