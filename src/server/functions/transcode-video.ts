@@ -14,6 +14,7 @@ import { Parser } from 'm3u8-parser';
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
+    corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
 });
 
 type ParsedSegment = {
