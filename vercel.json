@@ -5,6 +5,12 @@
         }
     },
     "build": {
-        "includeFiles": "vercel.include"
-    }
+        "env": {
+            "NPM_RC": "pnpm"
+        }
+    },
+    "files": [
+        "node_modules/@ffmpeg/core/dist/ffmpeg-core.js",
+        "node_modules/@ffmpeg/core/dist/ffmpeg-core.wasm"
+    ]
 }
