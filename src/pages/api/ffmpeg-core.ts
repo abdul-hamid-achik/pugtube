@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.setHeader('Content-Type', 'application/javascript');
         res.status(status.OK).send(coreContent);
-    } catch (err) {
+    } catch (err: any) {
         res.status(status.INTERNAL_SERVER_ERROR).json({ error: 'Failed to load ffmpeg-core', message: err.message });
     }
 }
