@@ -9,6 +9,7 @@ import os from 'os';
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
+    corePath: './node_modules/@ffmpeg/core/dist/ffmpeg-core.js',
 });
 
 export default inngest.createFunction(

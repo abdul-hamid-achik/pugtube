@@ -48,7 +48,8 @@ export default serve('pugtube', [postUpload, transcodeVideo, generateThumbnail, 
 
 export const config = {
   unstable_allowDynamic: [
-    './node_modules/.pnpm/@ffmpeg+ffmpeg@0.11.6/node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js'
+    './node_modules/.pnpm/@ffmpeg+ffmpeg@0.11.6/node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js',
+    './node_modules/.pnpm/@ffmpeg+core@0.11.0/node_modules/@ffmpeg/core/dist/ffmpeg-core.js',
   ]
 };
 
