@@ -7,13 +7,11 @@ import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
-// @ts-ignore
-import { getCreateFFmpegCore } from '@ffmpeg/core';
 
-console.log(getCreateFFmpegCore)
 
 const ffmpeg = createFFmpeg({
     log: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test',
+    corePath: "/ffmpeg-core/ffmpeg-core.js",
 });
 
 export default inngest.createFunction(
