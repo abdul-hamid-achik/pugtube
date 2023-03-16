@@ -84,7 +84,7 @@ export const Page: NextPageWithLayout<{ initialData: any }> = ({ initialData }) 
         hasMore={hasNextPage}
         loader={<Spinner />}
         endMessage={
-          <p className="text-center">
+          <p className="p-4 text-center text-lg text-white">
             <b>End of content</b>
           </p>
         }
