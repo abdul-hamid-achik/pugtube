@@ -1,6 +1,8 @@
-export default function Page() {
+import Layout from "@/components/layout";
+import { ReactElement } from "react";
 
-    return <>
+function Page() {
+    return <div className="prose max-w-none text-white">
         <h1>Terms of Service</h1>
 
         <p>
@@ -65,5 +67,11 @@ export default function Page() {
             These terms and conditions are governed by and construed in accordance with the laws of Mexico and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.
         </p>
 
-    </>
+    </div>
 }
+
+Page.getLayout = function getLayout(page: ReactElement) {
+    return <Layout>{page}</Layout>;
+};
+
+export default Page

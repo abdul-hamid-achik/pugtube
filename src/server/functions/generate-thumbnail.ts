@@ -1,19 +1,18 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
-import ffmpeg, { fetchFile } from '@/utils/ffmpeg';
+import { createFFmpeg, fetchFile } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
-// @ts-ignor
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
-
 
 export default inngest.createFunction(
     'Generate video thumbnail',
     'pugtube/hls.thumbnail',
     async ({ event }) => {
         const { uploadId } = event.data as { uploadId: string };
+        const ffmpeg = await createFFmpeg();
         log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
         // Create temporary directories to store input and output files
         const inputDirPath = `${os.tmpdir()}/input`;

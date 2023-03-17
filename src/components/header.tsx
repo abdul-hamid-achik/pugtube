@@ -17,8 +17,8 @@ export default function Header() {
   return (
     <div className="bg-gray-900 py-2">
       <div className="flex items-center">
-        <Link href="/" className="p-4">
-          <h1 className="text-white">Pugtube</h1>
+        <Link href="/" className="py-4 pl-0 pr-4">
+          <h1 className="font-bold text-white">Pugtube</h1>
         </Link>
         <div className="grow">
           <form onSubmit={() => handleSubmit(onSubmit)}>

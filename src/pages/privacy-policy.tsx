@@ -1,5 +1,8 @@
-export default function Page() {
-    return <>
+import Layout from "@/components/layout";
+import { ReactElement } from "react";
+
+function Page() {
+    return <div className="prose max-w-none text-white">
         <h1>Privacy Policy</h1>
         <p>
             Your privacy is important to us. It is Pugtube&apos;s policy to respect your privacy regarding any information we may collect from you across our website, <a href="https://pugtube.dev">https://pugtube.dev</a>, and other sites we own and operate.
@@ -25,5 +28,11 @@ export default function Page() {
         <p>
             This policy is effective as of 1 January 2023.
         </p>
-    </>
+    </div>
 }
+
+Page.getLayout = function getLayout(page: ReactElement) {
+    return <Layout>{page}</Layout>;
+};
+
+export default Page
