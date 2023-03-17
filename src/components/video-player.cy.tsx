@@ -6,7 +6,7 @@ describe(
         it(
             "should render correctly",
             () => {
-                cy.mount(<VideoPlayer src={""} />);
+                cy.mount(<VideoPlayer src={""} poster={""} />);
             },
         );
     },

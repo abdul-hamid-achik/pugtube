@@ -1,0 +1,3 @@
+*.cy.tsx
+*.cy.ts
+node_modules
