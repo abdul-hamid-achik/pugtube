@@ -3,7 +3,7 @@
   "version": "0.2.3",
   "private": true,
   "engines": {
-    "node": ">=16.19.0"
+    "node": "~=16.19.0"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
