@@ -11,30 +11,6 @@ import { Readable } from 'stream';
 import { Parser } from 'm3u8-parser';
 
 
-const ffmpeg = createFFmpeg({
-    log: true,
-    logger: ({ type, message }) => {
-        switch (type) {
-            case 'info':
-                log.info(message)
-                break;
-            case 'fferr':
-                log.error(message)
-                break;
-            case 'ffout':
-                log.debug(message)
-                break;
-            default:
-                log.warn(message)
-                break;
-        }
-    },
-    progress: ({ ratio }) => {
-        log.info(`progress: %${Math.floor(ratio * 100)}`)
-    },
-});
-
-
 type ParsedSegment = {
     byterange: {
         length: number,
@@ -65,6 +41,30 @@ type ParsedSegment = {
 
 export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode', async ({ event }) => {
     log.info('Transcoding video...')
+    const ffmpeg = createFFmpeg({
+        log: true,
+        logger: ({ type, message }) => {
+            switch (type) {
+                case 'info':
+                    log.info(message)
+                    break;
+                case 'fferr':
+                    log.error(message)
+                    break;
+                case 'ffout':
+                    log.debug(message)
+                    break;
+                default:
+                    log.warn(message)
+                    break;
+            }
+        },
+        progress: ({ ratio }) => {
+            log.info(`progress: %${Math.floor(ratio * 100)}`)
+        },
+    });
+
+    if (!ffmpeg.isLoaded()) await ffmpeg.load();
     const { uploadId } = event.data as { uploadId: string };
     // Create temporary directories to store input and output files
     const inputDirPath = `${os.tmpdir()}/input`;
@@ -103,8 +103,6 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
 
     log.info(`uploaded file: ${inputFilePath}`)
 
-    // Load input file into FFmpeg
-    if (!ffmpeg.isLoaded()) await ffmpeg.load();
     log.info(`loaded ffmpeg`)
     await ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFilePath))
     log.info(`wrote file to ffmpeg`)

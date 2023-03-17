@@ -9,33 +9,32 @@ import { log } from 'next-axiom';
 import os from 'os';
 
 
-const ffmpeg = createFFmpeg({
-    log: true,
-    logger: ({ type, message }) => {
-        switch (type) {
-            case 'info':
-                log.info(message)
-                break;
-            case 'fferr':
-                log.error(message)
-                break;
-            case 'ffout':
-                log.debug(message)
-                break;
-            default:
-                log.warn(message)
-                break;
-        }
-    },
-    progress: ({ ratio }) => {
-        log.info(`progress: %${Math.floor(ratio * 100)}`)
-    },
-});
-
 export default inngest.createFunction(
     'Generate video thumbnail',
     'pugtube/hls.thumbnail',
     async ({ event }) => {
+        const ffmpeg = createFFmpeg({
+            log: true,
+            logger: ({ type, message }) => {
+                switch (type) {
+                    case 'info':
+                        log.info(message)
+                        break;
+                    case 'fferr':
+                        log.error(message)
+                        break;
+                    case 'ffout':
+                        log.debug(message)
+                        break;
+                    default:
+                        log.warn(message)
+                        break;
+                }
+            },
+            progress: ({ ratio }) => {
+                log.info(`progress: %${Math.floor(ratio * 100)}`)
+            },
+        });
         if (!ffmpeg.isLoaded()) await ffmpeg.load();
         const { uploadId } = event.data as { uploadId: string };
         log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
