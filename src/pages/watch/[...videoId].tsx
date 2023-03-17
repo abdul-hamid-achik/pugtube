@@ -2,6 +2,7 @@ import Layout from '@/components/layout';
 import VideoPlayer from '@/components/video-player';
 import { NextPageWithLayout } from '@/pages/_app';
 import { prisma } from '@/server/db';
+import { getSignedUrl } from '@/utils/s3';
 import { clerkClient } from '@clerk/nextjs/server';
 import { DateTime } from 'luxon';
 import { GetServerSideProps } from 'next';
@@ -17,6 +18,7 @@ interface PageProps {
     category: string;
     author: string;
     authorProfileImageUrl: string;
+    poster: string;
     createdAt: string;
 }
 
@@ -29,7 +31,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, ...props }) => {
         </Head>
         <div className="m-0 h-fit w-full bg-gray-700">
             <div className="mx-4 pt-4">
-                <VideoPlayer src={playlistUrl} />
+                <VideoPlayer src={playlistUrl} poster={props.poster} />
             </div>
             <div className="flex flex-col p-4">
                 <h1 className="pt-2 text-xl text-white">{props?.title}</h1>
@@ -78,6 +80,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
             author: author.username || 'Unknown',
             authorProfileImageUrl: author.profileImageUrl || '',
             createdAt: video?.createdAt?.toISOString() || new Date().toISOString(),
+            poster: video?.thumbnailUrl ? await getSignedUrl(video?.thumbnailUrl as string) : '',
         }
     };
 

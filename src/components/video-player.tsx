@@ -3,16 +3,17 @@ import Hls from 'hls.js';
 import { useEffect, useRef } from 'react';
 interface VideoPlayerProps {
   src: string;
+  poster: string;
 }
 
-export default function VideoPlayer({ src }: VideoPlayerProps) {
+export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (videoRef.current && Hls.isSupported()) {
       const hls = new Hls({
         liveBackBufferLength: 0,
-        debug: true
+        debug: process.env.NODE_ENV === 'development',
       });
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         videoRef.current?.play();
@@ -32,6 +33,8 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
       src={src}
       style={{ maxWidth: '100%' }}
       width="100%"
+      poster={poster}
+      preload="metadata"
       controls
     />
   );
