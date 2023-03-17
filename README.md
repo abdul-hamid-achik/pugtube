@@ -15,17 +15,17 @@ PugTube is a video sharing platform where users can upload, watch and interact w
 To get started with PugTube, clone the repository and run the following commands:
 
 ```bash
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
 This will install the dependencies and start the development server.
 
 ## How do i develop with this?
 
-```
-pnpm e2e # i do all my tests here first and then this runs cypress and my tests and it reloads when i change the code, its very nice
-pnpm background # this adds the inngest dev server, you need this for the transcoding and thumbnailing and more
+```bash
+npm run e2e # i do all my tests here first and then this runs cypress and my tests and it reloads when i change the code, its very nice
+npm run background # this adds the inngest dev server, you need this for the transcoding and thumbnailing and more
 ```
 
 ## Usage

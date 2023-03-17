@@ -37,11 +37,6 @@ jobs:
         with:
           node-version: 16
 
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        with:
-          version: 7
-
       - name: Pull Vercel Environment Information
         run: |
           pnpx vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
@@ -50,7 +45,6 @@ jobs:
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
-          install: pnpm install
           component: true
           record: true
         env:
