@@ -1,7 +1,7 @@
 import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
+import ffmpeg, { fetchFile } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
@@ -41,30 +41,6 @@ type ParsedSegment = {
 
 export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode', async ({ event }) => {
     log.info('Transcoding video...')
-    const ffmpeg = createFFmpeg({
-        log: true,
-        logger: ({ type, message }) => {
-            switch (type) {
-                case 'info':
-                    log.info(message)
-                    break;
-                case 'fferr':
-                    log.error(message)
-                    break;
-                case 'ffout':
-                    log.debug(message)
-                    break;
-                default:
-                    log.warn(message)
-                    break;
-            }
-        },
-        progress: ({ ratio }) => {
-            log.info(`progress: %${Math.floor(ratio * 100)}`)
-        },
-    });
-
-    if (!ffmpeg.isLoaded()) await ffmpeg.load();
     const { uploadId } = event.data as { uploadId: string };
     // Create temporary directories to store input and output files
     const inputDirPath = `${os.tmpdir()}/input`;

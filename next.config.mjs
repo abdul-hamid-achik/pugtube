@@ -17,6 +17,10 @@ const config = {
     locales: ["en", "es"],
     defaultLocale: "en",
   },
+  webpack(config) {
+    config.experiments = { ...config.experiments, topLevelAwait: true };
+    return config;
+  },
   sentry: {
     // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
     // for client-side builds. (This will be the default starting in
