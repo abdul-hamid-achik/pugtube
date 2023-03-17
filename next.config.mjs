@@ -9,6 +9,7 @@ import path from "path";
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  transpilePackages: ["@ffmpeg/ffmpeg", "@ffmpeg/core"],
   i18n: {
     locales: ["en", "es"],
     defaultLocale: "en",
