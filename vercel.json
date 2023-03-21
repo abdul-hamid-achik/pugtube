@@ -1,6 +1,6 @@
 {
     "functions": {
-        "api/inngest.ts": {
+        "api/inngest": {
             "maxDuration": 60
         }
     }
