@@ -14,6 +14,14 @@ const config = {
     locales: ["en", "es"],
     defaultLocale: "en",
   },
+  async rewrites() {
+    return [
+      {
+        source: "/public/:path*",
+        destination: "/:path*",
+      },
+    ];
+  },
   webpack(config, { isServer }) {
     config.experiments = { ...config.experiments, topLevelAwait: true };
     if (isServer) {
