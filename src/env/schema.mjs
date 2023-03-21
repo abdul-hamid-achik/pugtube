@@ -14,10 +14,7 @@ export const serverSchema = z.object({
   DISCORD_ID: z.string(),
   DISCORD_SECRET: z.string(),
   CLERK_SECRET_KEY: z.string(),
-  REDIS_URL: z.string().url().optional(),
-  REDIS_PASSWORD: z.string().optional(),
-  REDIS_HOST: z.string(),
-  REDIS_PORT: z.string(),
+  REDIS_URL: z.string().url(),
 });
 
 /**
@@ -27,6 +24,7 @@ export const serverSchema = z.object({
  */
 export const serverEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
+  REDIS_URL: process.env.REDIS_URL,
   NODE_ENV: process.env.NODE_ENV,
   INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
   GITHUB_ID: process.env.GITHUB_ID,
@@ -34,10 +32,6 @@ export const serverEnv = {
   DISCORD_ID: process.env.DISCORD_ID,
   DISCORD_SECRET: process.env.DISCORD_SECRET,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
-  REDIS_URL: process.env.REDIS_URL,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  REDIS_HOST: process.env.REDIS_HOST,
-  REDIS_PORT: process.env.REDIS_PORT,
 };
 
 /**

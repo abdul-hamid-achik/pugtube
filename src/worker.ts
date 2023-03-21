@@ -2,15 +2,14 @@ import { Worker } from "bullmq";
 import dotenv from "dotenv";
 dotenv.config();
 
+import IORedis from "ioredis";
 import clearUploadArtifacts from "./server/functions/clear-upload-artifacts";
 import generateThumbnail from "./server/functions/generate-thumbnail";
 import transcodeVideo from "./server/functions/transcode-video";
 
-const connection = {
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT as string),
-  password: process.env.REDIS_PASSWORD,
-};
+const connection = new IORedis(process.env.REDIS_URL as string, {
+  maxRetriesPerRequest: 3,
+});
 
 const worker = new Worker(
   "hls",
