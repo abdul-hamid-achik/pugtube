@@ -2,39 +2,14 @@
 
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
-import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
-import path from "path";
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  transpilePackages: ["@ffmpeg/ffmpeg", "@ffmpeg/core"],
   i18n: {
     locales: ["en", "es"],
     defaultLocale: "en",
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/public/:path*",
-        destination: "/:path*",
-      },
-    ];
-  },
-  webpack(config, { isServer }) {
-    config.experiments = { ...config.experiments, topLevelAwait: true };
-    if (isServer) {
-      config.resolve.alias["@ffmpeg/ffmpeg/src/createFFmpeg"] = path.resolve(
-        path.dirname(import.meta.url),
-        "./src/utils/ffmpeg.ts"
-      );
-    }
-    return config;
-  },
-  sentry: {
-    hideSourceMaps: true,
-    excludeServerRoutes: ["/api/inngest"],
   },
   images: {
     remotePatterns: [
@@ -66,6 +41,4 @@ const config = {
   },
 };
 
-export default withSentryConfig(withAxiom(config), {
-  silent: true,
-});
+export default withAxiom(config);
