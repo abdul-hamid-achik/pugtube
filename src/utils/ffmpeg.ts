@@ -2,17 +2,35 @@
 import { getCreateFFmpegCore } from '@ffmpeg/core';
 import type { CreateFFmpegOptions } from '@ffmpeg/ffmpeg';
 import { createFFmpeg as originalCreateFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import fs from 'fs';
 import { log } from 'next-axiom';
 import path from 'path';
 
+function logDirectoryContents(dir: string) {
+    const files = fs.readdirSync(dir);
+
+    files.forEach((file) => {
+        const filePath = path.join(dir, file);
+        const stats = fs.statSync(filePath);
+
+        if (stats.isDirectory()) {
+            console.log(`Directory: ${filePath}`);
+            logDirectoryContents(filePath);
+        } else {
+            console.log(`File: ${filePath}`);
+        }
+    });
+}
 
 export async function createFFmpeg() {
+    logDirectoryContents(process.cwd());
+
     const ffmpeg = originalCreateFFmpeg({
         log: true,
         getCreateFFmpegCore,
-        corePath: path.join(process.cwd(), 'public', 'ffmpeg-core.js'),
-        workerPath: path.join(process.cwd(), 'public', 'ffmpeg-core.worker.js'),
-        wasmPath: path.join(process.cwd(), 'public', 'ffmpeg-core.wasm'),
+        corePath: path.resolve(process.cwd(), 'public', 'ffmpeg-core.js'),
+        workerPath: path.resolve(process.cwd(), 'public', 'ffmpeg-core.worker.js'),
+        wasmPath: path.resolve(process.cwd(), 'public', 'ffmpeg-core.wasm'),
         logger: ({ type, message }: { type: string, message: string }) => {
             switch (type) {
                 case 'info':

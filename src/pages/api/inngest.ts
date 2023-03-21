@@ -3,14 +3,10 @@ import clearUploadArtifacts from '@/server/functions/clear-upload-artifacts';
 import generateThumbnail from '@/server/functions/generate-thumbnail';
 import transcodeVideo from '@/server/functions/transcode-video';
 import { serve } from 'inngest/next';
-import path from 'path';
 
 const timeout = 5 * 60 * 1000; // 5 minutes
 const postUpload = inngest.createFunction('Post Upload', 'post-upload', async ({ event, step }) => {
   const { uploadId } = event.data as { uploadId: string };
-
-  const vercelFunctionHack = path.resolve('./public', '');
-  console.log(vercelFunctionHack);
 
   await step.run("Generate video thumbnail", async () => {
     return await inngest.send(
