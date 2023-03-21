@@ -44,10 +44,3 @@ cypress/downloads/*
 cypress/videos/*
 cypress/screenshots/*
 
-# tauri
-.tauri
-out
-src-tauri/target
-# Sentry
-.sentryclirc
-sentry.properties
