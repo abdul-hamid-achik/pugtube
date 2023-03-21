@@ -1,4 +1,3 @@
-import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
 import { createFFmpeg, fetchFile } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
@@ -39,9 +38,8 @@ type ParsedSegment = {
     custom: {}
 }
 
-export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode', async ({ event }) => {
+export default async function transcodeVideo({ uploadId }: { uploadId: string }) {
     log.info('Transcoding video...')
-    const { uploadId } = event.data as { uploadId: string };
     const ffmpeg = await createFFmpeg();
     // Create temporary directories to store input and output files
     const inputDirPath = `${os.tmpdir()}/input`;
@@ -236,9 +234,8 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
             },
         });
 
-        await inngest.send('pugtube/hls.transcoded', { data: { uploadId } })
     } catch (error) {
         log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
         throw error;
     }
-});
+};

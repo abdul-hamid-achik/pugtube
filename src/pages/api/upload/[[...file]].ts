@@ -1,5 +1,5 @@
-import { inngest } from '@/server/background';
 import { prisma } from '@/server/db';
+import queue from '@/server/queue';
 import type { Upload, VideoMetadata } from '@prisma/client';
 import { S3Store } from '@tus/s3-store';
 import { EVENTS, Server } from '@tus/server';
@@ -110,12 +110,8 @@ const tusServer = new Server({
 tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
   log.info(`Event received: post-finish`, upload);
 
-  await inngest.send({
-    name: 'post-upload',
-    data: {
-      uploadId: upload.id,
-    },
-  });
+
+  queue.add("hls", { uploadId: upload.id });
 
   log.info(`Event sent: post-upload ✅`)
 });

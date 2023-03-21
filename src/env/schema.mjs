@@ -13,6 +13,11 @@ export const serverSchema = z.object({
   GITHUB_SECRET: z.string(),
   DISCORD_ID: z.string(),
   DISCORD_SECRET: z.string(),
+  CLERK_SECRET_KEY: z.string(),
+  REDIS_URL: z.string().url().optional(),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.string(),
 });
 
 /**
@@ -28,6 +33,11 @@ export const serverEnv = {
   GITHUB_SECRET: process.env.GITHUB_SECRET,
   DISCORD_ID: process.env.DISCORD_ID,
   DISCORD_SECRET: process.env.DISCORD_SECRET,
+  CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+  REDIS_URL: process.env.REDIS_URL,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT,
 };
 
 /**
@@ -35,7 +45,9 @@ export const serverEnv = {
  * This way you can ensure the app isn't built with invalid env vars.
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
-export const clientSchema = z.object({});
+export const clientSchema = z.object({
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+});
 
 /**
  * You can't destruct `process.env` as a regular object, so you have to do
@@ -43,4 +55,7 @@ export const clientSchema = z.object({});
  * and only used environment variables are included in the build.
  * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
-export const clientEnv = {};
+export const clientEnv = {
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+};

@@ -1,5 +1,5 @@
-import { inngest } from "@/server/background";
 import { prisma } from "@/server/db";
+import queue from "@/server/queue";
 import { s3 } from "@/utils/s3";
 import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, UploadPartCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -102,12 +102,7 @@ export default async function handler(
                 }
             });
 
-            await inngest.send({
-                name: 'post-upload',
-                data: {
-                    uploadId: key
-                },
-            });
+            queue.add("hls", { uploadId: key });
         } else {
             res.status(status.BAD_REQUEST).json({ message: "Invalid operation or missing parameters" });
         }
