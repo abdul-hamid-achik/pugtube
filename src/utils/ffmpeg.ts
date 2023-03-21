@@ -7,9 +7,9 @@ import path from 'path';
 export async function createFFmpeg() {
     const ffmpeg = originalCreateFFmpeg({
         log: true,
-        corePath: path.join(process.cwd(), 'ffmpeg-core.js'),
-        workerPath: path.join(process.cwd(), 'ffmpeg-core.worker.js'),
-        wasmPath: path.join(process.cwd(), 'ffmpeg-core.wasm'),
+        corePath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.js'),
+        workerPath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.worker.js'),
+        wasmPath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.wasm'),
         logger: ({ type, message }: { type: string, message: string }) => {
             switch (type) {
                 case 'info':
