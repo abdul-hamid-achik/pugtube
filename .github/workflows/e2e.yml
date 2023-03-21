@@ -25,7 +25,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -37,7 +37,6 @@ jobs:
           record: true
           wait-on: ${{ github.event.deployment_status.target_url }}
         env:
-            # CYPRESS_BASE_URL: ${{ github.event.deployment_status.target_url }}
             CYPRESS_BASE_URL: https://pugtube.dev
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

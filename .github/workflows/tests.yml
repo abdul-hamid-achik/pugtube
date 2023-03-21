@@ -31,16 +31,11 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
-      
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16
-
-      - name: Pull Vercel Environment Information
-        run: |
-          npx vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
-          cp .vercel/.env.development.local .env
 
       - name: Testing
         uses: cypress-io/github-action@v5
