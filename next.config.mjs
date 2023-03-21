@@ -34,6 +34,7 @@ const config = {
   },
   sentry: {
     hideSourceMaps: true,
+    excludeServerRoutes: ["/api/inngest"],
   },
   images: {
     remotePatterns: [
