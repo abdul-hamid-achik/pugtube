@@ -10,9 +10,9 @@ export async function createFFmpeg() {
     const ffmpeg = originalCreateFFmpeg({
         log: true,
         getCreateFFmpegCore,
-        corePath: path.resolve(path.join(process.cwd(), 'node_modules/@ffmpeg/core/dist/', 'ffmpeg-core.js')),
-        workerPath: path.resolve(path.join(process.cwd(), 'node_modules/@ffmpeg/core/dist/', 'ffmpeg-core.worker.js')),
-        wasmPath: path.resolve(path.join(process.cwd(), 'node_modules/@ffmpeg/core/dist/', 'ffmpeg-core.wasm')),
+        corePath: path.resolve(process.cwd(), 'node_modules/@ffmpeg/core/dist/ffmpeg-core.js'),
+        workerPath: path.resolve(process.cwd(), 'node_modules/@ffmpeg/core/dist/ffmpeg-core.worker.js'),
+        wasmPath: path.resolve(process.cwd(), 'node_modules/@ffmpeg/core/dist/ffmpeg-core.wasm'),
         logger: ({ type, message }: { type: string, message: string }) => {
             switch (type) {
                 case 'info':
