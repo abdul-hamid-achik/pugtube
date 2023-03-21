@@ -1,18 +1,14 @@
-import { log } from 'next-axiom';
-// @ts-ignore
-import originalGetCreateFFmpegCore from '@ffmpeg/ffmpeg/src/node/getCreateFFmpegCore';
-// @ts-ignoreimport { log } from 'next-axiom';
 import type { CreateFFmpegOptions } from '@ffmpeg/ffmpeg';
 import { createFFmpeg as originalCreateFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-const getCreateFFmpegCore = (options: any) => {
-    const modifiedOptions = { ...options, corePath: '@ffmpeg/core/dist/ffmpeg-core.js' };
-    return originalGetCreateFFmpegCore(modifiedOptions);
-};
+import { log } from 'next-axiom';
+import path from 'path';
+
 
 export async function createFFmpeg() {
     const ffmpeg = originalCreateFFmpeg({
         log: true,
-        getCreateFFmpegCore,
+        corePath: path.join(process.cwd(), 'public', 'ffmpeg-core.js'),
+        workerPath: path.join(process.cwd(), 'public', 'ffmpeg-core.worker.js'),
         logger: ({ type, message }: { type: string, message: string }) => {
             switch (type) {
                 case 'info':
