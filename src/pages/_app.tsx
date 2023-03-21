@@ -1,6 +1,5 @@
 import { api } from '@/utils/api';
 import { ClerkProvider } from '@clerk/nextjs';
-import { Analytics } from '@vercel/analytics/react';
 import { type AppProps } from 'next/app';
 export { reportWebVitals } from 'next-axiom';
 
@@ -24,12 +23,10 @@ const MyApp = ({
 }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => page)
 
-  return (<>
+  return (
     <ClerkProvider {...pageProps} >
       {getLayout(<Component {...pageProps} />)}
     </ClerkProvider>
-    <Analytics />
-  </>
   )
 };
 

@@ -62,7 +62,6 @@ export default inngest.createFunction('Transcode video', 'pugtube/hls.transcode'
         Bucket: process.env.AWS_S3_BUCKET,
         Key: uploadId,
     });
-    console.log(upload, "FIND ME")
     const parsedUpload = JSON.parse(upload?.Metadata?.file || '{}') as Upload
     const parsedUploadMetadata: VideoMetadata = (parsedUpload as any)?.metadata || {}
     const inputFileName = parsedUploadMetadata.name
