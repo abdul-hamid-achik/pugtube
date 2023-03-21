@@ -1,7 +1,3 @@
 {
-    "functions": {
-        "api/inngest.js": {
-            "maxDuration": 60
-        }
-    }
+    "functions": {}
 }
