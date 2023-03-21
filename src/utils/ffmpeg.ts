@@ -1,3 +1,5 @@
+// @ts-ignore
+import { getCreateFFmpegCore } from '@ffmpeg/core';
 import type { CreateFFmpegOptions } from '@ffmpeg/ffmpeg';
 import { createFFmpeg as originalCreateFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { log } from 'next-axiom';
@@ -7,6 +9,7 @@ import path from 'path';
 export async function createFFmpeg() {
     const ffmpeg = originalCreateFFmpeg({
         log: true,
+        getCreateFFmpegCore,
         corePath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.js'),
         workerPath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.worker.js'),
         wasmPath: path.join(process.cwd(), '.next', 'public', 'ffmpeg-core.wasm'),
