@@ -1,11 +1,11 @@
 
+import { env } from '@/env/server.mjs';
 import { Queue } from 'bullmq';
+import IORedis from "ioredis";
 
-const connection = {
-    url: process.env.REDIS_HOST as string,
-    port: process.env.REDIS_PORT as unknown as number,
-    password: process.env.REDIS_PASSWORD as string,
-}
+const connection = new IORedis(env.REDIS_URL as string, {
+    maxRetriesPerRequest: 3,
+});
 
 const queue = new Queue('hls', {
     connection

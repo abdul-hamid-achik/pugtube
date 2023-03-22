@@ -79,6 +79,8 @@
     "m3u8-parser": "^6.0.0",
     "next": "^13.2.4",
     "next-axiom": "^0.17.0",
+    "node-fetch": "^3.3.1",
+    "pexels": "^1.4.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",

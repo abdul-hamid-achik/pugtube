@@ -1,3 +1,4 @@
+import { env } from '@/env/server.mjs';
 import { prisma } from '@/server/db';
 import queue from '@/server/queue';
 import type { Upload, VideoMetadata } from '@prisma/client';
@@ -99,10 +100,10 @@ const tusServer = new Server({
     // partSize: 5_242_880, // 5 MB
     partSize: 10_485_760, // 10 MB
     s3ClientConfig: {
-      region: process.env.AWS_REGION as string,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-      bucket: process.env.AWS_S3_BUCKET as string,
+      region: env.AWS_REGION as string,
+      accessKeyId: env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
+      bucket: env.AWS_S3_BUCKET as string,
     },
   }),
 });

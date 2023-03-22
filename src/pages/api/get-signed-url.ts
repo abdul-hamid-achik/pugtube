@@ -1,3 +1,4 @@
+import { env } from '@/env/server.mjs';
 import { prisma } from "@/server/db";
 import queue from "@/server/queue";
 import { s3 } from "@/utils/s3";
@@ -35,7 +36,7 @@ export default async function handler(
         if (operation === "createMultipartUpload" && filename && contentType) {
             const Key = uploadId || uuidv4();
             result = await s3.send(new CreateMultipartUploadCommand({
-                Bucket: process.env.AWS_S3_BUCKET,
+                Bucket: env.AWS_S3_BUCKET,
                 Key: Key,
                 ContentType: contentType,
                 Metadata: {

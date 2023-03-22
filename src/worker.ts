@@ -1,41 +1,62 @@
+import clearUploadArtifacts from "@/server/functions/clear-upload-artifacts";
+import generateThumbnail from "@/server/functions/generate-thumbnail";
+import transcodeVideo from "@/server/functions/transcode-video";
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
+import IORedis from "ioredis";
+import { log } from 'next-axiom';
+import fetch from 'node-fetch';
+import path from "path";
+
+try {
+  dotenv.config({
+    path: path.resolve(__dirname, "/.env"),
+  });
+} catch (e) {
+  log.error("failed to load env in worker", e);
+  process.exit(1);
+}
+
 dotenv.config();
 
-import IORedis from "ioredis";
-import clearUploadArtifacts from "./server/functions/clear-upload-artifacts";
-import generateThumbnail from "./server/functions/generate-thumbnail";
-import transcodeVideo from "./server/functions/transcode-video";
+const { env } = require('./env/server.mjs');
 
-const connection = new IORedis(process.env.REDIS_URL as string, {
+// @ts-ignore
+global.fetch = fetch;
+
+const connection = new IORedis(env.REDIS_URL as string, {
   maxRetriesPerRequest: 3,
 });
 
 const worker = new Worker(
   "hls",
   async ({ data: { uploadId, fileName } }) => {
-    await transcodeVideo({ uploadId, fileName });
-    await generateThumbnail({ uploadId, fileName });
+    log.info(`Processing job for upload ID: ${uploadId}...`)
+
+    await Promise.all([
+      transcodeVideo({ uploadId, fileName }),
+      generateThumbnail({ uploadId, fileName })
+    ]);
     await clearUploadArtifacts({ uploadId });
+
+    log.info(`Finished processing job for upload ID: ${uploadId}`);
   },
   { connection }
 );
 
 worker.on("ready", () => {
-  console.log("connected");
+  log.info("Worker connected");
 });
 
 worker.on("completed", (job) => {
-  console.info(job);
+  log.info("Job completed", job);
 });
 
 worker.on("failed", (job, err) => {
-  console.info("FAILED", job);
-  console.error("FAILED", err);
+  log.warn("Job failed", job);
+  log.error("Job failed with error", err);
 });
 
 worker.on("error", (err) => {
-  console.error(err);
+  log.error("Worker error", err);
 });
-
-
