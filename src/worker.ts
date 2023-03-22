@@ -4,7 +4,7 @@ import transcodeVideo from "@/server/functions/transcode-video";
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
 import IORedis from "ioredis";
-import { log } from 'next-axiom';
+import { log as logger } from 'next-axiom';
 import fetch from 'node-fetch';
 import path from "path";
 
@@ -13,13 +13,15 @@ try {
     path: path.resolve(__dirname, "/.env"),
   });
 } catch (e: any) {
-  log.error("failed to load env in worker", e);
+  console.error("failed to load env in worker", e);
   process.exit(1);
 }
 
 dotenv.config();
 
 const { env } = require('./env/server.mjs');
+
+const log = env.NODE_ENV === 'production' ? logger : console;
 
 // @ts-ignore
 global.fetch = fetch;
