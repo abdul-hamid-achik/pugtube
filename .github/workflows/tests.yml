@@ -23,12 +23,6 @@ env:
 jobs:
   component:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:latest
-      env:
-        NODE_ENV: ${{ env.NODE_ENV }}
-        DATABASE_URL: ${{ env.DATABASE_URL }}
-        REDIS_URL: ${{ env.REDIS_URL }}
 
     services:
       mysql:
