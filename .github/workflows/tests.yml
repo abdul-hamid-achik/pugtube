@@ -17,7 +17,6 @@ defaults:
 
 env:
   NODE_ENV: test
-  DATABASE_URL: mysql://root:root@mysql:3306/test
   REDIS_URL: redis://redis:6379/0
 
 jobs:
@@ -25,12 +24,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: test
-
       redis:
         image: redis:latest
 
@@ -61,7 +54,7 @@ jobs:
           HUSKY: 0
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DATABASE_URL: ${{ env.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REDIS_URL: ${{ env.REDIS_URL }}
           NODE_ENV: development
           GITHUB_ID: ${{ secrets.CLERK_GITHUB_ID }}
