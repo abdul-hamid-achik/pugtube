@@ -15,6 +15,8 @@ export const serverSchema = z.object({
   DISCORD_SECRET: z.string(),
   CLERK_SECRET_KEY: z.string(),
   REDIS_URL: z.string().url(),
+  AXIOM_TOKEN: z.string(),
+  AXIOM_DATASET: z.string(),
 });
 
 /**
@@ -32,6 +34,8 @@ export const serverEnv = {
   DISCORD_ID: process.env.DISCORD_ID,
   DISCORD_SECRET: process.env.DISCORD_SECRET,
   CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+  AXIOM_TOKEN: process.env.AXIOM_TOKEN,
+  AXIOM_DATASET: process.env.AXIOM_DATASET,
 };
 
 /**

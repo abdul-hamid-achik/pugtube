@@ -14,17 +14,6 @@ const connection = new IORedis(process.env.REDIS_URL as string, {
 const worker = new Worker(
   "hls",
   async ({ data: { uploadId } }) => {
-    // await import("./server/functions/generate-thumbnail").then((m) =>
-    //   m.default({ uploadId })
-    // );
-
-    // await import("./server/functions/transcode-video").then((m) =>
-    //   m.default({ uploadId })
-    // );
-
-    // await import("./server/functions/clear-upload-artifacts").then((m) =>
-    //   m.default({ uploadId })
-    // );
 
     await transcodeVideo({ uploadId });
     await generateThumbnail({ uploadId });
