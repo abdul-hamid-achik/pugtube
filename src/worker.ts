@@ -25,7 +25,7 @@ const { env } = require('./env/server.mjs');
 global.fetch = fetch;
 
 const connection = new IORedis(env.REDIS_URL as string, {
-  maxRetriesPerRequest: 3,
+  maxRetriesPerRequest: null,
 });
 
 const worker = new Worker(
