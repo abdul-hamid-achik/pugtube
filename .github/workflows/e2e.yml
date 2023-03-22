@@ -2,21 +2,18 @@
 name: End to End Tests
 
 on:
-  deployment_status:
+  schedule:
+    - cron: "0 6 * * *"
 
 defaults:
   run:
     shell: bash
 
 env:
-  ACT: ${{ github.event_name == 'pull_request' }}
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   NODE_ENV: test
 
 jobs:
-  test-on-deployment:
-    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
+  test-on-production:
     runs-on: ubuntu-latest
     steps:
       - name: Install `Xvfb` for testing in CI/CD simulations
@@ -26,17 +23,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Read .tool-versions
+        uses: marocchino/tool-versions-action@v1
+        id: versions
+
+      - name: Use Node.js ${{ steps.versions.outputs.nodejs}}
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ steps.versions.outputs.nodejs}}
 
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
           record: true
-          wait-on: ${{ github.event.deployment_status.target_url }}
+          wait-on: https://pugtube.dev
         env:
             CYPRESS_BASE_URL: https://pugtube.dev
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            CYPRESS_INSTALL_BINARY: 0
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

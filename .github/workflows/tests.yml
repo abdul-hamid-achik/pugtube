@@ -16,32 +16,69 @@ defaults:
     shell: bash
 
 env:
-  ACT: ${{ github.event_name == 'pull_request' }}
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   NODE_ENV: test
+  DATABASE_URL: mysql://root:root@mysql:3306/test
+  REDIS_URL: redis://redis:6379/0
 
 jobs:
   component:
     runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:latest
+      env:
+        NODE_ENV: ${{ env.NODE_ENV }}
+        DATABASE_URL: ${{ env.DATABASE_URL }}
+        REDIS_URL: ${{ env.REDIS_URL }}
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+
+      redis:
+        image: redis:latest
+
+
     steps:
-      - name: Install `Xvfb` for testing in CI/CD simulations
-        if: ${{ env.ACT }}
-        run: sudo apt-get update -y && sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+      # - name: Install `Xvfb` for testing in CI/CD simulations
+      #   if: ${{ env.ACT }}
+      #   run: sudo apt-get update -y && sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Read .tool-versions
+        uses: marocchino/tool-versions-action@v1
+        id: versions
+
+      - name: Use Node.js ${{ steps.versions.outputs.nodejs}}
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ steps.versions.outputs.nodejs}}
 
-      - name: Testing
+      - name: Cypress Component Tests
         uses: cypress-io/github-action@v5
         with:
           component: true
           record: true
         env:
-            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_INSTALL_BINARY: 0
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+          REDIS_URL: ${{ env.REDIS_URL }}
+          NODE_ENV: development
+          GITHUB_ID: ${{ secrets.CLERK_GITHUB_ID }}
+          GITHUB_SECRET: ${{ secrets.CLERK_GITHUB_SECRET }}
+          DISCORD_ID: ${{ secrets.DISCORD_ID }}
+          DISCORD_SECRET: ${{ secrets.DISCORD_SECRET }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET: component-testing
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
