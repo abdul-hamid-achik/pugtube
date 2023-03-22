@@ -38,7 +38,8 @@ jobs:
           record: true
           wait-on: https://pugtube.dev
         env:
-            CYPRESS_BASE_URL: https://pugtube.dev
-            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-            CYPRESS_INSTALL_BINARY: 0
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUSKY: 0
+          CYPRESS_BASE_URL: https://pugtube.dev
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_INSTALL_BINARY: 0
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

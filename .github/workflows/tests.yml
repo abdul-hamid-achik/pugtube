@@ -64,6 +64,7 @@ jobs:
           component: true
           record: true
         env:
+          HUSKY: 0
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_INSTALL_BINARY: 0
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
