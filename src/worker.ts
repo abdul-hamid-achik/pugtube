@@ -12,7 +12,7 @@ try {
   dotenv.config({
     path: path.resolve(__dirname, "/.env"),
   });
-} catch (e) {
+} catch (e: any) {
   log.error("failed to load env in worker", e);
   process.exit(1);
 }
