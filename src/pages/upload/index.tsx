@@ -139,7 +139,7 @@ export default function Upload() {
             <div className="mx-auto h-full max-w-full px-6 py-8">
                 <h1 className="mb-4 text-2xl font-medium text-white">Upload Video</h1>
                 <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-                    <div className="mb-8 flex justify-between rounded-lg bg-white p-6 shadow">
+                    <div className="mb-8 flex max-w-screen-sm flex-col justify-between rounded-lg bg-white p-6 shadow">
                         <div className="flex w-full flex-col px-8">
                             <div className="mb-6">
                                 <label htmlFor="title" className="mb-2 block font-medium text-gray-700">Title</label>
