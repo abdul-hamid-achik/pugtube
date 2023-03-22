@@ -69,6 +69,7 @@ jobs:
           DISCORD_ID: ${{ secrets.DISCORD_ID }}
           DISCORD_SECRET: ${{ secrets.DISCORD_SECRET }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: component-testing
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
