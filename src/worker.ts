@@ -13,12 +13,10 @@ const connection = new IORedis(process.env.REDIS_URL as string, {
 
 const worker = new Worker(
   "hls",
-  async ({ data: { uploadId } }) => {
-
-    await transcodeVideo({ uploadId });
-    await generateThumbnail({ uploadId });
+  async ({ data: { uploadId, fileName } }) => {
+    await transcodeVideo({ uploadId, fileName });
+    await generateThumbnail({ uploadId, fileName });
     await clearUploadArtifacts({ uploadId });
-
   },
   { connection }
 );

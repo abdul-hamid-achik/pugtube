@@ -1,7 +1,6 @@
 import { prisma } from '@/server/db';
 import { createFFmpeg, fetchFile } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
-import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
@@ -38,7 +37,7 @@ type ParsedSegment = {
     custom: {}
 }
 
-export default async function transcodeVideo({ uploadId }: { uploadId: string }) {
+export default async function transcodeVideo({ uploadId, fileName }: { uploadId: string, fileName: string }) {
     log.info('Transcoding video...')
     const ffmpeg = await createFFmpeg();
     // Create temporary directories to store input and output files
@@ -60,12 +59,11 @@ export default async function transcodeVideo({ uploadId }: { uploadId: string })
         Bucket: process.env.AWS_S3_BUCKET,
         Key: uploadId,
     });
-    const parsedUpload = JSON.parse(upload?.Metadata?.file || '{}') as Upload
-    const parsedUploadMetadata: VideoMetadata = (parsedUpload as any)?.metadata || {}
-    const inputFileName = parsedUploadMetadata.name
+
+    const inputFileName = fileName
     const inputFilePath = `${inputDirPath}/${inputFileName}`
     const inputStream = upload?.Body as Readable        // Derive the output file name
-    const outputFileName = `${parsedUpload.id}.m3u8`;
+    const outputFileName = `${uploadId}.m3u8`;
     const writeStream = fs.createWriteStream(inputFilePath)
 
     await new Promise((resolve, reject) => {
@@ -220,14 +218,14 @@ export default async function transcodeVideo({ uploadId }: { uploadId: string })
 
         await putObject({
             Bucket: process.env.AWS_S3_BUCKET,
-            Key: `originals/${uploadId}/${parsedUploadMetadata.filename}`,
+            Key: `originals/${uploadId}/${fileName}`,
             Body: await fetchFile(inputFilePath),
         });
         log.info('Original video uploaded to S3', { uploadId });
 
         await prisma.upload.update({
             where: {
-                id: parsedUpload.id,
+                id: uploadId,
             },
             data: {
                 transcoded: true,

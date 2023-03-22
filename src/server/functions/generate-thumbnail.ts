@@ -1,12 +1,11 @@
 import { prisma } from '@/server/db';
 import { createFFmpeg, fetchFile } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
-import { Upload, VideoMetadata } from '@prisma/client';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
 
-export default async function generateThumbnail({ uploadId }: { uploadId: string }) {
+export default async function generateThumbnail({ uploadId, fileName }: { uploadId: string, fileName: string }) {
     const ffmpeg = await createFFmpeg();
     log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
     // Create temporary directories to store input and output files
@@ -28,9 +27,7 @@ export default async function generateThumbnail({ uploadId }: { uploadId: string
         Key: uploadId,
     });
 
-    const parsedUpload = JSON.parse(upload?.Metadata?.file || '{}') as Upload
-    const parsedUploadMetadata: VideoMetadata = (parsedUpload as any)?.metadata || {}
-    const inputFileName = parsedUploadMetadata.name
+    const inputFileName = fileName
     const inputFilePath = `${inputDirPath}/${inputFileName}`
     const outputFilePath = `${os.tmpdir()}/${uploadId}.png`;
     const outputFileName = `${uploadId}.png`;
