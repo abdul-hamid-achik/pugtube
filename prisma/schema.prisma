@@ -1,4 +1,3 @@
-// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -13,101 +12,115 @@ datasource db {
 }
 
 model Video {
-    id           String        @id @default(cuid())
-    title        String
-    description  String?
-    duration     Int?
-    thumbnailUrl String?
-    category     String?
-    userId       String        @map("user_id")
-    comments     Comment[]
-    likes        Like[]
-    hlsPlaylist  HlsPlaylist[] @relation
-    uploadId     String        @unique @map("upload_id")
-    upload       Upload        @relation(fields: [uploadId], references: [id])
-    createdAt    DateTime      @default(now()) @updatedAt
-    HlsSegment   HlsSegment[]
+    id            String       @id @default(cuid())
+    title         String
+    description   String?
+    duration      Int?
+    thumbnailUrl  String?      @map("thumbnail_url")
+    category      String?
+    userId        String       @map("user_id")
+    comments      Comment[]
+    likes         Like[]
+    hlsPlaylist   HlsPlaylist? @relation(fields: [hlsPlaylistId], references: [id])
+    hlsPlaylistId String?      @unique @map("hls_playlist_id")
+    uploadId      String       @unique @map("upload_id")
+    upload        Upload       @relation(fields: [uploadId], references: [id])
+    createdAt     DateTime     @default(now()) @updatedAt @map("created_at")
+    hlsSegments   HlsSegment[]
 
-    @@index([userId])
-    @@index([uploadId])
+    @@index([userId], name: "user_id")
+    @@index([uploadId], name: "upload_id")
     @@map("videos")
 }
 
 model HlsPlaylist {
     id                    String       @id @default(uuid())
-    video                 Video        @relation(fields: [videoId], references: [id])
-    videoId               String
+    videoId               String       @unique @map("video_id")
     key                   String
     resolution            String?
     url                   String?
-    createdAt             DateTime     @default(now())
-    updatedAt             DateTime     @updatedAt
+    createdAt             DateTime     @default(now()) @map("created_at")
+    updatedAt             DateTime     @updatedAt @map("updated_at")
     segments              HlsSegment[]
-    allowCache            Boolean?
-    endList               Boolean?
-    mediaSequence         Int?
-    discontinuitySequence Int?
-    playlistType          String?
-    targetDuration        Int?
-    totalDuration         Int?
-    discontinuityStarts   String?
+    allowCache            Boolean?     @map("allow_cache")
+    endList               Boolean?     @map("end_list")
+    mediaSequence         Int?         @map("media_sequence")
+    discontinuitySequence Int?         @map("discontinuity_sequence")
+    playlistType          String?      @map("playlist_type")
+    targetDuration        Int?         @map("target_duration")
+    totalDuration         Int?         @map("total_duration")
+    discontinuityStarts   String?      @map("discontinuity_starts")
+    video                 Video?
 
-    @@index([videoId])
+    @@index([videoId], name: "video_id")
+    @@map("hls_playlists")
 }
 
 model HlsSegment {
     id                 String      @id @default(uuid())
     playlist           HlsPlaylist @relation(fields: [playlistId], references: [id])
-    playlistId         String
+    playlistId         String      @map("playlist_id")
     video              Video       @relation(fields: [videoId], references: [id])
-    videoId            String
+    videoId            String      @map("video_id")
     key                String
     url                String?
     resolution         String?
     duration           Float?
-    segmentNumber      Int
-    createdAt          DateTime    @default(now())
-    updatedAt          DateTime    @updatedAt
-    byterangeOffset    Int?
-    byterangeLength    Int?
+    segmentNumber      Int         @map("segment_number")
+    createdAt          DateTime    @default(now()) @map("created_at")
+    updatedAt          DateTime    @updatedAt @map("updated_at")
+    byterangeOffset    Int?        @map("byterange_offset")
+    byterangeLength    Int?        @map("byterange_length")
     discontinuity      Int?
     uri                String?
     timeline           Int?
-    keyMethod          String?
-    keyUri             String?
-    keyIv              String?
-    mapUri             String?
-    mapByterangeOffset Int?
-    mapByterangeLength Int?
-    cueOut             String?
-    cueOutCont         String?
-    cueIn              String?
+    keyMethod          String?     @map("key_method")
+    keyUri             String?     @map("key_uri")
+    keyIv              String?     @map("key_iv")
+    mapUri             String?     @map("map_uri")
+    mapByterangeOffset Int?        @map("map_byterange_offset")
+    mapByterangeLength Int?        @map("map_byterange_length")
+    cueOut             String?     @map("cue_out")
+    cueOutCont         String?     @map("cue_out_cont")
+    cueIn              String?     @map("cue_in")
     custom             Json?
 
-    @@index([playlistId])
-    @@index([videoId])
+    @@index([playlistId], name: "playlist_id")
+    @@index([videoId], name: "video_id")
+    @@map("hls_segments")
 }
 
 model Comment {
-    id      String @id @default(cuid())
-    text    String
-    userId  String @map("user_id")
-    videoId String @map("video_id")
-    Video   Video  @relation(fields: [videoId], references: [id])
+    id              String    @id @default(cuid())
+    text            String
+    userId          String    @map("user_id")
+    videoId         String    @map("video_id")
+    video           Video     @relation(fields: [videoId], references: [id])
+    parentComment   Comment?  @relation("CommentToComment", fields: [parentCommentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+    parentCommentId String?   @map("parent_comment_id")
+    comments        Comment[] @relation("CommentToComment")
 
-    @@index([userId])
-    @@index([videoId])
+    createdAt DateTime @default(now()) @updatedAt @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+    Like      Like[]
+
+    @@index([userId], name: "user_id")
+    @@index([videoId], name: "video_id")
+    @@index([parentCommentId])
     @@map("comments")
 }
 
 model Like {
-    id      String @id @default(cuid())
-    userId  String @map("user_id")
-    videoId String @map("video_id")
-    Video   Video  @relation(fields: [videoId], references: [id])
+    id        String   @id @default(cuid())
+    userId    String   @map("user_id")
+    videoId   String?  @map("video_id")
+    video     Video?   @relation(fields: [videoId], references: [id])
+    commentId String?  @map("comment_id")
+    comment   Comment? @relation(fields: [commentId], references: [id])
 
-    @@index([userId])
-    @@index([videoId])
+    @@index([userId], name: "user_id")
+    @@index([videoId], name: "video_id")
+    @@index([commentId], name: "comment_id")
     @@map("likes")
 }
 
@@ -115,25 +128,25 @@ model VideoMetadata {
     id           String @id @default(cuid())
     name         String
     type         String
-    filetype     String
-    filename     String
-    relativePath String
+    fileType     String @map("filetype")
+    fileName     String @map("filename")
+    relativePath String @map("relative_path")
 
-    uploadId String  @unique
-    Upload   Upload?
+    uploadId String  @unique @map("upload_id")
+    upload   Upload?
 
     @@map("video_metadata")
 }
 
 model Upload {
-    id            String         @id @default(cuid())
-    size          Int?
-    offset        Int
-    creation_date DateTime?
-    metadata      VideoMetadata? @relation(fields: [metadataId], references: [id])
-    transcoded    Boolean        @default(false)
-    metadataId    String?        @unique
-    video         Video?
+    id           String         @id @default(cuid())
+    size         Int?
+    offset       Int
+    creationDate DateTime?      @map("creation_date")
+    metadata     VideoMetadata? @relation(fields: [metadataId], references: [id])
+    transcoded   Boolean        @default(false)
+    metadataId   String?        @unique @map("metadata_id")
+    video        Video?
 
     @@map("uploads")
 }

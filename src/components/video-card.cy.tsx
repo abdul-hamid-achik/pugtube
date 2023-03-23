@@ -40,6 +40,7 @@ const video = {
     createdAt: new Date(),
     userId: faker.random.alphaNumeric(),
     uploadId: faker.random.alphaNumeric(),
+    hlsPlaylistId: faker.random.alphaNumeric(),
 }
 
 describe(

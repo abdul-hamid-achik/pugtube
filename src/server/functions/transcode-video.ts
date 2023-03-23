@@ -84,6 +84,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
     // Transcode the video to HLS format
     await ffmpeg.run(
         '-i', inputFileName,
+        '-c:v', 'libx264',
         '-codec', 'copy',
         '-start_number', '0',
         '-hls_time', '4',
@@ -92,8 +93,10 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
         '-hls_segment_filename', `output/segment-%01d.ts`,
         '-hls_playlist_type', 'vod',
         '-hls_list_size', '0',
+        '-movflags', '+faststart',
         '-f', 'hls', `output/${outputFileName}`,
     );
+
 
     log.info(`ran ffmpeg`)
 
@@ -149,6 +152,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
             targetDuration: parsedPlaylist.targetDuration,
             totalDuration: parsedPlaylist.totalDuration,
             discontinuityStarts: (parsedPlaylist.discontinuityStarts as number[]).join(','),
+            videoId: video.id,
         },
     });
 

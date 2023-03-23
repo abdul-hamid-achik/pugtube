@@ -4,6 +4,7 @@ import { getObject, putObject } from '@/utils/s3';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
+import { Readable } from 'stream';
 
 export default async function generateThumbnail({ uploadId, fileName }: { uploadId: string, fileName: string }) {
     const ffmpeg = await createFFmpeg();
@@ -27,17 +28,37 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
         Key: uploadId,
     });
 
+    if (!upload?.Body) {
+        throw new Error('No upload body');
+    }
+
+
     const inputFileName = fileName
     const inputFilePath = `${inputDirPath}/${inputFileName}`
+    const inputStream = upload?.Body as Readable        // Derive the output file name
+    const writeStream = fs.createWriteStream(inputFilePath)
+
+    await new Promise((resolve, reject) => {
+        inputStream.pipe(writeStream);
+        inputStream.on('error', reject);
+        writeStream.on('error', reject);
+        writeStream.on('finish', resolve);
+    });
+
     const outputFilePath = `${os.tmpdir()}/${uploadId}.png`;
     const outputFileName = `${uploadId}.png`;
     await ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFilePath))
     await ffmpeg.run(
         '-i', inputFileName,
         '-ss', '00:00:01.000',
+        '-vf', 'scale=480:360',
         '-vframes', '1',
+        '-q:v', '2',
+        '-c:v', 'libx264',
+        '-movflags', '+faststart',
         outputFileName,
     );
+
 
     log.info(`Thumbnail generated for upload ID: ${uploadId}`);
 

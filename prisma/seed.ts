@@ -14,16 +14,18 @@ const client = createClient(env.PEXELS_API_KEY as string);
 const log = env.NODE_ENV === 'production' ? logger : console;
 
 async function main() {
-  try {
-    // Fetch popular videos from Pexels
-    const videos = await client.videos.popular({ per_page: 30, page: 30 });
-    // @ts-ignore
-    log.debug(`Fetched ${videos.videos?.length} videos from Pexels...`)
+  // Fetch popular videos from Pexels
+  const videos = await client.videos.popular({ per_page: 1000, page: 1 });
+  // @ts-ignore
+  log.debug(`Fetched ${videos.videos?.length} videos from Pexels...`)
 
-    // Iterate through each video
-    let counter = 0;
-    // @ts-ignore
-    for (const video of videos.videos) {
+  // Iterate through each video
+  let counter = 0;
+  let videoId;
+  // @ts-ignore
+  for (const video of videos.videos) {
+    try {
+      videoId = video.id;
       // @ts-ignore
       log.debug(`Processing video ${counter + 1} of ${videos?.videos?.length}`)
       log.debug(`Video ID: ${video.id}...`)
@@ -63,7 +65,7 @@ async function main() {
         data: {
           size: videoBuffer.length,
           offset: 0,
-          creation_date: new Date(),
+          creationDate: new Date(),
           transcoded: false,
           id: uploadId,
         },
@@ -76,8 +78,8 @@ async function main() {
         data: {
           name: fileName,
           type: file_type,
-          filetype: file_type,
-          filename: fileName,
+          fileType: file_type,
+          fileName: fileName,
           relativePath: uploadId,
           uploadId: uploadId,
         },
@@ -107,9 +109,10 @@ async function main() {
       await clearUploadArtifacts({ uploadId });
       await new Promise(resolve => setTimeout(resolve, 500));
       counter++;
+    } catch (error: any) {
+      counter++;
+      log.error(`Error while processing video: ${videoId}`, error)
     }
-  } catch (error: any) {
-    log.error("Error seeding videos:", error);
   }
 }
 

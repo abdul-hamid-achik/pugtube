@@ -34,7 +34,7 @@ const worker = new Worker(
   "hls",
   async ({ data: { uploadId, fileName } }) => {
     log.info(`Processing job for upload ID: ${uploadId}...`)
-
+ 
     await Promise.all([
       transcodeVideo({ uploadId, fileName }),
       generateThumbnail({ uploadId, fileName })

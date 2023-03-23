@@ -86,7 +86,7 @@ export default async function handler(
                 data: {
                     size: size as number,
                     offset: 0,
-                    creation_date: new Date(),
+                    creationDate: new Date(),
                     transcoded: false,
                     id: key,
                 }
@@ -96,8 +96,8 @@ export default async function handler(
                 data: {
                     name: filename as string,
                     type: contentType,
-                    filetype: contentType,
-                    filename: filename,
+                    fileType: contentType,
+                    fileName: filename,
                     relativePath: key,
                     uploadId: key,
                 }

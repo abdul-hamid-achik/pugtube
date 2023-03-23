@@ -21,9 +21,9 @@ export const config = {
 interface MetadataValidation { ok: boolean, expected: string, received: string }
 
 const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
-  const received = upload?.metadata?.filename || '';
+  const received = upload?.metadata?.fileName || '';
   const validFileTypes = ['video/mp4', 'video/quicktime'];
-  const validFileName = /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*$/.test(upload?.metadata?.filename || '');
+  const validFileName = /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*$/.test(upload?.metadata?.fileName || '');
   const validFileType = validFileTypes.includes(upload?.metadata?.type || '');
 
   if (!validFileName) {
@@ -74,11 +74,11 @@ const tusServer = new Server({
 
       const newMetadata = await prisma.videoMetadata.create({
         data: {
-          filename: upload?.metadata?.filename as string,
+          fileName: upload?.metadata?.filename as string,
           type: upload?.metadata?.type as string,
           relativePath: upload?.metadata?.relativePath as string,
           name: upload?.metadata?.name as string,
-          filetype: upload?.metadata?.filetype as string,
+          fileType: upload?.metadata?.filetype as string,
           uploadId: newUpload.id,
         }
       });
