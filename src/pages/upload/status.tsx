@@ -6,11 +6,11 @@ import { useRouter } from 'next/router';
 
 export default function ProcessingPage() {
     const { query: { uploadId } } = useRouter();
-    const { data: upload } = api.upload.getById.useQuery(uploadId as string, {
+    const { data: upload } = api.video.getUploadById.useQuery(uploadId as string, {
         enabled: !!uploadId,
         refetchInterval: 3_000,
     });
-    const { data: segments = [] } = api.playlist.getSegmentsByUploadId.useQuery(uploadId as string, {
+    const { data: segments = [] } = api.video.getPlaylistSegmentsByUploadId.useQuery(uploadId as string, {
         enabled: !!uploadId,
         refetchInterval: 3_000,
     });

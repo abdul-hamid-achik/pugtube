@@ -10,6 +10,7 @@ export const socialRouter = createTRPCRouter({
             videoId: z.string(),
             limit: z.number().min(1).max(100).optional(),
             cursor: z.string().optional(),
+            skip: z.number().optional(),
         })
     ).query(async ({ ctx, input }) => {
         const limit = input.limit ?? 9;
@@ -18,6 +19,7 @@ export const socialRouter = createTRPCRouter({
                 videoId: input.videoId,
             },
             take: limit + 1,
+            skip: input.skip || 0,
             cursor: input.cursor ? { id: input.cursor } : undefined,
             orderBy: {
                 createdAt: 'desc',

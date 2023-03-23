@@ -2,17 +2,27 @@
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface FormData {
-  query: string
+  term: string
 }
 
 export default function Header() {
   const { isSignedIn } = useUser();
-  const { register, handleSubmit } = useForm<FormData>();
-  const onSubmit = (_data: FormData) => { };
+  const router = useRouter();
+  const { register, handleSubmit } = useForm<FormData>({
+    defaultValues: {
+      term: router.query.term as string,
+    },
+  });
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const onSubmit = (data: FormData) => {
+    router.push(`/results?term=${data.term}`)
+  };
 
   return (
     <div className="bg-gray-900 py-2">
@@ -21,9 +31,10 @@ export default function Header() {
           <h1 className="font-bold text-white">Pugtube</h1>
         </Link>
         <div className="grow">
-          <form onSubmit={() => handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex items-center justify-between">
-              <div className="flex grow items-center space-x-2 rounded-lg bg-gray-800 px-3 py-2">
+              <div className="flex grow items-center space-x-2 rounded-lg bg-gray-800 px-3 py-2"
+                onClick={() => searchInputRef.current?.focus()}>
                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                 <label htmlFor="search" className="sr-only">
                   Search
@@ -31,10 +42,10 @@ export default function Header() {
                 <input
                   id="search"
                   placeholder="Search"
-                  className="bg-gray-800 text-sm text-white placeholder:text-gray-400 focus:outline-none"
+                  className="w-full bg-gray-800 text-sm text-white placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-transparent"
                   aria-label="Search"
                   data-testid="search-input"
-                  {...register('query')}
+                  {...register('term')}
                 />
               </div>
               <button

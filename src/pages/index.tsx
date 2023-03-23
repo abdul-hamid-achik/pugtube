@@ -51,6 +51,7 @@ export const Page: NextPageWithLayout<{ initialData: any }> = ({ initialData }) 
   const { data, error, isError, isLoading, fetchNextPage } = api.video.feed.useInfiniteQuery(
     {
       limit: 9,
+      skip: 9
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,

@@ -11,27 +11,32 @@ interface VideoCardProps {
   video: Video;
   author: User;
   channel?: boolean;
+  searchResult?: boolean;
 }
 
-export default function VideoCard({ video, author, channel }: VideoCardProps) {
+export default function VideoCard({ video, author, channel, searchResult = false }: VideoCardProps) {
   const [failedToLoad, setFailedToLoad] = useState(false);
 
   const onError = (event: React.SyntheticEvent<HTMLImageElement>) => setFailedToLoad(true);
 
   return (
-    <div className="h-fit rounded-md bg-white shadow-md">
+    <div className={searchResult ? "flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm" : "h-fit rounded-md bg-white shadow-md"}>
       <Link href={channel ? `/channel/${author.username}/video/${video.id}` : `/watch/${video.id}`}>
         {video.thumbnailUrl && !failedToLoad ? <Image
           src={video.thumbnailUrl as string}
           alt={video.title}
           onError={onError}
-          width={720}
-          height={480}
-        /> : <Image src="/images/video-placeholder.jpg" alt={video.title} width={720} height={480} />}
+          width={searchResult ? 170 : 720}
+          height={searchResult ? 96 : 405}
+
+        /> : <Image src="/images/video-placeholder.jpg" alt={video.title}
+          width={searchResult ? 170 : 720}
+          height={searchResult ? 96 : 405}
+        />}
       </Link>
-      <div className="flex flex-row justify-between">
+      <div className={searchResult ? "flex w-full flex-row justify-between" : "flex flex-row justify-between"}>
         <div className="flex-1 p-4 pr-0">
-          <Link className="block text-lg font-medium text-gray-800 hover:text-gray-600" href={`/watch/${video.id}`}>
+          <Link className={`block text-lg font-medium hover:text-gray-200 ${searchResult ? 'text-white' : 'text-black'} `} href={`/watch/${video.id}`}>
             {video.title}
           </Link>
           <p className="text-gray-400">{DateTime.fromISO(typeof video?.createdAt === "object" ? video.createdAt.toISOString() : video.createdAt).toRelative()}</p>

@@ -121,7 +121,7 @@ export const videoRouter = createTRPCRouter({
         upload: true,
         hlsPlaylist: true,
       },
-    });
+    })!;
 
 
     await ctx.prisma.video.delete({
@@ -162,5 +162,107 @@ export const videoRouter = createTRPCRouter({
 
     return video;
   }),
+
+  getUploadById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.upload.findUniqueOrThrow({
+      where: {
+        id: input,
+      },
+    })
+  }),
+
+  getPlaylistSegmentsByUploadId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const video = await ctx.prisma.video.findUniqueOrThrow({
+      where: {
+        uploadId: input,
+      },
+      include: {
+        hlsPlaylist: true,
+      }
+    })
+
+    const segments = await ctx.prisma.hlsSegment.findMany({
+      where: {
+        videoId: video.id,
+      },
+    })
+
+    return segments || [];
+  }),
+
+  search: publicProcedure
+    .input(
+      z.object({
+        searchTerm: z.string(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+        skip: z.number().optional()
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 5;
+      const searchTerm = input.searchTerm;
+      const cursor = input.cursor;
+
+      let videos = await ctx.prisma.video.findMany({
+        take: limit + 1,
+        skip: input.skip || 0,
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        where: {
+          OR: [
+            {
+              title: {
+                contains: searchTerm,
+              },
+            },
+            {
+              description: {
+                contains: searchTerm,
+              },
+            },
+            {
+              category: {
+                contains: searchTerm,
+              },
+            },
+          ],
+          upload: {
+            transcoded: true,
+          },
+        },
+      });
+      videos = await Promise.all(
+        videos.map(async (video: Video) => ({
+          ...video,
+          thumbnailUrl: video.thumbnailUrl
+            ? await getSignedUrl(video.thumbnailUrl as string)
+            : null,
+        })),
+      );
+
+      const authors = await clerkClient.users.getUserList({
+        userId: videos.map((video) => video.userId),
+      });
+
+      const items = videos.map((video) => ({
+        video,
+        author: authors.find((author) => author.id === video.userId)!,
+      }));
+
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.video!.id;
+      }
+
+      return {
+        items,
+        nextCursor,
+      };
+    }),
+
 });
 
