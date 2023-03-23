@@ -31,8 +31,8 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
     <video
       ref={videoRef}
       src={src}
-      style={{ maxWidth: '100%', maxHeight: '480px', minHeight: '480px' }}
-      width="100%"
+      width="720"
+      height="480"
       poster={poster}
       preload="metadata"
       controls

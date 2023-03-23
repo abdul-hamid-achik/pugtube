@@ -6,6 +6,7 @@ import { NextPageWithLayout } from '@/pages/_app';
 import { prisma } from '@/server/db';
 import { api } from '@/utils/api';
 import { getSignedUrl } from '@/utils/s3';
+import { useAuth } from '@clerk/nextjs';
 import { clerkClient, User } from '@clerk/nextjs/api';
 import { Comment } from '@prisma/client';
 import { DateTime } from 'luxon';
@@ -75,6 +76,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
 
 const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...props }) => {
     const { register, handleSubmit, reset } = useForm<Inputs>();
+    const { isSignedIn } = useAuth();
     const {
         data: commentData,
         error: commentError,
@@ -90,6 +92,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         {
             getNextPageParam: (lastPage) => lastPage?.nextCursor,
             initialData: { pages: [initialData], pageParams: [] },
+            refetchInterval: 10000,
         }
     );
     const { mutate } = api.social.addCommentToVideo.useMutation({
@@ -120,12 +123,14 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         <Head>
             <title>{props?.title}</title>
         </Head>
-        <div className="m-0 flex h-fit w-fit bg-gray-700">
-            <div className="flex flex-1 flex-col p-4">
+        <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700" >
+            <div className="mx-auto flex flex-1 flex-col p-4">
                 <VideoPlayer src={playlistUrl} poster={props.poster} />
-                <div className="flex flex-col p-4">
-                    <h1 className="text-xl text-white">{props?.title}</h1>
-                    <p className="pt-2 text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
+                <div className="flex flex-col p-4 ">
+                    <div className="mb-2 flex flex-row">
+                        <h1 className="text-xl text-white">{props?.title}</h1>
+                        <p className="ml-4 pt-1 align-middle text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
+                    </div>
                     {props?.author &&
                         <div className="flex items-center py-2">
                             <Image
@@ -140,7 +145,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                                 @{props?.author}
                             </Link>
                         </div>}
-                    <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+                    {isSignedIn && <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                         <div className="mb-4">
                             <textarea
                                 {...register("text")}
@@ -154,7 +159,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                         >
                             Submit
                         </button>
-                    </form>
+                    </form>}
                 </div>
             </div>
 
@@ -175,7 +180,11 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                         dataLength={commentItems.length}
                         next={fetchMoreCommentData}
                         hasMore={hasNextCommentPage}
-                        loader={<Spinner />}
+                        loader={
+                            <div className="p-4">
+                                <Spinner />
+                            </div>
+                        }
                         endMessage={
                             <p className="p-4 text-center text-lg text-white">
                                 <b>End of comments</b>
