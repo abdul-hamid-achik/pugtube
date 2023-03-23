@@ -18,7 +18,7 @@ interface PageProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { user: authUser } = getAuth(context?.req);
+    const { userId } = getAuth(context?.req);
     const { username, videoId } = context.query;
     const [user] = await clerkClient.users.getUserList({
         username: [username as string],
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
     });
 
-    if (!user || !video || user.id !== authUser?.id) {
+    if (!user || !video || user?.id !== userId) {
         return {
             notFound: true,
         };

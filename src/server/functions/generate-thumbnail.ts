@@ -63,7 +63,7 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
     log.info(`Thumbnail generated for upload ID: ${uploadId}`);
 
     const thumbnail = await ffmpeg.FS('readFile', outputFileName);
-
+    ffmpeg.exit();
     await putObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: `thumbnails/${uploadId}.png`,

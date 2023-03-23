@@ -5,6 +5,7 @@ import type { Video } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
+import { env } from '@/env/server.mjs';
 export const videoRouter = createTRPCRouter({
   getByUploadId: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.video.findUniqueOrThrow({
@@ -104,7 +105,7 @@ export const videoRouter = createTRPCRouter({
         ...input,
         thumbnailUrl: input.thumbnailUrl?.startsWith('https://') || input.thumbnailUrl?.startsWith('http://') ?
           input.thumbnailUrl :
-          `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_BUCKET}/${input.thumbnailUrl}`,
+          `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${input.thumbnailUrl}`,
       },
     });
 

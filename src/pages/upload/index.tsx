@@ -48,7 +48,7 @@ export default function Upload() {
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        credentials: 'include',
+                        credentials: "same-origin",
                         body: JSON.stringify({
                             filename: file.name,
                             filetype: file.type,
@@ -66,7 +66,7 @@ export default function Upload() {
                 signPart(file, partData) {
                     return fetch('/api/get-signed-url', {
                         method: 'POST',
-                        credentials: 'include',
+                        credentials: "same-origin",
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -83,7 +83,7 @@ export default function Upload() {
                 completeMultipartUpload(file, data) {
                     return fetch('/api/get-signed-url', {
                         method: 'POST',
-                        credentials: 'include',
+                        credentials: "same-origin",
                         headers: {
                             'Content-Type': 'application/json',
                         },

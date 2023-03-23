@@ -102,6 +102,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
 
     // Upload the transcoded video to S3
     const transcodedVideo = ffmpeg.FS('readFile', `output/${outputFileName}`);
+    ffmpeg.exit();
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;
     const decoder = new TextDecoder();
     const transcodedVideoString = decoder.decode(transcodedVideo);
@@ -240,4 +241,5 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
         log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
         throw error;
     }
+
 };
