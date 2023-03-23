@@ -1,6 +1,7 @@
 import { playlistRouter } from './routers/playlist';
 import { uploadRouter } from './routers/upload';
 import { videoRouter } from './routers/video';
+import { socialRouter } from './routers/social';
 import { createTRPCRouter } from './trpc';
 
 /**
@@ -11,7 +12,8 @@ import { createTRPCRouter } from './trpc';
 export const appRouter = createTRPCRouter({
   video: videoRouter,
   upload: uploadRouter,
-  playlist: playlistRouter
+  playlist: playlistRouter,
+  social: socialRouter
 });
 
 // export type definition of API

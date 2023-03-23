@@ -8,6 +8,7 @@ import { DocumentArrowUpIcon, ExclamationCircleIcon } from '@heroicons/react/24/
 import { Video } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useState } from 'react';
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -16,6 +17,13 @@ interface PageProps {
     user: User;
     video: Video;
 }
+
+type Inputs = {
+    title: string,
+    description: string,
+    thumbnailUrl: string,
+    category: string,
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { userId } = getAuth(context?.req);
@@ -48,12 +56,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
 }
 
-type Inputs = {
-    title: string,
-    description: string,
-    thumbnailUrl: string,
-    category: string,
-};
 
 function Page(props: PageProps) {
     const router = useRouter();
@@ -129,6 +131,11 @@ function Page(props: PageProps) {
                             <p className="mt-1 text-sm text-white">
                                 This information will be displayed publicly so be careful what you share.
                             </p>
+                            <div className="mt-5">
+                                <Link href={`/watch/${props.video.id}`} className="text-sm font-medium text-white hover:text-gray-200">
+                                    View Video
+                                </Link>
+                            </div>
                         </div>
                     </div>
                     <div className="mt-5 md:col-span-2 md:mt-0">
@@ -250,4 +257,4 @@ function Page(props: PageProps) {
 }
 
 
-export default Page;
+export default Page

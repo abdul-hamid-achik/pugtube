@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="sticky top-0 z-10 bg-gray-900 pl-4">
                 <Header />
             </div>
-            <div className="container relative mx-auto h-full max-w-screen-xl px-4">
+            <div className="container relative mx-auto h-fit max-w-screen-xl px-4">
                 {children}
             </div>
         </div>

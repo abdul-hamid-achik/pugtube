@@ -15,7 +15,7 @@ const log = env.NODE_ENV === 'production' ? logger : console;
 
 async function main() {
   // Fetch popular videos from Pexels
-  const videos = await client.videos.popular({ per_page: 1000, page: 1 });
+  const videos = await client.videos.popular({ per_page: 50, page: 1 });
   // @ts-ignore
   log.debug(`Fetched ${videos.videos?.length} videos from Pexels...`)
 
