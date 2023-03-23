@@ -6,12 +6,9 @@ import dotenv from "dotenv";
 import IORedis from "ioredis";
 import { log as logger } from 'next-axiom';
 import fetch from 'node-fetch';
-import path from "path";
 
 try {
-  dotenv.config({
-    path: path.resolve(__dirname, "/.env"),
-  });
+  dotenv.config();
 } catch (e: any) {
   console.error("failed to load env in worker", e);
   process.exit(1);
@@ -34,7 +31,7 @@ const worker = new Worker(
   "hls",
   async ({ data: { uploadId, fileName } }) => {
     log.info(`Processing job for upload ID: ${uploadId}...`)
- 
+
     await Promise.all([
       transcodeVideo({ uploadId, fileName }),
       generateThumbnail({ uploadId, fileName })

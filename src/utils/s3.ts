@@ -8,27 +8,26 @@ import axios from 'axios';
 import fs from "fs";
 import { log } from 'next-axiom';
 import os from "os";
-/* eslint-disable-line */
-import { env } from '@/env/server.mjs';
+
 export const s3 = new S3Client({
-    region: env.AWS_REGION as string,
+    region: process.env.AWS_REGION as string,
 } as S3ClientConfig);
 
 
 export async function getPresignedPutUrl(key: string, contentType: string, expiresIn = 3600) {
     const presigner = new S3RequestPresigner({
         credentials: {
-            accessKeyId: env.AWS_ACCESS_KEY_ID as string,
-            secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
         },
-        region: env.AWS_REGION as string,
+        region: process.env.AWS_REGION as string,
         sha256: Sha256,
     });
 
     const request = new HttpRequest({
         method: "PUT",
         protocol: "https",
-        hostname: `${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com`,
+        hostname: `${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com`,
         path: `/${key}`,
         headers: {
             "Content-Type": contentType,
@@ -56,8 +55,8 @@ export async function getSignedUrl(s3ObjectUrl: string) {
 
     const presigner = new S3RequestPresigner({
         credentials: {
-            accessKeyId: env.AWS_ACCESS_KEY_ID as string,
-            secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
         },
         region: region as string,
         sha256: Sha256,
