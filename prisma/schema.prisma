@@ -1,8 +1,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "rhel-openssl-1.0.x"]
+    provider        = "prisma-client-js"
+    binaryTargets   = ["native", "rhel-openssl-1.0.x"]
+    previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -94,8 +95,8 @@ model Comment {
     id              String    @id @default(cuid())
     text            String
     userId          String    @map("user_id")
-    videoId         String?    @map("video_id")
-    video           Video?     @relation(fields: [videoId], references: [id])
+    videoId         String?   @map("video_id")
+    video           Video?    @relation(fields: [videoId], references: [id])
     parentComment   Comment?  @relation("CommentToComment", fields: [parentCommentId], references: [id], onUpdate: NoAction, onDelete: NoAction)
     parentCommentId String?   @map("parent_comment_id")
     comments        Comment[] @relation("CommentToComment")
