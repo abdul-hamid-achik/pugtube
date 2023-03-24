@@ -26,13 +26,28 @@ export default async function deleteVideoArtifacts({ videoId }: { videoId: strin
 
     log.debug(`Deleting original, thumbnail, and transcoded segments...`)
 
-    await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`);
-    await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/thumbnails/${video?.upload?.id}/${video?.id}.png`);
+    await deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET as string,
+        Key: `originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+    });
+    await deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET as string,
+        Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+    });
     await Promise.all(segments.map((_, index) =>
-        deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/transcoded/${video?.upload?.id}/segment-${index}.ts`)
+        deleteObject({
+            Bucket: process.env.AWS_S3_BUCKET as string,
+            Key: `transcoded/${video?.upload?.id}/segment-${index}.ts`,
+        })
     ))
-    await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/transcoded/${video?.upload?.id}/output.m3u8`);
-    await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${video?.upload?.id}`);
+    await deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET as string,
+        Key: `transcoded/${video?.upload?.id}/output.m3u8`,
+    });
+    await deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET as string,
+        Key: video?.upload?.id as string,
+    });
     log.debug(`Deleting video, upload, metadata, segments, and playlist...`)
 
 

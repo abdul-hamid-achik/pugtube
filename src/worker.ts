@@ -65,11 +65,11 @@ worker.on("ready", () => {
 });
 
 worker.on("completed", (job) => {
-  log.info("Job completed", job);
+  log.info("Job completed", job.asJSON());
 });
 
 worker.on("failed", (job, err) => {
-  log.warn("Job failed", job);
+  log.warn("Job failed", job?.asJSON());
   log.error("Job failed with error", err);
 });
 

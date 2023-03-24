@@ -1,15 +1,33 @@
 import { Sha256 } from "@aws-crypto/sha256-browser";
-import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, PutObjectCommandInput, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, DeleteObjectCommandInput, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, PutObjectCommandInput, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from '@aws-sdk/url-parser';
 import { formatUrl } from '@aws-sdk/util-format-url';
 import { log } from 'next-axiom';
+import { Readable } from "stream";
 
 export const s3 = new S3Client({
     region: process.env.AWS_REGION as string,
 } as S3ClientConfig);
 
+export async function moveObject(input: GetObjectCommandInput, output: PutObjectCommandInput) {
+    const object = await getObject(input);
+
+    if (!object || !object.Body) {
+        log.error(`Failed to get the object with Key: ${input.Key}`);
+        return;
+    }
+
+    await putObject({ ...output, Body: object.Body as Readable, ContentType: object.ContentType, ContentLength: object.ContentLength });
+
+    const deleteInput: DeleteObjectCommandInput = {
+        Bucket: input.Bucket,
+        Key: input.Key,
+    };
+
+    await deleteObject(deleteInput);
+}
 
 export async function getPresignedPutUrl(key: string, contentType: string, expiresIn = 3600) {
     const presigner = new S3RequestPresigner({
@@ -98,19 +116,14 @@ export async function getObject(input: GetObjectCommandInput) {
     }
 }
 
-export async function deleteObject(objectUrl: string) {
-    const { bucket, key } = parseS3ObjectUrl(objectUrl);
-
+export async function deleteObject(input: DeleteObjectCommandInput) {
     try {
-        const result = await s3.send(new DeleteObjectCommand({
-            Bucket: bucket,
-            Key: key
-        }));
+        const result = await s3.send(new DeleteObjectCommand(input));
 
-        log.info(`Deleted from S3: ${objectUrl}`);
+        log.info(`Deleted from S3: ${input.Bucket}/${input.Key}`);
 
-        return result
+        return result;
     } catch (error) {
-        log.error(`Error deleting from S3: ${objectUrl}`, error as { [key: string]: any; });
+        log.error(`Error deleting from S3: ${input.Bucket}/${input.Key}`, error as { [key: string]: any; });
     }
 }

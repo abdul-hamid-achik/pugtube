@@ -1,20 +1,20 @@
-import { deleteObject, getObject, putObject } from "@/utils/s3";
+import { moveObject } from "@/utils/s3";
+import { GetObjectCommandInput, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { log } from "next-axiom";
 export default async function moveUpload({ uploadId, fileName }: { uploadId: string, fileName: string }) {
-    log.debug(`Moving upload ${uploadId} to originals/${uploadId}/${fileName}...`)
-    const upload = await getObject({
+    log.debug(`Moving upload ${uploadId} to originals/${uploadId}/${fileName}...`);
+
+    const getObjectInput: GetObjectCommandInput = {
         Bucket: process.env.AWS_S3_BUCKET,
         Key: uploadId,
-    })
+    };
 
-    await putObject({
+    const putObjectInput: PutObjectCommandInput = {
         Bucket: process.env.AWS_S3_BUCKET,
         Key: `originals/${uploadId}/${fileName}`,
-        Body: upload!.Body,
-    });
+    };
 
+    await moveObject(getObjectInput, putObjectInput);
 
-    await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadId}`);
-
-    log.debug(`Moved upload ${uploadId} to originals/${uploadId}/${fileName}...`)
+    log.debug(`Moved upload ${uploadId} to originals/${uploadId}/${fileName}...`);
 }

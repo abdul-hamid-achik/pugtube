@@ -101,10 +101,6 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
         '-f', 'hls', `output/${outputFileName}`,
     );
 
-
-
-    log.info(`ran ffmpeg`)
-
     // Upload the transcoded video to S3
     const transcodedVideo = ffmpeg.FS('readFile', `output/${outputFileName}`);
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;

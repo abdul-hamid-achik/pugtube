@@ -43,7 +43,7 @@ async function main() {
         log.debug(`Video ID: ${id} has been assigned an upload ID: ${uploadId}...`)
 
         if (env.NODE_ENV === 'production') {
-          log.info(`Watch Upload Status: https://pugtube.dev/upload/${uploadId}/status`)
+          log.info(`https://pugtube.dev/upload/${uploadId}/status`)
         }
 
         // Download the highest resolution video file
@@ -62,11 +62,10 @@ async function main() {
         const fileName = `${id}_${videoWidth}x${videoHeight}.${file_type.split('/')[1]}`;
         await putObject({
           Bucket: env.AWS_S3_BUCKET,
-          Key: uploadId,
+          Key: `originals/${uploadId}/${fileName}`,
           Body: videoBuffer,
         });
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
         log.debug(`Video ID: ${id} has been uploaded to S3...`)
 
         // Create an upload entry in the database
@@ -110,14 +109,11 @@ async function main() {
           },
         })
 
-        await functions.moveUpload({ uploadId, fileName });
-
         await Promise.all([
           functions.transcodeVideo({ uploadId, fileName }),
           functions.generateThumbnail({ uploadId, fileName })
         ]);
 
-        await new Promise(resolve => setTimeout(resolve, 500));
         counter++;
       } catch (error: any) {
         counter++;
