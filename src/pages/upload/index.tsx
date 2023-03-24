@@ -119,7 +119,7 @@ export default function Upload() {
     const { mutate } = api.videos.create.useMutation({
         onSuccess: async (video) => {
             uppy.resetProgress();
-            await router.push(`/upload/status?uploadId=${video.uploadId}`);
+            await router.push(`/upload/${video.uploadId}/status`);
         },
     });
 

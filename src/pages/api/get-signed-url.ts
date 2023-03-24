@@ -103,7 +103,7 @@ export default async function handler(
                 }
             });
 
-            queue.add("hls", { uploadId: key, fileName: filename });
+            queue.add("post-upload", { uploadId: key, fileName: filename });
         } else {
             res.status(status.BAD_REQUEST).json({ message: "Invalid operation or missing parameters" });
         }

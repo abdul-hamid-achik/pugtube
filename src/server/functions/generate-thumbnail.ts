@@ -27,17 +27,12 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
 
         const upload = await getObject({
             Bucket: process.env.AWS_S3_BUCKET,
-            Key: uploadId,
+            Key: `originals/${uploadId}/${fileName}`,
         });
-
-        if (!upload?.Body) {
-            throw new Error('No upload body');
-        }
-
 
         const inputFileName = fileName
         const inputFilePath = `${inputDirPath}/${inputFileName}`
-        const inputStream = upload?.Body as Readable        // Derive the output file name
+        const inputStream = upload!.Body as Readable        // Derive the output file name
         const writeStream = fs.createWriteStream(inputFilePath)
 
         await new Promise((resolve, reject) => {

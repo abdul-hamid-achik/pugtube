@@ -94,54 +94,9 @@ export const videoRouter = createTRPCRouter({
   }),
 
   delete: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-    const video = await ctx.prisma.video.findUnique({
-      where: {
-        id: input,
-      },
-      include: {
-        upload: true,
-        hlsPlaylist: true,
-      },
-    })!;
-
-
-    await ctx.prisma.video.delete({
-      where: {
-        id: input,
-      },
-    });
-
-    await ctx.prisma.upload.delete({
-      where: {
-        id: video?.upload.id,
-      },
-    });
-
-    await ctx.prisma.videoMetadata.delete({
-      where: {
-        id: video?.upload?.metadataId as string,
-      },
-    });
-
-    await ctx.prisma.hlsPlaylist.findUnique({
-      where: {
-        id: video?.hlsPlaylist?.id as string,
-      },
-    });
-
-    await ctx.prisma.hlsSegment.deleteMany({
-      where: {
-        playlistId: video?.hlsPlaylist?.id as string,
-      },
-    });
-
     queue.add('delete-video-artifacts', {
-      videoId: video?.id,
-      uploadId: video?.upload?.id
+      videoId: input,
     })
-
-
-    return video;
   }),
 
   upload: publicProcedure.input(z.string()).query(({ ctx, input }) => {
@@ -149,6 +104,9 @@ export const videoRouter = createTRPCRouter({
       where: {
         id: input,
       },
+      include: {
+        metadata: true,
+      }
     })
   }),
 

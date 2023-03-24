@@ -1,8 +1,6 @@
 import { env } from '@/env/server.mjs';
 import { prisma } from "@/server/db";
-import clearUploadArtifacts from '@/server/functions/clear-upload-artifacts';
-import generateThumbnail from '@/server/functions/generate-thumbnail';
-import transcodeVideo from '@/server/functions/transcode-video';
+import * as functions from '@/server/functions';
 import { putObject } from '@/utils/s3';
 import axios from 'axios';
 import { log as logger } from 'next-axiom';
@@ -45,7 +43,7 @@ async function main() {
         log.debug(`Video ID: ${id} has been assigned an upload ID: ${uploadId}...`)
 
         if (env.NODE_ENV === 'production') {
-          log.info(`Watch Upload Status: https://pugtube.dev/upload/status?uploadId=${uploadId}`)
+          log.info(`Watch Upload Status: https://pugtube.dev/upload/${uploadId}/status`)
         }
 
         // Download the highest resolution video file
@@ -112,12 +110,13 @@ async function main() {
           },
         })
 
-        // queue.add("hls", { data: { uploadId, fileName } });
+        await functions.moveUpload({ uploadId, fileName });
+
         await Promise.all([
-          transcodeVideo({ uploadId, fileName }),
-          generateThumbnail({ uploadId, fileName })
+          functions.transcodeVideo({ uploadId, fileName }),
+          functions.generateThumbnail({ uploadId, fileName })
         ]);
-        await clearUploadArtifacts({ uploadId });
+
         await new Promise(resolve => setTimeout(resolve, 500));
         counter++;
       } catch (error: any) {

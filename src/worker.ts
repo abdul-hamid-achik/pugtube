@@ -1,6 +1,4 @@
-import clearUploadArtifacts from "@/server/functions/clear-upload-artifacts";
-import generateThumbnail from "@/server/functions/generate-thumbnail";
-import transcodeVideo from "@/server/functions/transcode-video";
+import * as functions from '@/server/functions';
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
 import IORedis from "ioredis";
@@ -29,16 +27,35 @@ const connection = new IORedis(env.REDIS_URL as string, {
 
 const worker = new Worker(
   "hls",
-  async ({ data: { uploadId, fileName } }) => {
-    log.info(`Processing job for upload ID: ${uploadId}...`)
+  async ({ name, data: { videoId, uploadId, fileName, ...opts } }) => {
+    log.info(`Processing job: ${name}`)
+    switch (name) {
+      case 'post-upload':
+        await functions.moveUpload({ uploadId, fileName });
 
-    await Promise.all([
-      transcodeVideo({ uploadId, fileName }),
-      generateThumbnail({ uploadId, fileName })
-    ]);
-    await clearUploadArtifacts({ uploadId });
+        await Promise.all([
+          functions.transcodeVideo({ uploadId, fileName }),
+          functions.generateThumbnail({ uploadId, fileName })
+        ]);
+        break;
 
-    log.info(`Finished processing job for upload ID: ${uploadId}`);
+      case 'transcode-video':
+        await functions.transcodeVideo({ uploadId, fileName, ...opts });
+        break;
+
+      case 'generate-thumbnail':
+        await functions.generateThumbnail({ uploadId, fileName, ...opts });
+        break;
+
+      case 'delete-video-artifacts':
+        await functions.deleteVideoArtifacts({ videoId });
+        break;
+
+      default:
+        log.error(`Unknown job name: ${name}`);
+        break;
+    }
+    log.info(`Finished Job: ${name}`);
   },
   { connection }
 );

@@ -18,9 +18,7 @@ export default function LikeButton({ videoId, commentId, likeId: likeIdProps, re
         enabled: isLiked
     });
 
-    console.log("should be working", isLiked && !!likeId, likeId, likeData)
     const { mutate: like, isLoading: isLiking } = api.social.like.useMutation({
-        mutationKey: ["like", videoId || commentId],
         onSuccess: (data) => {
             setLikeId(data.id);
             refetch();
@@ -29,7 +27,6 @@ export default function LikeButton({ videoId, commentId, likeId: likeIdProps, re
     });
 
     const { mutate: unlike, isLoading: isUnliking } = api.social.unlike.useMutation({
-        mutationKey: ["unlike", videoId || commentId],
         onSuccess: (_) => {
             setLikeId(null)
             refetch?.();

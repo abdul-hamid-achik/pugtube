@@ -57,7 +57,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
     // Download TUS upload file from S3
     const upload = await getObject({
         Bucket: process.env.AWS_S3_BUCKET,
-        Key: uploadId,
+        Key: `originals/${uploadId}/${fileName}`,
     });
 
     const inputFileName = fileName
@@ -84,18 +84,23 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
     // Transcode the video to HLS format
     await ffmpeg.run(
         '-i', inputFileName,
-        '-c:v', 'libx264',
+        '-c:v', 'h264',  // Use h264 codec instead of libx264
+        '-profile:v', 'baseline', // Use the baseline H.264 profile
         '-codec', 'copy',
         '-start_number', '0',
-        '-hls_time', '4',
+        '-hls_time', '6', // Increase HLS segment duration to 6 seconds
         '-hls_flags', 'independent_segments',
         '-hls_segment_type', 'mpegts',
         '-hls_segment_filename', `output/segment-%01d.ts`,
         '-hls_playlist_type', 'vod',
         '-hls_list_size', '0',
         '-movflags', '+faststart',
+        '-b:v', '800k', // Lower the video bitrate to 800k
+        '-g', '12', // Set GOP size to 12 frames
+        '-keyint_min', '72', // Set keyframe interval to 72 frames
         '-f', 'hls', `output/${outputFileName}`,
     );
+
 
 
     log.info(`ran ffmpeg`)

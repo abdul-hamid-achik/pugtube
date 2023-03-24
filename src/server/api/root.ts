@@ -1,3 +1,4 @@
+import { jobsRouter } from './routers/jobs';
 import { socialRouter } from './routers/social';
 import { videoRouter } from './routers/videos';
 import { createTRPCRouter } from './trpc';
@@ -9,7 +10,8 @@ import { createTRPCRouter } from './trpc';
  */
 export const appRouter = createTRPCRouter({
   videos: videoRouter,
-  social: socialRouter
+  social: socialRouter,
+  jobs: jobsRouter,
 });
 
 // export type definition of API

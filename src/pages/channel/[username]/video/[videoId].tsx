@@ -36,6 +36,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         where: {
             id: videoId as string,
         },
+        include: {
+            upload: true,
+        }
     });
 
     if (!user || !video || user?.id !== userId) {
@@ -129,6 +132,7 @@ function Page(props: PageProps) {
                     <div className="md:col-span-1">
                         <div className="px-4 sm:px-0">
                             <h3 className="text-base font-semibold leading-6 text-white">Video: {props.video.id}</h3>
+                            <Link className="text-sm font-semibold leading-6 text-gray-300 underline" href={`/upload/${props?.video?.uploadId}/status`}>Upload: {props.video?.uploadId}</Link>
                             <p className="mt-1 text-sm text-white">
                                 This information will be displayed publicly so be careful what you share.
                             </p>
