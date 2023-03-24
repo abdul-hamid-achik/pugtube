@@ -3,7 +3,10 @@ import { Comment } from "@prisma/client";
 import { DateTime } from 'luxon';
 import Image from 'next/image';
 import Link from 'next/link';
+import React from 'react';
 import LikeButton from './like';
+
+const MemoizedLikeButton = React.memo(LikeButton);
 interface ComponentCardProps {
     comment: Comment & { likeId?: string | null };
     author: User;
@@ -24,7 +27,7 @@ function CommentCard({ comment, author, parentComment }: ComponentCardProps) {
                     <p className="text-xs text-gray-400">{DateTime.fromISO(typeof comment?.createdAt === "object" ? comment.createdAt.toISOString() : comment.createdAt).toRelative()}</p>
                 </div>
             </div>
-            <LikeButton commentId={comment.id} likeId={comment?.likeId} />
+            <MemoizedLikeButton commentId={comment.id} likeId={comment?.likeId} />
         </div>
         <p className="my-2 justify-start text-sm text-gray-200">{comment.text}</p>
         {parentComment && (

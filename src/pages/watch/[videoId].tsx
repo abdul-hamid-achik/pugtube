@@ -4,21 +4,18 @@ import LikeButton from '@/components/like';
 import Spinner from '@/components/spinner';
 import VideoPlayer from '@/components/video-player';
 import { NextPageWithLayout } from '@/pages/_app';
-import { prisma } from '@/server/db';
 import { api } from '@/utils/api';
-import { getSignedUrl } from '@/utils/s3';
+import { getVideoData } from '@/utils/shared';
 import { useAuth } from '@clerk/nextjs';
-import { clerkClient, User } from '@clerk/nextjs/api';
+import { User } from '@clerk/nextjs/api';
 import { Comment } from '@prisma/client';
-import { DateTime } from 'luxon';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
+import { DateTime, Duration } from 'luxon';
+import { GetServerSideProps, Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
 interface PageProps {
     playlistUrl: string;
     likeId: string | null;
@@ -31,6 +28,7 @@ interface PageProps {
     authorProfileImageUrl: string;
     poster: string;
     createdAt: string;
+    duration: number;
     initialData: {
         items: Comment[];
         nextCursor: string | null;
@@ -45,23 +43,15 @@ type CommentItem = {
 
 type Inputs = { text: string }
 
+
+const MemoizedCommentCard = React.memo(CommentCard);
+
+const MemoizedLikeButton = React.memo(LikeButton);
+
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
     const { videoId } = params as { videoId: string };
-    const video = await prisma.video.findFirst({
-        where: { id: String(videoId) },
-        include: {
-            upload: true,
-        },
-    });
+    const { video, author, like } = await getVideoData(videoId);
     const isVideoReady = video?.upload?.transcoded;
-    const author = await clerkClient.users.getUser(video?.userId as string);
-
-    const like = await prisma.like.findFirst({
-        where: {
-            videoId: videoId,
-            userId: author.id,
-        },
-    });
 
     return {
         props: {
@@ -75,15 +65,52 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
             author: author.username || 'Unknown',
             authorProfileImageUrl: author.profileImageUrl || '',
             createdAt: video?.createdAt?.toISOString() || new Date().toISOString(),
-            poster: video?.thumbnailUrl ? await getSignedUrl(video?.thumbnailUrl as string) : '',
+            poster: video?.thumbnailUrl || '',
+            duration: video?.duration || 0,
             initialData: {
                 items: [],
                 nextCursor: null,
             }
         }
     };
-
 };
+
+export async function generateMetadata({ params }: {
+    params: { videoId: string };
+}): Promise<Metadata> {
+    const { videoId } = params;
+    const { video, author } = await getVideoData(videoId);
+
+    return {
+        title: video!.title,
+        description: video!.description,
+        applicationName: 'PugTube',
+        keywords: video!.category, // TODO: Add more keywords
+        authors: [{
+            name: author.username!,
+            url: `https://pugtube.dev/channel/${author.username}`,
+        }],
+        twitter: {
+            site: '@pugtube',
+            title: video!.title,
+            description: video!.description as string,
+            images: video!.thumbnailUrl,
+            creator: `@${author.username!}`,
+            creatorId: author.id,
+        },
+        openGraph: {
+            type: 'video.other',
+            siteName: 'PugTube',
+            url: `https://pugtube.dev/watch/${video.id}`,
+            title: video!.title,
+            description: video!.description as string,
+            images: video!.thumbnailUrl,
+        },
+        category: video!.category as string,
+        creator: author.username!,
+        publisher: 'PugTube',
+    };
+}
 
 
 const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...props }) => {
@@ -133,23 +160,6 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
     };
 
     return (<>
-        <Head>
-            {/* Open Graph (Facebook) */}
-            <meta property="og:title" content={props?.title} />
-            <meta property="og:description" content={props?.description} />
-            <meta property="og:image" content={props.poster} />
-            <meta property="og:type" content="video" />
-            <meta property="og:url" content={`https://pugtube.dev/watch/${props.videoId}`} />
-
-            {/* Twitter */}
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" content={props?.title} />
-            <meta name="twitter:description" content={props?.description} />
-            <meta name="twitter:image" content={props.poster} />
-            <meta name="twitter:site" content="@pugtube" />
-
-            <title>{props?.title}</title>
-        </Head>
         <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700" >
             <div className="mx-auto flex flex-1 flex-col p-4">
                 <VideoPlayer src={playlistUrl} poster={props.poster} />
@@ -160,7 +170,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                             <p className="ml-4 pt-1 align-middle text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
                         </div>
                         <div className="flex self-end">
-                            <LikeButton videoId={props.videoId} likeId={props.likeId} />
+                            <MemoizedLikeButton videoId={props.videoId} likeId={props.likeId} />
                         </div>
                     </div>
                     {props?.author &&
@@ -226,7 +236,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                         {!isCommentLoading &&
                             !isCommentError &&
                             commentItems?.filter(props => props).map((props) => (
-                                <CommentCard
+                                <MemoizedCommentCard
                                     key={props.comment.id}
                                     comment={props.comment}
                                     author={props.author}
@@ -238,6 +248,46 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
             </div>
 
         </div>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                    "@context": "http://schema.org",
+                    "@type": "VideoObject",
+                    "name": props.title,
+                    "description": props.description,
+                    "thumbnailUrl": props.poster,
+                    "uploadDate": props.createdAt,
+                    "duration": Duration.fromObject({ seconds: props.duration }).toISOTime({ includePrefix: true }),
+                    "contentUrl": `https://pugtube.dev/api/watch/${props.videoId}.m3u8`,
+                    "embedUrl": `https://pugtube.dev/embed/${props.videoId}`,
+                    "author": {
+                        "@type": "Person",
+                        "name": props.author,
+                        "url": `https://pugtube.dev/channel/${props.author}`
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "PugTube",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://pugtube.dev/logo.png", // Replace with the URL to your site's logo
+                            "width": 200, // Replace with the width of your logo
+                            "height": 60 // Replace with the height of your logo
+                        }
+                    },
+                    "interactionStatistic": {
+                        "@type": "InteractionCounter",
+                        "interactionType": {
+                            "@type": "http://schema.org/LikeAction"
+                        },
+                        "userInteractionCount": 0 // Replace with the actual number of likes for the video
+                    },
+                    "genre": props.category
+                })
+            }}
+        />
+
     </>
     );
 };

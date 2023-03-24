@@ -91,6 +91,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",
     "react-infinite-scroll-component": "^6.1.0",
+    "schema-dts": "^1.1.2",
     "sharp": "^0.31.3",
     "superjson": "1.9.1",
     "tus-js-client": "^3.0.1",
