@@ -5,13 +5,12 @@
  *
  * We also create a few inference helpers for input and output types
  */
+import { type AppRouter } from '@/server/api/root';
 import { httpBatchLink, loggerLink } from '@trpc/client';
-
 import { createTRPCNext } from '@trpc/next';
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
+import Cookie from 'js-cookie';
 import superjson from 'superjson';
-
-import { type AppRouter } from '@/server/api/root';
 
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') return ''; // browser should use relative url
@@ -23,7 +22,8 @@ const getBaseUrl = () => {
  * A set of typesafe react-query hooks for your tRPC API
  */
 export const api = createTRPCNext<AppRouter>({
-  config() {
+  config({ ctx }) {
+    const token = Cookie.get('__session') ?? '';
     return {
       /**
        * Transformer used for data de-serialization from the server
@@ -43,6 +43,10 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          headers: {
+            ...(ctx?.req?.headers ?? {}),
+            Authorization: `Bearer ${token}`,
+          }
         }),
       ],
     };

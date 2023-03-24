@@ -31,10 +31,13 @@ export default function VideoPlayer({ src, poster }: VideoPlayerProps) {
     <video
       ref={videoRef}
       src={src}
+      poster={poster}
       width="720"
       height="480"
-      poster={poster}
       preload="metadata"
+      style={{
+        maxHeight: '480px',
+      }}
       controls
     />
   );
