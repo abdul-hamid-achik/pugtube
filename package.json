@@ -131,7 +131,6 @@
     "eslint-plugin-tailwindcss": "^3.8.3",
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.0",
-    "inngest-cli": "^0.11.0",
     "msw": "^1.2.0",
     "msw-trpc": "^1.2.0",
     "postcss": "^8.4.14",

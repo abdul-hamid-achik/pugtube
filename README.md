@@ -8,7 +8,7 @@ PugTube is a video sharing platform where users can upload, watch and interact w
 - Prisma
 - Planetscale
 - Clerkjs
-- Inngest
+- BullMQ
 
 ## Getting Started
 
