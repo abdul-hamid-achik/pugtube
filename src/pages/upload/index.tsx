@@ -116,7 +116,7 @@ export default function Upload() {
 
     const { userId } = useAuth();
     const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
-    const { mutate } = api.video.create.useMutation({
+    const { mutate } = api.videos.create.useMutation({
         onSuccess: async (video) => {
             uppy.resetProgress();
             await router.push(`/upload/status?uploadId=${video.uploadId}`);

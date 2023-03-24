@@ -2,11 +2,8 @@ import Layout from '@/components/layout';
 import Spinner from '@/components/spinner';
 import VideoCard from '@/components/video-card';
 import { NextPageWithLayout } from '@/pages/_app';
-import { prisma } from '@/server/db';
 import { api } from '@/utils/api';
-import { getSignedUrl } from '@/utils/s3';
 import { User } from '@clerk/nextjs/api';
-import { clerkClient } from '@clerk/nextjs/server';
 import { Video } from '@prisma/client';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
@@ -21,30 +18,11 @@ type InitialData = {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  let videos = await prisma.video.findMany({
-    take: 9,
+  const { getFeed } = await import('@/utils/shared');
+  const { items } = await getFeed({
+    limit: 9,
     skip: 0,
-    cursor: undefined,
-    orderBy: {
-      createdAt: 'desc',
-    },
-    where: {
-      upload: {
-        transcoded: true
-      }
-    }
-  })
-
-  videos = await Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
-
-  const authors = await clerkClient.users.getUserList({
-    userId: videos.map((video) => video.userId),
   });
-
-  const items = videos.map((video) => ({
-    video,
-    author: authors.find((author) => author.id === video.userId)!,
-  }));
 
   return {
     props: {
@@ -57,7 +35,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initialData }) => {
-  const { data, error, isError, isLoading, fetchNextPage } = api.video.feed.useInfiniteQuery(
+  const { data, error, isError, isLoading, fetchNextPage } = api.videos.feed.useInfiniteQuery(
     {
       limit: 9,
       skip: 9

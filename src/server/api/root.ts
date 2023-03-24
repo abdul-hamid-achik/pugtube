@@ -1,5 +1,5 @@
-import { videoRouter } from './routers/video';
 import { socialRouter } from './routers/social';
+import { videoRouter } from './routers/videos';
 import { createTRPCRouter } from './trpc';
 
 /**
@@ -8,7 +8,7 @@ import { createTRPCRouter } from './trpc';
  * All routers added in /api/routers should be manually added here
  */
 export const appRouter = createTRPCRouter({
-  video: videoRouter,
+  videos: videoRouter,
   social: socialRouter
 });
 

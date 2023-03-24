@@ -8,37 +8,41 @@ export interface LikeButtonProps {
     videoId?: string;
     commentId?: string;
     likeId?: string | null;
+    refresh?: () => void;
 }
 
-export default function LikeButton({ videoId, commentId, likeId: likeIdProps }: LikeButtonProps) {
+export default function LikeButton({ videoId, commentId, likeId: likeIdProps, refresh }: LikeButtonProps) {
     const [likeId, setLikeId] = useState(likeIdProps ? likeIdProps : null);
-    const isLiked = likeId !== null;
-    const { data: likeData, refetch, isError, isLoading } = api.social.getLike.useQuery(likeId as string, {
+    const isLiked = !!likeId;
+    const { data: likeData, refetch, isError, isLoading, isFetching } = api.social.getLike.useQuery(likeId as string, {
         enabled: isLiked
     });
 
+    console.log("should be working", isLiked && !!likeId, likeId, likeData)
     const { mutate: like, isLoading: isLiking } = api.social.like.useMutation({
+        mutationKey: ["like", videoId || commentId],
         onSuccess: (data) => {
             setLikeId(data.id);
             refetch();
+            refresh?.()
         }
     });
 
     const { mutate: unlike, isLoading: isUnliking } = api.social.unlike.useMutation({
+        mutationKey: ["unlike", videoId || commentId],
         onSuccess: (_) => {
             setLikeId(null)
-            refetch();
+            refetch?.();
         }
     });
-
 
     if (!videoId && !commentId) {
         return null;
     }
 
-    if (isLiking || isUnliking) {
+    if (isLiking || isUnliking || (isLoading && isFetching)) {
         return (
-            <Spinner className="h-6 w-6" />
+            <Spinner className="h-4 w-4" />
         )
     }
 

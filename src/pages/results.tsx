@@ -1,11 +1,8 @@
 import Layout from "@/components/layout";
 import Spinner from "@/components/spinner";
 import VideoCard from "@/components/video-card";
-import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
-import { getSignedUrl } from "@/utils/s3";
 import { User } from "@clerk/nextjs/api";
-import { clerkClient } from "@clerk/nextjs/server";
 import { Video } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
@@ -26,52 +23,14 @@ interface PageProps {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const { getSearchResults } = await import("@/utils/shared");
+
     const searchTerm = context.query.term as string;
-
-    const searchResults = await prisma.video.findMany({
-        take: 10,
+    const { items } = await getSearchResults({
+        searchTerm,
+        limit: 10,
         skip: 0,
-        cursor: undefined,
-        orderBy: {
-            createdAt: 'desc',
-        },
-        where: {
-            OR: [
-                {
-                    title: {
-                        contains: searchTerm,
-                    },
-                },
-                {
-                    description: {
-                        contains: searchTerm,
-                    },
-                },
-                {
-                    category: {
-                        contains: searchTerm,
-                    },
-                },
-            ],
-            upload: {
-                transcoded: true,
-            },
-        },
     });
-
-    const authors = await clerkClient.users.getUserList({
-        userId: searchResults.map((result) => result.userId),
-    });
-
-    const items = await Promise.all(
-        searchResults.map(async (video) => ({
-            video: {
-                ...video,
-                thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl) : null,
-            },
-            author: authors.find((author) => author.id === video.userId)!,
-        }))
-    );
 
     return {
         props: {
@@ -83,7 +42,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
 }
 
-
 const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
     const { query: { term } } = useRouter();
     const {
@@ -91,7 +49,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
         fetchNextPage,
         isError,
         isLoading,
-    } = api.video.search.useInfiniteQuery(
+    } = api.videos.search.useInfiniteQuery(
         {
             searchTerm: term as string || '',
             limit: 10,

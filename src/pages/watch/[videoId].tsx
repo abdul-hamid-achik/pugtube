@@ -30,15 +30,15 @@ interface PageProps {
     createdAt: string;
     duration: number;
     initialData: {
-        items: Comment[];
+        items: CommentItem[];
         nextCursor: string | null;
     }
 }
 
 type CommentItem = {
-    comment: Comment;
+    comment: Comment | { createdAt: string; updatedAt: string };
     author: User;
-    parentComment?: Comment;
+    parentComment?: Comment | { createdAt: string; updatedAt: string };
 };
 
 type Inputs = { text: string }
@@ -48,33 +48,6 @@ const MemoizedCommentCard = React.memo(CommentCard);
 
 const MemoizedLikeButton = React.memo(LikeButton);
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
-    const { getVideoData } = await import('@/utils/shared');
-    const { videoId } = params as { videoId: string };
-    const { video, author, like } = await getVideoData(videoId);
-    const isVideoReady = video?.upload?.transcoded;
-
-    return {
-        props: {
-            videoId,
-            likeId: like?.id || null,
-            uploadId: video?.upload?.id,
-            playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : '',
-            title: video?.title || 'Unavailable',
-            description: video?.description || '',
-            category: video?.category || 'Uncategorized',
-            author: author.username || 'Unknown',
-            authorProfileImageUrl: author.profileImageUrl || '',
-            createdAt: video?.createdAt?.toISOString() || new Date().toISOString(),
-            poster: video?.thumbnailUrl || '',
-            duration: video?.duration || 0,
-            initialData: {
-                items: [],
-                nextCursor: null,
-            }
-        }
-    };
-};
 
 export async function generateMetadata({ params }: {
     params: { videoId: string };
@@ -114,6 +87,37 @@ export async function generateMetadata({ params }: {
     };
 }
 
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
+    const { getVideoData, getComments } = await import('@/utils/shared');
+    const { videoId } = params as { videoId: string };
+    const { video, author, like } = await getVideoData(videoId);
+    const { items } = await getComments({
+        videoId,
+        limit: 9,
+    });
+
+    const isVideoReady = video?.upload?.transcoded;
+    return {
+        props: {
+            videoId,
+            likeId: like?.id || null,
+            uploadId: video?.upload?.id,
+            playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : '',
+            title: video?.title || 'Unavailable',
+            description: video?.description || '',
+            category: video?.category || 'Uncategorized',
+            author: author.username || 'Unknown',
+            authorProfileImageUrl: author.profileImageUrl || '',
+            createdAt: video?.createdAt?.toISOString() || new Date().toISOString(),
+            poster: video?.thumbnailUrl || '',
+            duration: video?.duration || 0,
+            initialData: {
+                items: items as CommentItem[],
+                nextCursor: null,
+            }
+        }
+    };
+};
 
 const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...props }) => {
     const { register, handleSubmit, reset } = useForm<Inputs>();
@@ -125,22 +129,28 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         isLoading: isCommentLoading,
         fetchNextPage: fetchNextCommentPage,
         refetch: refetchComments,
-    } = api.social.getCommentsForVideo.useInfiniteQuery(
+    } = api.social.comments.useInfiniteQuery(
         {
             videoId: props.videoId,
             limit: 9,
+            skip: initialData.items.length < 9 ? 0 : initialData.items.length,
         },
         {
             getNextPageParam: (lastPage) => lastPage?.nextCursor,
             initialData: { pages: [initialData], pageParams: [] },
             refetchInterval: 10000,
+            enabled: initialData.items.length === 9
         }
     );
 
-    const { mutate } = api.social.addCommentToVideo.useMutation({
+    const { data: likes, refetch: refetchLikes } = api.social.likes.useQuery({
+        videoId: props.videoId,
+    });
+
+    const { mutate } = api.social.comment.useMutation({
         onSuccess: () => {
             reset();
-            refetchComments();
+            refresh();
         }
     });
 
@@ -152,7 +162,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         }
     };
 
-    const commentItems = (commentData?.pages?.flatMap((page) => page?.items) || []) as unknown as CommentItem[];
+    const commentItems = (commentData?.pages?.flatMap((page) => page?.items) || []);
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         mutate({
@@ -161,18 +171,25 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         })
     };
 
+    const refresh = () => {
+        refetchComments();
+        refetchLikes();
+    }
     return (<>
         <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700" >
             <div className="mx-auto flex flex-1 flex-col p-4">
                 <VideoPlayer src={playlistUrl} poster={props.poster} />
                 <div className="flex flex-col p-4 ">
-                    <div className="mb-2 flex justify-between">
+                    <div className="mb-2 flex items-center justify-between">
                         <div className="flex flex-row">
                             <h1 className="text-xl text-white">{props?.title}</h1>
                             <p className="ml-4 pt-1 align-middle text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
                         </div>
-                        <div className="flex self-end">
-                            <MemoizedLikeButton videoId={props.videoId} likeId={props.likeId} />
+                        <div className="flex items-center self-end">
+                            <MemoizedLikeButton videoId={props.videoId} likeId={props.likeId} refresh={refresh} />
+                            <span className="mr-4 text-xs text-white">
+                                {likes || 0}
+                            </span>
                         </div>
                     </div>
                     {props?.author &&
@@ -239,10 +256,10 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                             !isCommentError &&
                             commentItems?.filter(props => props).map((props) => (
                                 <MemoizedCommentCard
-                                    key={props.comment.id}
-                                    comment={props.comment}
+                                    key={(props.comment as Comment).id}
+                                    comment={props.comment as Comment}
                                     author={props.author}
-                                    parentComment={props.parentComment}
+                                    parentComment={props.parentComment as Comment}
                                 />
                             ))}
                     </div>
@@ -283,7 +300,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                         "interactionType": {
                             "@type": "http://schema.org/LikeAction"
                         },
-                        "userInteractionCount": 0 // Replace with the actual number of likes for the video
+                        "userInteractionCount": likes
                     },
                     "genre": props.category
                 })

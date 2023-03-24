@@ -68,7 +68,7 @@ function Page(props: PageProps) {
         }
     });
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(props.video.thumbnailUrl);
-    const { mutate, isLoading, error, isError } = api.video.update.useMutation({
+    const { mutate, isLoading, error, isError } = api.videos.update.useMutation({
         onSuccess: (_data) => {
             router.reload();
         },

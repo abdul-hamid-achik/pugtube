@@ -1,18 +1,31 @@
+import { env } from '@/env/server.mjs';
 import queue from '@/server/queue';
-import { getSignedUrl } from '@/utils/s3';
-import { clerkClient } from '@clerk/nextjs/server';
+import * as shared from '@/utils/shared';
 import type { Video } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
-import { env } from '@/env/server.mjs';
 export const videoRouter = createTRPCRouter({
-  getByUploadId: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.video.findUniqueOrThrow({
-      where: {
-        uploadId: input,
-      },
-    })
+  video: publicProcedure.input(z.object({
+    uploadId: z.string().uuid().optional(),
+    videoId: z.string().optional()
+  })).query(async ({ ctx, input }) => {
+    if (!input.uploadId && !input.videoId) {
+      throw new Error('Must provide either uploadId or videoId')
+    }
+    if (input.uploadId) {
+      const video = await prisma?.video.findFirst({
+        where: {
+          uploadId: input.uploadId
+        },
+        select: {
+          id: true
+        }
+      })
+
+      return await shared.getVideoData(video!.id, ctx)
+    }
+    return await shared.getVideoData(input.videoId!, ctx);
   }),
 
   feed: publicProcedure.input(z.object({
@@ -21,44 +34,12 @@ export const videoRouter = createTRPCRouter({
     skip: z.number().optional()
   })
   ).query(async ({ ctx, input }) => {
-    const limit = input.limit ?? 9;
-    const { cursor, skip } = input;
-    let videos = await ctx.prisma.video.findMany({
-      take: limit + 1,
-      skip,
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: {
-        upload: {
-          transcoded: true
-        }
-      }
+    return await shared.getFeed({
+      limit: input.limit,
+      cursor: input.cursor,
+      skip: input.skip,
+      ctx,
     })
-
-    videos = await Promise.all(videos.map(async (video: Video) => ({ ...video, thumbnailUrl: video.thumbnailUrl ? await getSignedUrl(video.thumbnailUrl as string) : null })));
-
-    const authors = await clerkClient.users.getUserList({
-      userId: videos.map((video) => video.userId),
-    });
-
-    const items = videos.map((video) => ({
-      video,
-      author: authors.find((author) => author.id === video.userId)!,
-    }));
-    // @ts-ignore
-    let nextCursor: typeof cursor | undefined = undefined;
-    if (items.length > limit) {
-      const nextItem = items.pop()
-      nextCursor = nextItem!.video!.id;
-    }
-
-    return {
-      items,
-      nextCursor,
-    };
-
   }),
 
   create: protectedProcedure.input(z.object({
@@ -163,7 +144,7 @@ export const videoRouter = createTRPCRouter({
     return video;
   }),
 
-  getUploadById: publicProcedure.input(z.string()).query(({ ctx, input }) => {
+  upload: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.upload.findUniqueOrThrow({
       where: {
         id: input,
@@ -171,7 +152,7 @@ export const videoRouter = createTRPCRouter({
     })
   }),
 
-  getPlaylistSegmentsByUploadId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  segments: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const video = await ctx.prisma.video.findUniqueOrThrow({
       where: {
         uploadId: input,
@@ -200,69 +181,13 @@ export const videoRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const limit = input.limit ?? 5;
-      const searchTerm = input.searchTerm;
-      const cursor = input.cursor;
-
-      let videos = await ctx.prisma.video.findMany({
-        take: limit + 1,
-        skip: input.skip || 0,
-        cursor: cursor ? { id: cursor } : undefined,
-        orderBy: {
-          createdAt: 'desc',
-        },
-        where: {
-          OR: [
-            {
-              title: {
-                contains: searchTerm,
-              },
-            },
-            {
-              description: {
-                contains: searchTerm,
-              },
-            },
-            {
-              category: {
-                contains: searchTerm,
-              },
-            },
-          ],
-          upload: {
-            transcoded: true,
-          },
-        },
-      });
-      videos = await Promise.all(
-        videos.map(async (video: Video) => ({
-          ...video,
-          thumbnailUrl: video.thumbnailUrl
-            ? await getSignedUrl(video.thumbnailUrl as string)
-            : null,
-        })),
-      );
-
-      const authors = await clerkClient.users.getUserList({
-        userId: videos.map((video) => video.userId),
-      });
-
-      const items = videos.map((video) => ({
-        video,
-        author: authors.find((author) => author.id === video.userId)!,
-      }));
-
-      let nextCursor: typeof cursor | undefined = undefined;
-      if (items.length > limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem!.video!.id;
-      }
-
-      return {
-        items,
-        nextCursor,
-      };
+      return await shared.getSearchResults({
+        limit: input.limit,
+        cursor: input.cursor,
+        skip: input.skip,
+        searchTerm: input.searchTerm,
+        ctx,
+      })
     }),
-
 });
 

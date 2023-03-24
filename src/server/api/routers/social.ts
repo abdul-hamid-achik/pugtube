@@ -1,11 +1,11 @@
+import * as shared from '@/utils/shared';
 import { User } from '@clerk/nextjs/api';
-import { clerkClient } from '@clerk/nextjs/server';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 export const socialRouter = createTRPCRouter({
-    getCommentsForVideo: publicProcedure.input(
+    comments: publicProcedure.input(
         z.object({
             videoId: z.string(),
             limit: z.number().min(1).max(100).optional(),
@@ -13,64 +13,16 @@ export const socialRouter = createTRPCRouter({
             skip: z.number().optional(),
         })
     ).query(async ({ ctx, input }) => {
-        const limit = input.limit ?? 9;
-        const comments = await ctx.prisma.comment.findMany({
-            where: {
-                videoId: input.videoId,
-            },
-            take: limit + 1,
-            skip: input.skip || 0,
-            cursor: input.cursor ? { id: input.cursor } : undefined,
-            orderBy: {
-                createdAt: 'desc',
-            },
-            include: {
-                parentComment: true,
-            },
-        })!;
-
-
-        const authors = await clerkClient.users.getUserList({
-            userId: comments.map((comment) => comment.userId),
+        return await shared.getComments({
+            videoId: input.videoId,
+            limit: input.limit,
+            cursor: input.cursor,
+            skip: input.skip,
+            ctx
         });
-
-        let nextCursor: string | null = null;
-        if (comments.length > limit) {
-            const nextComment = comments.pop();
-            nextCursor = nextComment!.id;
-        }
-
-        return {
-            items: await Promise.all(comments.map(async (comment) => {
-                const userLikes = ctx.auth.userId ? await ctx.prisma.like.findMany({
-                    where: {
-                        userId: ctx.auth.userId as string,
-                        commentId: comment.id,
-                    },
-                }) : [];
-
-                return ({
-                    comment: {
-                        ...comment,
-                        likeId: userLikes.length > 0 ? userLikes[0]!.id : null
-                    },
-                    author: authors.find((author) => author.id === comment.userId)!,
-                    parentComment: comment.parentComment
-                        ? {
-                            ...comment.parentComment,
-                            author: authors.find(
-                                (author) => author.id === comment.parentComment!.userId
-                            )!,
-                        }
-                        : null,
-                })
-            })) || [],
-            nextCursor,
-        };
     }),
 
-
-    addCommentToVideo: protectedProcedure.input(
+    comment: protectedProcedure.input(
         z.object({
             videoId: z.string().optional(),
             commentId: z.string().optional(),
@@ -91,7 +43,6 @@ export const socialRouter = createTRPCRouter({
         }
 
         const comment = await ctx.prisma.comment.create({ data });
-
 
         return {
             comment,
@@ -145,6 +96,19 @@ export const socialRouter = createTRPCRouter({
             where: {
                 id: input,
             },
+        });
+    }),
+
+    likes: publicProcedure.input(
+        z.object({
+            videoId: z.string().optional(),
+            commentId: z.string().optional(),
+        })
+    ).query(async ({ ctx, input }) => {
+        return await shared.getLikes({
+            videoId: input.videoId,
+            commentId: input.commentId,
+            ctx,
         });
     }),
 });
