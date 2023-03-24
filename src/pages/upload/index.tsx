@@ -27,16 +27,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function Upload() {
     const [isResumable, setIsResumable] = useState(false);
+    const [token, setToken] = useState<string>();
+    const { getToken } = useAuth();
 
     const uppy = React.useMemo(() => {
         const uppyInstance = new Uppy();
-
         if (isResumable) {
             uppyInstance.use(Tus, {
                 id: 'uppy-tus',
                 endpoint: '/api/upload',
                 retryDelays: [0, 1000, 3000, 5000],
                 chunkSize: 10_485_760, // 10 MB
+                headers: {
+                    Authentication: `Bearer ${token}`,
+                },
             });
         } else {
             uppyInstance.use(AwsS3Multipart, {
@@ -47,6 +51,7 @@ export default function Upload() {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            "Authorization": `Bearer ${token}`
                         },
                         credentials: "include",
                         body: JSON.stringify({
@@ -69,6 +74,7 @@ export default function Upload() {
                         credentials: "include",
                         headers: {
                             'Content-Type': 'application/json',
+                            "Authorization": `Bearer ${token}`
                         },
                         body: JSON.stringify({
                             ...partData,
@@ -86,6 +92,7 @@ export default function Upload() {
                         credentials: "include",
                         headers: {
                             'Content-Type': 'application/json',
+                            "Authorization": `Bearer ${token}`
                         },
                         body: JSON.stringify({
                             key: data.key,
@@ -105,7 +112,7 @@ export default function Upload() {
             });
         }
         return uppyInstance;
-    }, [isResumable]);
+    }, [isResumable, token]);
 
     const { userId } = useAuth();
     const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
@@ -115,6 +122,12 @@ export default function Upload() {
             await router.push(`/upload/status?uploadId=${video.uploadId}`);
         },
     });
+
+    React.useEffect(() => {
+        getToken().then((t) => {
+            setToken(t as string);
+        });
+    }, [getToken]);
 
     const onSubmit = async (data: FormData) => {
         const { successful, failed } = await uppy.upload();
