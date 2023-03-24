@@ -1,11 +1,12 @@
 import { api } from '@/utils/api';
-import LikeButton from './like';
+import LikeButton, { type LikeButtonProps } from './like';
 
-const WrappedComponent = api.withTRPC(LikeButton)
+const WrappedComponent = api.withTRPC(LikeButton) as React.FC<LikeButtonProps>;
+    
 describe('LikeButton', () => {
     it('should render successfully', () => {
         cy.mount(
-            <WrappedComponent />
+            <WrappedComponent videoId="test" />
         )
 
         cy.get('button').should('exist');
