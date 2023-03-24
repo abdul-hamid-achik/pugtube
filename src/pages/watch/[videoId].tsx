@@ -1,5 +1,6 @@
 import CommentCard from '@/components/comment';
 import Layout from '@/components/layout';
+import LikeButton from '@/components/like';
 import Spinner from '@/components/spinner';
 import VideoPlayer from '@/components/video-player';
 import { NextPageWithLayout } from '@/pages/_app';
@@ -17,8 +18,10 @@ import Link from 'next/link';
 import { ReactElement } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
 interface PageProps {
     playlistUrl: string;
+    likeId: string | null;
     videoId: string;
     uploadId: string | undefined;
     title: string;
@@ -52,9 +55,18 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
     });
     const isVideoReady = video?.upload?.transcoded;
     const author = await clerkClient.users.getUser(video?.userId as string);
+
+    const like = await prisma.like.findFirst({
+        where: {
+            videoId: videoId,
+            userId: author.id,
+        },
+    });
+
     return {
         props: {
             videoId,
+            likeId: like?.id || null,
             uploadId: video?.upload?.id,
             playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : '',
             title: video?.title || 'Unavailable',
@@ -127,9 +139,14 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
             <div className="mx-auto flex flex-1 flex-col p-4">
                 <VideoPlayer src={playlistUrl} poster={props.poster} />
                 <div className="flex flex-col p-4 ">
-                    <div className="mb-2 flex flex-row">
-                        <h1 className="text-xl text-white">{props?.title}</h1>
-                        <p className="ml-4 pt-1 align-middle text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
+                    <div className="mb-2 flex justify-between">
+                        <div className="flex flex-row">
+                            <h1 className="text-xl text-white">{props?.title}</h1>
+                            <p className="ml-4 pt-1 align-middle text-sm text-gray-300">{DateTime.fromISO(props?.createdAt).toRelative()}</p>
+                        </div>
+                        <div className="flex self-end">
+                            <LikeButton videoId={props.videoId} likeId={props.likeId} />
+                        </div>
                     </div>
                     {props?.author &&
                         <div className="flex items-center py-2">

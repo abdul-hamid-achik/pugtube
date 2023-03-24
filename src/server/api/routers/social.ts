@@ -27,7 +27,8 @@ export const socialRouter = createTRPCRouter({
             include: {
                 parentComment: true,
             },
-        });
+        })!;
+
 
         const authors = await clerkClient.users.getUserList({
             userId: comments.map((comment) => comment.userId),
@@ -40,17 +41,29 @@ export const socialRouter = createTRPCRouter({
         }
 
         return {
-            items: comments.map((comment) => ({
-                comment,
-                author: authors.find((author) => author.id === comment.userId)!,
-                parentComment: comment.parentComment
-                    ? {
-                        ...comment.parentComment,
-                        author: authors.find(
-                            (author) => author.id === comment.parentComment!.userId
-                        )!,
-                    }
-                    : null,
+            items: await Promise.all(comments.map(async (comment) => {
+                const userLikes = ctx.auth.userId ? await ctx.prisma.like.findMany({
+                    where: {
+                        userId: ctx.auth.userId as string,
+                        commentId: comment.id,
+                    },
+                }) : [];
+
+                return ({
+                    comment: {
+                        ...comment,
+                        likeId: userLikes.length > 0 ? userLikes[0]!.id : null
+                    },
+                    author: authors.find((author) => author.id === comment.userId)!,
+                    parentComment: comment.parentComment
+                        ? {
+                            ...comment.parentComment,
+                            author: authors.find(
+                                (author) => author.id === comment.parentComment!.userId
+                            )!,
+                        }
+                        : null,
+                })
             })) || [],
             nextCursor,
         };
@@ -86,5 +99,52 @@ export const socialRouter = createTRPCRouter({
         };
     }),
 
+    like: protectedProcedure.input(
+        z.object({
+            commentId: z.string().optional(),
+            videoId: z.string().optional(),
+        })
+    ).mutation(async ({ ctx, input }) => {
+        let data: Prisma.LikeCreateInput = {
+            userId: ctx.auth.userId as string,
+        }
 
+        if (input.commentId) {
+            data = {
+                ...data,
+                comment: { connect: { id: input.commentId } },
+            }
+        }
+
+        if (input.videoId) {
+            data = {
+                ...data,
+                video: { connect: { id: input.videoId } },
+            }
+        }
+
+        return await ctx.prisma.like.create({
+            data,
+        });
+    }),
+
+    getLike: publicProcedure.input(
+        z.string()
+    ).query(async ({ ctx, input }) => {
+        return await ctx.prisma.like.findUniqueOrThrow({
+            where: {
+                id: input,
+            },
+        });
+    }),
+
+    unlike: protectedProcedure.input(
+        z.string()
+    ).mutation(async ({ ctx, input }) => {
+        return await ctx.prisma.like.delete({
+            where: {
+                id: input,
+            },
+        });
+    }),
 });

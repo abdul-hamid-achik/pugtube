@@ -1,5 +1,7 @@
+import { api } from '@/utils/api';
 import { faker } from "@faker-js/faker";
-import CommentCard from "./comment";
+import Comment from "./comment";
+
 const author = {
     id: faker.random.alphaNumeric(),
     username: faker.internet.userName(),
@@ -47,6 +49,8 @@ const comment = {
     createdAt: new Date(),
     updatedAt: new Date(),
 }
+
+const CommentCard = api.withTRPC(Comment) as any;
 
 describe("CommentCard", () => {
     it("should render correctly", () => {
