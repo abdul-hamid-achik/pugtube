@@ -4,10 +4,7 @@ import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from '@aws-sdk/url-parser';
 import { formatUrl } from '@aws-sdk/util-format-url';
-import axios from 'axios';
-import fs from "fs";
 import { log } from 'next-axiom';
-import os from "os";
 
 export const s3 = new S3Client({
     region: process.env.AWS_REGION as string,
@@ -99,26 +96,6 @@ export async function getObject(input: GetObjectCommandInput) {
     } catch (error) {
         log.error(`Error downloading from S3: ${input.Key}`, error as { [key: string]: any; });
     }
-}
-
-export async function downloadObject(objectUrl: string): Promise<string> {
-    const objectKey = objectUrl.split('/').slice(3).join('/');
-    const filePath = `${os.tmpdir()}/output/${objectKey}`;
-
-    if (fs.existsSync(filePath)) {
-        return filePath;
-    }
-
-    if (!fs.existsSync(`${os.tmpdir()}/output`)) {
-        fs.mkdirSync(`${os.tmpdir()}/output`);
-    }
-
-    const signedUrl = await getSignedUrl(objectUrl);
-
-    const response = await axios.get(signedUrl, { responseType: 'arraybuffer' });
-    fs.writeFileSync(filePath, response.data);
-
-    return filePath;
 }
 
 export async function deleteObject(objectUrl: string) {

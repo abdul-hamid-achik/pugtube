@@ -1,6 +1,6 @@
 import { prisma } from '@/server/db';
+import { getSignedUrl } from '@/utils/s3';
 import { clerkClient } from "@clerk/nextjs/server";
-import { getSignedUrl } from './s3';
 
 export async function getVideoData(videoId: string) {
     const video = await prisma.video.findFirst({
