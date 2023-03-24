@@ -72,6 +72,7 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
             ContentType: 'image/png',
         });
 
+
         const thumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/thumbnails/${uploadId}.png`;
 
         await prisma.video.update({
@@ -82,6 +83,9 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
                 thumbnailUrl
             }
         });
+
+        await ffmpeg.FS('unlink', inputFileName);
+        await ffmpeg.FS('unlink', outputFileName);
 
         log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
     } catch (err: any) {

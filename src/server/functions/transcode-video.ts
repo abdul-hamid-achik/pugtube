@@ -236,6 +236,13 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
             },
         });
 
+        await ffmpeg.FS('unlink', inputFileName);
+        await ffmpeg.FS('unlink', `output/${outputFileName}`);
+        await Promise.all(parsedPlaylist.segments.map(
+            async (parsedSegment: ParsedSegment, index: number) => {
+                await ffmpeg.FS('unlink', `output/segment-${index}.ts`);
+            }
+        ))
     } catch (error) {
         log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
         ffmpeg.exit();
