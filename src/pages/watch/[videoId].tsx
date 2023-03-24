@@ -5,7 +5,6 @@ import Spinner from '@/components/spinner';
 import VideoPlayer from '@/components/video-player';
 import { NextPageWithLayout } from '@/pages/_app';
 import { api } from '@/utils/api';
-import { getVideoData } from '@/utils/shared';
 import { useAuth } from '@clerk/nextjs';
 import { User } from '@clerk/nextjs/api';
 import { Comment } from '@prisma/client';
@@ -16,6 +15,7 @@ import Link from 'next/link';
 import React, { ReactElement } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
 interface PageProps {
     playlistUrl: string;
     likeId: string | null;
@@ -49,6 +49,7 @@ const MemoizedCommentCard = React.memo(CommentCard);
 const MemoizedLikeButton = React.memo(LikeButton);
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
+    const { getVideoData } = await import('@/utils/shared');
     const { videoId } = params as { videoId: string };
     const { video, author, like } = await getVideoData(videoId);
     const isVideoReady = video?.upload?.transcoded;
@@ -78,6 +79,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
 export async function generateMetadata({ params }: {
     params: { videoId: string };
 }): Promise<Metadata> {
+    const { getVideoData } = await import('@/utils/shared');
     const { videoId } = params;
     const { video, author } = await getVideoData(videoId);
 
