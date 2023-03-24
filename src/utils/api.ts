@@ -23,7 +23,6 @@ const getBaseUrl = () => {
  */
 export const api = createTRPCNext<AppRouter>({
   config({ ctx }) {
-    const token = Cookie.get('__session') ?? '';
     return {
       /**
        * Transformer used for data de-serialization from the server
@@ -43,9 +42,12 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
-          headers: {
-            ...(ctx?.req?.headers ?? {}),
-            Authorization: `Bearer ${token}`,
+          headers: () => {
+            const token = Cookie.get('__session') ?? '';
+            return {
+              ...(ctx?.req?.headers ?? {}),
+              Authorization: `Bearer ${token}`,
+            }
           }
         }),
       ],
