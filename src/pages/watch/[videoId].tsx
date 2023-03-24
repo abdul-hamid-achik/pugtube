@@ -107,6 +107,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
             refetchInterval: 10000,
         }
     );
+
     const { mutate } = api.social.addCommentToVideo.useMutation({
         onSuccess: () => {
             reset();
@@ -133,6 +134,20 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
 
     return (<>
         <Head>
+            {/* Open Graph (Facebook) */}
+            <meta property="og:title" content={props?.title} />
+            <meta property="og:description" content={props?.description} />
+            <meta property="og:image" content={props.poster} />
+            <meta property="og:type" content="video" />
+            <meta property="og:url" content={`https://pugtube.dev/watch/${props.videoId}`} />
+
+            {/* Twitter */}
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={props?.title} />
+            <meta name="twitter:description" content={props?.description} />
+            <meta name="twitter:image" content={props.poster} />
+            <meta name="twitter:site" content="@pugtube" />
+
             <title>{props?.title}</title>
         </Head>
         <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700" >
