@@ -1,7 +1,9 @@
 import { prisma } from '@/server/db';
 import { deleteObject } from '@/utils/s3';
-
+import { log } from 'next-axiom';
 export default async function deleteVideoArtifacts({ videoId }: { videoId: string }) {
+    log.debug(`Deleting video artifacts for video ID: ${videoId}...`)
+
     const video = await prisma.video.findUnique({
         where: {
             id: videoId,
@@ -22,15 +24,16 @@ export default async function deleteVideoArtifacts({ videoId }: { videoId: strin
 
     const segments = video?.hlsPlaylist?.segments || [];
 
+    log.debug(`Deleting original, thumbnail, and transcoded segments...`)
+
     await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`);
     await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/thumbnails/${video?.upload?.id}/${video?.id}.png`);
-
     await Promise.all(segments.map((_, index) =>
         deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/transcoded/${video?.upload?.id}/segment-${index}.ts`)
     ))
-
     await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/transcoded/${video?.upload?.id}/output.m3u8`);
     await deleteObject(`https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${video?.upload?.id}`);
+    log.debug(`Deleting video, upload, metadata, segments, and playlist...`)
 
 
     await prisma.video.delete({
@@ -62,4 +65,6 @@ export default async function deleteVideoArtifacts({ videoId }: { videoId: strin
             id: video?.hlsPlaylist?.id as string,
         },
     });
+
+    log.debug(`Deleted video artifacts for video ID: ${videoId}...`)
 }
