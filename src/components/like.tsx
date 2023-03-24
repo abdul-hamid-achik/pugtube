@@ -1,5 +1,6 @@
 import { api } from '@/utils/api';
-import { HeartIcon } from '@heroicons/react/24/solid';
+import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon as SolidHeartIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import Spinner from './spinner';
 
@@ -41,16 +42,16 @@ export default function LikeButton({ videoId, commentId, likeId: likeIdProps }: 
         )
     }
 
-    if (likeId && likeData && !isError) {
+    if ((likeId || likeData) && !isError) {
         return (
             <button
                 className="mr-2 flex h-6 w-6 items-center justify-center rounded-full text-pink-300 hover:text-pink-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 onClick={() => {
-                    unlike(likeId)
+                    unlike((likeId || likeData?.id) as string)
                 }}
                 disabled={isUnliking}
             >
-                <HeartIcon className="h-5 w-5" aria-hidden="true" />
+                <SolidHeartIcon className="h-5 w-5" aria-hidden="true" />
                 <span className="sr-only">Unlike</span>
             </button>
         )

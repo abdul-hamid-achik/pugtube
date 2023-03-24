@@ -5,11 +5,20 @@ import { NextPageWithLayout } from '@/pages/_app';
 import { prisma } from '@/server/db';
 import { api } from '@/utils/api';
 import { getSignedUrl } from '@/utils/s3';
+import { User } from '@clerk/nextjs/api';
 import { clerkClient } from '@clerk/nextjs/server';
 import { Video } from '@prisma/client';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
+type InitialData = {
+  items: {
+    video: Video;
+    author: User;
+  }[];
+  nextCursor: null;
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   let videos = await prisma.video.findMany({
@@ -47,7 +56,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export const Page: NextPageWithLayout<{ initialData: any }> = ({ initialData }) => {
+export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initialData }) => {
   const { data, error, isError, isLoading, fetchNextPage } = api.video.feed.useInfiniteQuery(
     {
       limit: 9,
@@ -59,7 +68,6 @@ export const Page: NextPageWithLayout<{ initialData: any }> = ({ initialData }) 
     }
   );
 
-  const hasNextPage = data?.pages.some((page) => !!page.nextCursor) || false;
 
   const fetchMoreData = () => {
     if (hasNextPage) {
@@ -67,6 +75,8 @@ export const Page: NextPageWithLayout<{ initialData: any }> = ({ initialData }) 
     }
   };
 
+  const lastPage = data?.pages[data.pages.length - 1];
+  const hasNextPage = !!lastPage?.nextCursor;
   const items = data?.pages.flatMap((page) => page.items) || [];
 
   return (

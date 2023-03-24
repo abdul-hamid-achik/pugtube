@@ -26,17 +26,19 @@ export default function VideoCard({ video, author, channel, searchResult = false
           src={video.thumbnailUrl as string}
           alt={video.title}
           onError={onError}
-          width={searchResult ? 170 : 720}
-          height={searchResult ? 96 : 405}
+          width={searchResult ? 170 : 420}
+          height={searchResult ? 96 : 240}
+          className="h-auto w-full"
 
         /> : <Image src="/images/video-placeholder.jpg" alt={video.title}
-          width={searchResult ? 170 : 720}
-          height={searchResult ? 96 : 405}
+          width={searchResult ? 170 : 420}
+          height={searchResult ? 96 : 240}
+          className="h-auto w-full"
         />}
       </Link>
       <div className={searchResult ? "flex w-full flex-row justify-between" : "flex flex-row justify-between"}>
         <div className="flex-1 p-4 pr-0">
-          <Link className={`block text-lg font-medium hover:text-gray-200 ${searchResult ? 'text-white' : 'text-black'} `} href={`/watch/${video.id}`}>
+          <Link className={`block text-lg font-medium hover:text-gray-400 ${searchResult ? 'text-white' : 'text-black'} `} href={`/watch/${video.id}`}>
             {video.title}
           </Link>
           <p className="text-gray-400">{DateTime.fromISO(typeof video?.createdAt === "object" ? video.createdAt.toISOString() : video.createdAt).toRelative()}</p>

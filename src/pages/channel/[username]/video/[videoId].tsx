@@ -79,6 +79,7 @@ function Page(props: PageProps) {
         try {
             const response = await fetch(`/api/video/${props.video.id}/thumbnail`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": (thumbnailUrl as unknown as File).type,
                 },
@@ -242,9 +243,10 @@ function Page(props: PageProps) {
                                 <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                                     <button
                                         type="submit"
+                                        disabled={isLoading}
                                         className="inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                                     >
-                                        Save {isLoading && <Spinner className="ml-2" />}
+                                        {isLoading ? <Spinner className="ml-2" /> : 'Send'}
                                     </button>
                                 </div>
                             </div>

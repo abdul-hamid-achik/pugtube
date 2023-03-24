@@ -179,50 +179,49 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                     </form>}
                 </div>
             </div>
-
-            {commentItems.length > 0 &&
-                <div className="my-auto w-full max-w-sm flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4" style={{
-                    maxHeight: 'calc(100vh - 12rem)',
-                }}>
-                    {isCommentError && (
-                        <div className="bg-red-400 text-white">
-                            <div className="p-4">
-                                <p>{commentError?.message}</p>
-                            </div>
+            <div className="my-auto h-fit w-full max-w-sm flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4">
+                {isCommentLoading && <div className="w-fit py-4"><Spinner /></div>}
+                {isCommentError && (
+                    <div className="bg-red-400 text-white">
+                        <div className="p-4">
+                            <p>{commentError?.message}</p>
                         </div>
-                    )}
-                    {isCommentLoading && <div className="py-4"><Spinner /></div>}
+                    </div>
+                )}
 
-                    <InfiniteScroll
-                        dataLength={commentItems.length}
-                        next={fetchMoreCommentData}
-                        hasMore={hasNextCommentPage}
-                        loader={
-                            <div className="p-4">
-                                <Spinner />
-                            </div>
-                        }
-                        endMessage={
-                            <p className="p-4 text-center text-lg text-white">
-                                <b>End of comments</b>
-                            </p>
-                        }
-                    >
-                        <div className="flex w-full flex-col items-center justify-center gap-4 overflow-y-auto">
-                            {!isCommentLoading &&
-                                !isCommentError &&
-                                commentItems?.filter(props => props).map((props) => (
-                                    <CommentCard
-                                        key={props.comment.id}
-                                        comment={props.comment}
-                                        author={props.author}
-                                        parentComment={props.parentComment}
-                                    />
-                                ))}
+                <InfiniteScroll
+                    dataLength={commentItems.length}
+                    next={fetchMoreCommentData}
+                    hasMore={hasNextCommentPage}
+                    style={{
+                        minHeight: 'calc(100vh - 24rem)',
+                    }}
+                    loader={
+                        <div className="p-4">
+                            <Spinner />
                         </div>
-                    </InfiniteScroll>
-                </div>
-            }
+                    }
+                    endMessage={
+                        <p className="p-4 text-center text-lg text-white">
+                            <b>End of comments</b>
+                        </p>
+                    }
+                >
+                    <div className="flex w-full flex-col items-center justify-center gap-4 overflow-y-auto">
+                        {!isCommentLoading &&
+                            !isCommentError &&
+                            commentItems?.filter(props => props).map((props) => (
+                                <CommentCard
+                                    key={props.comment.id}
+                                    comment={props.comment}
+                                    author={props.author}
+                                    parentComment={props.parentComment}
+                                />
+                            ))}
+                    </div>
+                </InfiniteScroll>
+            </div>
+
         </div>
     </>
     );
