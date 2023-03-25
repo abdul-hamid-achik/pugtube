@@ -12,9 +12,37 @@ try {
   process.exit(1);
 }
 
-dotenv.config();
-
 const { env } = require('./env/server.mjs');
+
+import * as Sentry from '@sentry/node';
+
+import * as Tracing from '@sentry/tracing';
+
+console.log(Tracing)
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+// const transaction = Sentry.startTransaction({
+//   op: "test",
+//   name: "My First Test Transaction",
+// });
+
+// setTimeout(() => {
+//   try {
+//     // @ts-ignore
+//     foo();
+//   } catch (e) {
+//     Sentry.captureException(e);
+//   } finally {
+//     transaction.finish();
+//   }
+// }, 99);
 
 const log = env.NODE_ENV === 'production' ? logger : console;
 
@@ -28,8 +56,13 @@ const connection = new IORedis(env.REDIS_URL as string, {
 const worker = new Worker(
   "hls",
   async ({ name, data: { videoId, uploadId, fileName, ...opts } }) => {
+    const transaction = Sentry.startTransaction({
+      op: "worker",
+      name: `Processing job: ${name}`,
+    });
     log.info(`Processing job: ${name}`)
     switch (name) {
+
       case 'post-upload':
         await functions.moveUpload({ uploadId, fileName });
 
@@ -55,6 +88,7 @@ const worker = new Worker(
         log.error(`Unknown job name: ${name}`);
         break;
     }
+    transaction.finish();
     log.info(`Finished Job: ${name}`);
   },
   { connection }
