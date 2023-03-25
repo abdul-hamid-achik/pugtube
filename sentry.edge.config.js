@@ -1,0 +1,13 @@
+// sentry.edge.config.js or sentry.edge.config.ts
+
+import * as Sentry from "@sentry/nextjs";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+  tracesSampleRate: 1.0,
+});

@@ -1,12 +1,16 @@
 // @ts-check
 
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
-
 import { withAxiom } from "next-axiom";
+import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  sentry: {
+    hideSourceMaps: true,
+    autoInstrumentServerFunctions: true,
+  },
   i18n: {
     locales: ["en", "es"],
     defaultLocale: "en",
@@ -40,5 +44,15 @@ const config = {
     ],
   },
 };
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry Webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, org, project, authToken, configFile, stripPrefix,
+  //   urlPrefix, include, ignore
 
-export default withAxiom(config);
+  silent: true, // Suppresses all logs
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
+};
+export default withSentryConfig(withAxiom(config), sentryWebpackPluginOptions);
