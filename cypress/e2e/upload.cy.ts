@@ -23,7 +23,7 @@ describe('Upload', () => {
       cy.get('button[type="submit"]').click();
     });
 
-    cy.url().should('match', /\/upload\/[a-zA-Z0-9_-]+\/status/g);
+    cy.url().should('match', /\/upload\/[a-zA-Z0-9_-]+/g);
   });
 });
 

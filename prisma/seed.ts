@@ -43,7 +43,7 @@ async function main() {
         log.debug(`Video ID: ${id} has been assigned an upload ID: ${uploadId}...`)
 
         if (env.NODE_ENV === 'production') {
-          log.info(`https://pugtube.dev/upload/${uploadId}/status`)
+          log.info(`https://pugtube.dev/upload/${uploadId}`)
         }
 
         // Download the highest resolution video file

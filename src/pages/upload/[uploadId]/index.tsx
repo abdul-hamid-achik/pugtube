@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-export default function ProcessingPage() {
+export default function Page() {
     const { query: { uploadId } } = useRouter();
     const { data: upload } = api.videos.upload.useQuery(uploadId as string, {
         enabled: !!uploadId,
