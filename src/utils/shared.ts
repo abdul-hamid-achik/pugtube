@@ -10,7 +10,11 @@ export async function getVideoData(
     const videoPromise = ctx.prisma.video.findFirst({
         where: { id: String(videoId) },
         include: {
-            upload: true,
+            upload: {
+                include: {
+                    metadata: true,
+                }
+            },
         },
     });
 
