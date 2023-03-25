@@ -32,10 +32,16 @@ export async function getVideoData(
     ]);
 
     return {
-        video: {
+        video: JSON.parse(JSON.stringify({
             ...video,
+            upload: {
+                ...video?.upload,
+                metadata: {
+                    ...video?.upload?.metadata,
+                }
+            },
             thumbnailUrl: thumbnailUrl,
-        },
+        })),
         like,
         author,
     };

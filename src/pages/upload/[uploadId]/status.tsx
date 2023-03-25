@@ -60,7 +60,7 @@ export default function ProcessingPage() {
         },
     ];
 
-    const isDone = statusIcons.every(({ value }) => value) && !!job?.finishedOn;
+    const isDone = statusIcons.every(({ value }) => value) && (job && job.finishedOn);
 
     return (
         <div className="m-0 flex h-screen w-screen items-center justify-center bg-gray-900" style={{
