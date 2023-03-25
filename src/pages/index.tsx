@@ -6,7 +6,7 @@ import { api } from '@/utils/api';
 import { User } from '@clerk/nextjs/api';
 import { Video } from '@prisma/client';
 import { GetServerSidePropsContext } from 'next';
-import { ReactElement } from 'react';
+import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 type InitialData = {
@@ -35,6 +35,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initialData }) => {
+  const [enabled, setEnabled] = useState(false);
   const { data, error, isError, isLoading, fetchNextPage } = api.videos.feed.useInfiniteQuery(
     {
       limit: 9,
@@ -43,7 +44,7 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initial
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       initialData: { pages: [initialData], pageParams: [undefined] },
-      enabled: initialData.items.length === 9,
+      enabled: enabled,
     }
   );
 
@@ -58,45 +59,47 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initial
   const hasNextPage = !!lastPage?.nextCursor;
   const items = data?.pages.flatMap((page) => page.items) || [];
 
-  return (
-    <section className="">
-      {isError && (
-        <div className="bg-red-400 text-white">
-          <div className="p-4">
-            <p>{error?.message}</p>
-          </div>
-        </div>
-      )}
-      {isLoading && <Spinner />}
-      <InfiniteScroll
-        dataLength={items.length}
-        next={fetchMoreData}
-        hasMore={hasNextPage}
-        loader={
-          <div className="p-4">
-            <Spinner />
-          </div>
-        }
-        endMessage={
-          <p className="p-4 text-center text-lg text-white">
-            <b>End of content</b>
-          </p>
-        }
-      >
-        <div className="w-full flex-col items-center justify-center gap-4 overflow-y-auto md:grid md:grid-cols-2 lg:grid-cols-3">
-          {!isLoading &&
-            !isError &&
-            items.map(({ video, author }) => (
-              <VideoCard key={video.id} video={video} author={author} />
-            ))}
-        </div>
-      </InfiniteScroll>
-    </section>
-  );
-};
+  const handleScroll = () => {
+    setEnabled(true);
+  }
 
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <section className="" onScroll={handleScroll}>
+        {isError && (
+          <div className="bg-red-400 text-white">
+            <div className="p-4">
+              <p>{error?.message}</p>
+            </div>
+          </div>
+        )}
+        {isLoading && <Spinner />}
+        <InfiniteScroll
+          dataLength={items.length}
+          next={fetchMoreData}
+          hasMore={hasNextPage}
+          loader={
+            <div className="p-4">
+              <Spinner />
+            </div>
+          }
+          endMessage={
+            <p className="p-4 text-center text-lg text-white">
+              <b>End of content</b>
+            </p>
+          }
+        >
+          <div className="w-full flex-col items-center justify-center gap-4 overflow-y-auto md:grid md:grid-cols-2 lg:grid-cols-3">
+            {!isLoading &&
+              !isError &&
+              items.map(({ video, author }) => (
+                <VideoCard key={video.id} video={video} author={author} />
+              ))}
+          </div>
+        </InfiniteScroll>
+      </section>
+    </Layout>
+  );
 };
 
 export default Page;
