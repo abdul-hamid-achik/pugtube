@@ -24,7 +24,7 @@ export async function createFFmpeg() {
             }
         },
         progress: ({ ratio }: { ratio: number }) => {
-            log.info(`progress: %${Math.floor(ratio * 100)}`)
+            log.info(`progress: %${(ratio * 100).toFixed(2)}`);
         },
     } as CreateFFmpegOptions);
 

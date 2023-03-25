@@ -4,9 +4,9 @@ import { getObject, putObject } from '@/utils/s3';
 import fs from 'fs';
 import { log } from 'next-axiom';
 import os from 'os';
-import { Readable } from 'stream';
 // @ts-ignore
 import { Parser } from 'm3u8-parser';
+import { Readable } from 'stream';
 
 
 type ParsedSegment = {
@@ -37,10 +37,20 @@ type ParsedSegment = {
     custom: {}
 }
 
+async function streamToBuffer(stream: Readable): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+        const chunks: Uint8Array[] = [];
+
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    });
+}
+
+
 export default async function transcodeVideo({ uploadId, fileName }: { uploadId: string, fileName: string }) {
     log.info('Transcoding video...')
     const ffmpeg = await createFFmpeg();
-    // Create temporary directories to store input and output files
     const inputDirPath = `${os.tmpdir()}/input`;
     const outputDirPath = `${os.tmpdir()}/output`;
 
@@ -54,7 +64,6 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
         fs.mkdirSync(outputDirPath);
     }
 
-    // Download TUS upload file from S3
     const upload = await getObject({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: `originals/${uploadId}/${fileName}`,
@@ -62,46 +71,31 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
 
     const inputFileName = fileName
     const inputFilePath = `${inputDirPath}/${inputFileName}`
-    const inputStream = upload?.Body as Readable        // Derive the output file name
     const outputFileName = `${uploadId}.m3u8`;
-    const writeStream = fs.createWriteStream(inputFilePath)
+    const buffer = await streamToBuffer(upload!.Body as Readable);
+    await ffmpeg.FS('writeFile', inputFileName, new Uint8Array(buffer));
 
-    await new Promise((resolve, reject) => {
-        inputStream.pipe(writeStream);
-        inputStream.on('error', reject);
-        writeStream.on('error', reject);
-        writeStream.on('finish', resolve);
-    });
-
-    log.info(`uploaded file: ${inputFilePath}`)
-
-    log.info(`loaded ffmpeg`)
-    await ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFilePath))
-    log.info(`wrote file to ffmpeg`)
     ffmpeg.FS('mkdir', 'output');
-    log.info(`created output directory`)
 
-    // Transcode the video to HLS format
     await ffmpeg.run(
         '-i', inputFileName,
-        '-c:v', 'h264',  // Use h264 codec instead of libx264
-        '-profile:v', 'baseline', // Use the baseline H.264 profile
-        '-codec', 'copy',
+        '-c:v', 'h264',
+        '-profile:v', 'baseline',
         '-start_number', '0',
-        '-hls_time', '6', // Increase HLS segment duration to 6 seconds
+        '-vf', 'scale=w=min(720\\,iw):h=min(480\\,ih)',
+        '-hls_time', '6',
         '-hls_flags', 'independent_segments',
         '-hls_segment_type', 'mpegts',
         '-hls_segment_filename', `output/segment-%01d.ts`,
         '-hls_playlist_type', 'vod',
         '-hls_list_size', '0',
         '-movflags', '+faststart',
-        '-b:v', '800k', // Lower the video bitrate to 800k
-        '-g', '12', // Set GOP size to 12 frames
-        '-keyint_min', '72', // Set keyframe interval to 72 frames
+        '-b:v', '800k',
+        '-g', '12',
+        '-keyint_min', '72',
         '-f', 'hls', `output/${outputFileName}`,
     );
 
-    // Upload the transcoded video to S3
     const transcodedVideo = ffmpeg.FS('readFile', `output/${outputFileName}`);
     const transcodedVideoKey = `transcoded/${uploadId}/output.m3u8`;
     const decoder = new TextDecoder();
@@ -240,7 +234,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
         await ffmpeg.FS('unlink', inputFileName);
         await ffmpeg.FS('unlink', `output/${outputFileName}`);
         await Promise.all(parsedPlaylist.segments.map(
-            async (parsedSegment: ParsedSegment, index: number) => {
+            async (_: ParsedSegment, index: number) => {
                 await ffmpeg.FS('unlink', `output/segment-${index}.ts`);
             }
         ))
