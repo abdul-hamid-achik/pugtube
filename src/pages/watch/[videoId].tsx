@@ -15,7 +15,7 @@ import Link from 'next/link';
 import React, { ReactElement } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
+import Head from 'next/head';
 interface PageProps {
     playlistUrl: string;
     likeId: string | null;
@@ -49,7 +49,7 @@ const MemoizedCommentCard = React.memo(CommentCard);
 const MemoizedLikeButton = React.memo(LikeButton);
 
 
-export async function generateMetadata({ params }: {
+async function generateMetadata({ params }: {
     params: { videoId: string };
 }): Promise<Metadata> {
     const { getVideoData } = await import('@/utils/shared');
@@ -176,6 +176,35 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
         refetchLikes();
     }
     return (<>
+          <Head>
+            <title>{props.title} - PugTube</title>
+            <meta name="description" content={props.description} />
+            <meta name="keywords" content={props.category} />
+            <meta name="application-name" content="PugTube" />
+            <meta name="author" content={props.author} />
+            <meta name="twitter:site" content="@pugtube" />
+            <meta name="twitter:title" content={props.title} />
+            <meta name="twitter:description" content={props.description} />
+            <meta name="twitter:image" content={props.poster} />
+            <meta name="twitter:creator" content={`@${props.author}`} />
+            <meta name="twitter:creator:id" content={props.author} />
+            <meta property="og:type" content="video.other" />
+            <meta property="og:site_name" content="PugTube" />
+            <meta property="og:url" content={`https://pugtube.dev/watch/${props.videoId}`} />
+            <meta property="og:title" content={props.title} />
+            <meta property="og:description" content={props.description} />
+            <meta property="og:image" content={props.poster} />
+            <meta property="og:video" content={playlistUrl} />
+            <meta property="og:video:secure_url" content={playlistUrl} />
+            <meta property="og:video:type" content="application/x-mpegURL" />
+            <meta property="og:video:width" content="720" />
+            <meta property="og:video:height" content="480" />
+            <meta property="og:video:tag" content={props.category} />
+            <meta property="og:video:tag" content={props.author} />
+            <meta property="og:video:tag" content={props.title} />
+            <meta property="og:video:tag" content={props.description} />
+            <meta property="og:video:tag" content="PugTube" />
+          </Head>
         <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700" >
             <div className="mx-auto flex flex-1 flex-col p-4">
                 <VideoPlayer src={playlistUrl} poster={props.poster} />
