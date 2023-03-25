@@ -16,6 +16,7 @@ import React, { ReactElement } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Head from 'next/head';
+import { log } from "next-axiom";
 interface PageProps {
     playlistUrl: string;
     likeId: string | null;
@@ -172,8 +173,11 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
     };
 
     const refresh = () => {
-        refetchComments();
-        refetchLikes();
+        Promise.all([
+          refetchComments(), refetchLikes()
+        ]).catch((err) => {
+            log.error(err);
+        });
     }
     return (<>
           <Head>
@@ -182,6 +186,7 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
             <meta name="keywords" content={props.category} />
             <meta name="application-name" content="PugTube" />
             <meta name="author" content={props.author} />
+            <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:site" content="@pugtube" />
             <meta name="twitter:title" content={props.title} />
             <meta name="twitter:description" content={props.description} />
