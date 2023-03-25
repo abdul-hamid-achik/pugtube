@@ -108,7 +108,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
             category: video?.category || 'Uncategorized',
             author: author.username || 'Unknown',
             authorProfileImageUrl: author.profileImageUrl || '',
-            createdAt: video?.createdAt?.toISOString() || new Date().toISOString(),
+            createdAt: typeof video?.createdAt === 'object' ? video?.createdAt?.toISOString() || new Date().toISOString() : video?.createdAt,
             poster: video?.thumbnailUrl || '',
             duration: video?.duration || 0,
             initialData: {

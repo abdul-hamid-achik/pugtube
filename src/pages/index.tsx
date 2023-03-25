@@ -10,10 +10,10 @@ import { ReactElement } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 type InitialData = {
-  items: {
+  items: Array<{
     video: Video;
     author: User;
-  }[];
+  }>;
   nextCursor: null;
 };
 
