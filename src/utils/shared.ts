@@ -7,7 +7,7 @@ export async function getVideoData(
     videoId: string,
     ctx: { prisma: typeof prisma } = { prisma }
 ) {
-    const videoPromise = ctx.prisma.video.findFirst({
+    const video = await ctx.prisma.video.findFirst({
         where: { id: String(videoId) },
         include: {
             upload: {
@@ -18,7 +18,6 @@ export async function getVideoData(
         },
     });
 
-    const video = await videoPromise;
     const userId = video?.userId as string;
 
     const [author, like, thumbnailUrl] = await Promise.all([
