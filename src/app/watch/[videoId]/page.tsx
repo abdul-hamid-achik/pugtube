@@ -87,7 +87,7 @@ export async function generateMetadata({ params }: {
     };
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
+const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
     const { getVideoData, getComments } = await import('@/utils/shared');
     const { videoId } = params as { videoId: string };
     const { video, author, like } = await getVideoData(videoId);
@@ -119,7 +119,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
     };
 };
 
-const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...props }) => {
+const Page: NextPageWithLayout<PageProps> = async () => {
+    const { playlistUrl, initialData, ...serverProps } = await getServerSideProps({ params: { videoId: '1' } });
     const { register, handleSubmit, reset } = useForm<Inputs>();
     const { isSignedIn } = useAuth();
     const {

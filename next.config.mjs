@@ -1,8 +1,8 @@
 // @ts-check
 
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
-import { withAxiom } from "next-axiom";
 import { withSentryConfig } from "@sentry/nextjs";
+import { withAxiom } from "next-axiom";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -14,6 +14,9 @@ const config = {
   i18n: {
     locales: ["en", "es"],
     defaultLocale: "en",
+  },
+  experimental: {
+    appDir: true,
   },
   images: {
     remotePatterns: [

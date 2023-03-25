@@ -34,7 +34,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initialData }) => {
+export const Index: NextPageWithLayout<{ initialData: InitialData }> = ({ initialData }) => {
   const [enabled, setEnabled] = useState(false);
   const { data, error, isError, isLoading, fetchNextPage } = api.videos.feed.useInfiniteQuery(
     {
@@ -102,4 +102,4 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({ initial
   );
 };
 
-export default Page;
+export default Index;

@@ -34,8 +34,13 @@
       ],
       "@cypress/*": [
         "./cypress/*"
-      ],
-    }
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -44,6 +49,7 @@
     "**/*.cjs",
     "**/*.mjs",
     "prisma/seed.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
