@@ -27,8 +27,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function Upload() {
     const [isResumable, setIsResumable] = useState(false);
-    const [token, setToken] = useState<string>();
     const { getToken } = useAuth();
+    const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
+    const { mutate } = api.videos.create.useMutation({
+        onSuccess: async (video) => {
+            uppy.resetProgress();
+            await router.push(`/upload/${video.uploadId}`);
+        },
+    });
 
     const uppy = React.useMemo(() => {
         const uppyInstance = new Uppy();
@@ -38,16 +44,17 @@ export default function Upload() {
                 endpoint: '/api/upload',
                 retryDelays: [0, 1000, 3000, 5000],
                 chunkSize: 10_485_760, // 10 MB
-                headers: {
-                    Authentication: `Bearer ${token}`,
-                },
+                onBeforeRequest: async (req, _file) => {
+                    const token = await getToken();
+                    req.setHeader('Authorization', `Bearer ${token}`);
+                }
             });
         } else {
             uppyInstance.use(AwsS3Multipart, {
                 id: 'uppy-s3-multipart',
                 companionUrl: '/api',
                 createMultipartUpload(file) {
-                    return fetch('/api/get-signed-url', {
+                    return getToken().then(token => fetch('/api/get-signed-url', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -66,10 +73,10 @@ export default function Upload() {
                         .then((res) => res.json())
                         .then((data) => {
                             return { uploadId: data.uploadId, key: data.key };
-                        });
+                        }));
                 },
                 signPart(file, partData) {
-                    return fetch('/api/get-signed-url', {
+                    return getToken().then(token => fetch('/api/get-signed-url', {
                         method: 'POST',
                         credentials: "include",
                         headers: {
@@ -84,10 +91,10 @@ export default function Upload() {
                         .then((res) => res.json())
                         .then((data) => {
                             return { url: data.url };
-                        });
+                        }));
                 },
                 completeMultipartUpload(file, data) {
-                    return fetch('/api/get-signed-url', {
+                    return getToken().then(token => fetch('/api/get-signed-url', {
                         method: 'POST',
                         credentials: "include",
                         headers: {
@@ -107,30 +114,16 @@ export default function Upload() {
                         .then((res) => res.json())
                         .then((data) => {
                             return { location: data.location };
-                        });
+                        }));
                 },
             });
         }
         return uppyInstance;
-    }, [isResumable, token]);
+    }, [isResumable, getToken]);
 
-    const { userId } = useAuth();
-    const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();
-    const { mutate } = api.videos.create.useMutation({
-        onSuccess: async (video) => {
-            uppy.resetProgress();
-            await router.push(`/upload/${video.uploadId}`);
-        },
-    });
-
-    React.useEffect(() => {
-        getToken().then((t) => {
-            setToken(t as string);
-        });
-    }, [getToken]);
 
     const onSubmit = async (data: FormData) => {
-        const { successful, failed } = await uppy.upload();
+        const { successful } = await uppy.upload();
         const file = successful.pop();
         const uploadId = (file as UppyFile & { uploadURL?: string })?.uploadURL?.split('/').pop();
 
