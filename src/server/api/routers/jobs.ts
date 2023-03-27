@@ -17,8 +17,6 @@ export const jobsRouter = createTRPCRouter({
 
 
     job: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-        const job = await queue.getJob(input);
-
-        return job;
+        return await queue.getJob(input);
     }),
 });
