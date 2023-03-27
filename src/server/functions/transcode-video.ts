@@ -1,5 +1,5 @@
 import { prisma } from '@/server/db';
-import { createFFmpeg, fetchFile } from '@/utils/ffmpeg';
+import { createFFmpeg, fetchFile, streamToBuffer } from '@/utils/ffmpeg';
 import { getObject, putObject } from '@/utils/s3';
 import fs from 'fs';
 import { log } from 'next-axiom';
@@ -37,32 +37,14 @@ type ParsedSegment = {
     custom: {}
 }
 
-async function streamToBuffer(stream: Readable): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-        const chunks: Uint8Array[] = [];
-
-        stream.on('data', (chunk) => chunks.push(chunk));
-        stream.on('error', reject);
-        stream.on('end', () => resolve(Buffer.concat(chunks)));
-    });
-}
 
 
 export default async function transcodeVideo({ uploadId, fileName }: { uploadId: string, fileName: string }) {
     log.info('Transcoding video...')
     const ffmpeg = await createFFmpeg();
     const inputDirPath = `${os.tmpdir()}/input`;
-    const outputDirPath = `${os.tmpdir()}/output`;
 
     log.info(`Transcoding video for upload ID: ${uploadId}...`)
-
-    if (!fs.existsSync(inputDirPath)) {
-        fs.mkdirSync(inputDirPath);
-    }
-
-    if (!fs.existsSync(outputDirPath)) {
-        fs.mkdirSync(outputDirPath);
-    }
 
     const upload = await getObject({
         Bucket: process.env.AWS_S3_BUCKET,
@@ -70,7 +52,6 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
     });
 
     const inputFileName = fileName
-    const inputFilePath = `${inputDirPath}/${inputFileName}`
     const outputFileName = `${uploadId}.m3u8`;
     const buffer = await streamToBuffer(upload!.Body as Readable);
     await ffmpeg.FS('writeFile', inputFileName, new Uint8Array(buffer));
@@ -213,13 +194,6 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
             }
         ))
 
-        log.info(`Transcoded video uploaded to S3 for upload ID: ${uploadId}`);
-
-        await putObject({
-            Bucket: process.env.AWS_S3_BUCKET,
-            Key: `originals/${uploadId}/${fileName}`,
-            Body: await fetchFile(inputFilePath),
-        });
         log.info('Original video uploaded to S3', { uploadId });
 
         await prisma.upload.update({

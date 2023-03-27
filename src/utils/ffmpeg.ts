@@ -1,6 +1,7 @@
 import type { CreateFFmpegOptions } from '@ffmpeg/ffmpeg';
 import { createFFmpeg as originalCreateFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { log } from 'next-axiom';
+import { Readable } from "stream";
 
 export async function createFFmpeg() {
 
@@ -31,5 +32,16 @@ export async function createFFmpeg() {
     if (!ffmpeg.isLoaded()) await ffmpeg.load();
     return ffmpeg;
 };
+
+
+export async function streamToBuffer(stream: Readable): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+        const chunks: Uint8Array[] = [];
+
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    });
+}
 
 export { fetchFile };

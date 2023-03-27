@@ -51,7 +51,7 @@
     "cypress/downloads/*",
     "cypress/fixtures/*",
     "cypress/videos/*",
-    "cypress/screenshots/*",
+    "cypress/screenshots/*"
   ],
   "ts-node": {
     "swc": true
