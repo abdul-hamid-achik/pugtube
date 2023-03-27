@@ -5,7 +5,7 @@ import { getSignedUrl } from '@/utils/s3';
 import { User } from '@clerk/nextjs/api';
 import { clerkClient, getAuth } from '@clerk/nextjs/server';
 import { DocumentArrowUpIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { Video } from '@prisma/client';
+import { Upload, Video, VideoMetadata } from "@prisma/client";
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 interface PageProps {
     user: User;
-    video: Video;
+    video:  (Video & {upload: Upload & {metadata: VideoMetadata | null}}) | null;
 }
 
 type Inputs = {
@@ -37,7 +37,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             id: videoId as string,
         },
         include: {
-            upload: true,
+            upload: {
+                include: {
+                    metadata: true,
+                }
+            },
         }
     });
 
@@ -62,25 +66,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 function Page(props: PageProps) {
     const router = useRouter();
-    const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<Inputs>({
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<Inputs>({
         defaultValues: {
-            title: props.video.title,
-            description: props.video.description || "",
-            thumbnailUrl: props.video.thumbnailUrl || "",
-            category: props.video.category || "",
+            title: props.video!.title,
+            description: props.video!.description || "",
+            thumbnailUrl: props.video!.thumbnailUrl || "",
+            category: props.video!.category || "",
         }
     });
-    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(props.video.thumbnailUrl);
+    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(props.video!.thumbnailUrl);
     const { mutate, isLoading, error, isError } = api.videos.update.useMutation({
         onSuccess: (_data) => {
             router.reload();
         },
     })
+    const { mutate: deleteVideo } = api.videos.delete.useMutation()
+
+    const { mutate: enqueue } = api.jobs.enqueue.useMutation({ })
 
     const onSubmit: SubmitHandler<Inputs> = async data => {
         let { thumbnailUrl } = data;
         try {
-            const response = await fetch(`/api/video/${props.video.id}/thumbnail`, {
+            const response = await fetch(`/api/video/${props.video!.id}/thumbnail`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -102,12 +109,12 @@ function Page(props: PageProps) {
                 }),
             });
 
-            thumbnailUrl = `thumbnails/${props.video.id}.png`;
+            thumbnailUrl = `thumbnails/${props.video!.id}.png`;
         } catch (error) {
             console.error("Error uploading thumbnail:", error);
             return;
         }
-        mutate({ ...data, id: props.video.id, thumbnailUrl: thumbnailUrl as string });
+        mutate({ ...data, id: props.video!.id, thumbnailUrl: thumbnailUrl as string });
     };
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -121,6 +128,22 @@ function Page(props: PageProps) {
         reader.readAsDataURL(file);
         setValue("thumbnailUrl", file as unknown as string);
     };
+
+    const handleDelete = async () => {
+        await deleteVideo(props.video!.id);
+        await router.push(`/channel/${props.user.username}`);
+    }
+
+    const handleTranscode = async () => {
+        await enqueue({
+            name: "transcode",
+            payload: {
+                uploadId: props.video!.uploadId,
+                fileName: props.video!.upload!.metadata!.fileName
+            }
+        });
+    }
+
     return (
         <div className="flex h-screen flex-col justify-center bg-gray-900 p-4 align-middle"
             style={{
@@ -131,15 +154,26 @@ function Page(props: PageProps) {
                 <div className="md:grid md:grid-cols-3 md:gap-6">
                     <div className="md:col-span-1">
                         <div className="px-4 sm:px-0">
-                            <h3 className="text-base font-semibold leading-6 text-white">Video: {props.video.id}</h3>
-                            <Link className="text-sm font-semibold leading-6 text-gray-300 underline" href={`/upload/${props?.video?.uploadId}/status`}>Upload: {props.video?.uploadId}</Link>
+                            <Link href={`/channel/${props.user.username}`} className="text-sm font-semibold leading-6 text-gray-300 underline hover:text-gray-200">
+                                Go back to channel
+                            </Link>
+                            <h3 className="text-base font-semibold leading-6 text-white">Video: {props.video!.id}</h3>
                             <p className="mt-1 text-sm text-white">
                                 This information will be displayed publicly so be careful what you share.
                             </p>
-                            <div className="mt-5">
-                                <Link href={`/watch/${props.video.id}`} className="text-sm font-medium text-white hover:text-gray-200">
+                            <div className="mt-5 flex flex-col">
+                                <Link className="text-sm font-semibold leading-6 text-gray-300 underline hover:text-gray-200" href={`/upload/${props?.video?.uploadId}/status`}>
+                                    View Upload
+                                </Link>
+                                <Link href={`/watch/${props.video!.id}`} className="text-sm font-semibold leading-6 text-gray-300 underline hover:text-gray-200">
                                     View Video
                                 </Link>
+                                <button type="button" onClick={handleTranscode} className="text-sm font-semibold leading-6 text-blue-500 underline hover:text-blue-400">
+                                    Transcode Video
+                                </button>
+                                <button type="button" onClick={handleDelete} className="text-sm font-semibold leading-6 text-red-500 underline hover:text-red-400">
+                                    Delete Video
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -220,9 +254,9 @@ function Page(props: PageProps) {
                                         <label htmlFor="thumbnail" className="block text-sm font-medium leading-6 text-gray-900">Thumbnail</label>
                                         <div className="mt-2 flex h-full justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
                                             <div className="space-y-1 text-center">
-                                                {props.video.thumbnailUrl || thumbnailPreview ? <Image
-                                                    src={props.video.thumbnailUrl || thumbnailPreview as string}
-                                                    alt={props.video.title} width={480} height={480} className="w-full" />
+                                                {props.video!.thumbnailUrl || thumbnailPreview ? <Image
+                                                    src={props.video!.thumbnailUrl || thumbnailPreview as string}
+                                                    alt={props.video!.title} width={480} height={480} className="w-full" />
                                                     : <>
                                                         <DocumentArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
                                                     </>}

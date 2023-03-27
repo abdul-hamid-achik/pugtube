@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
 
 const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...props }) => {
     const { register, handleSubmit, reset } = useForm<Inputs>();
-    const { isSignedIn } = useAuth();
+    const { isSignedIn, userId } = useAuth();
     const {
         data: commentData,
         error: commentError,
@@ -159,7 +159,9 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
 
     const fetchMoreCommentData = () => {
         if (hasNextCommentPage) {
-            fetchNextCommentPage();
+            fetchNextCommentPage().then((r: any) => {
+                return log.info(r);
+            });
         }
     };
 
@@ -224,6 +226,9 @@ const Page: NextPageWithLayout<PageProps> = ({ playlistUrl, initialData, ...prop
                             <span className="mr-4 text-xs text-white">
                                 {likes || 0}
                             </span>
+                            {isSignedIn && userId === props.author && <Link href={`/channel/${props.author}/video/${props.videoId}`}>
+                                Edit
+                            </Link>}
                         </div>
                     </div>
                     {props?.author &&

@@ -58,6 +58,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
         {
             getNextPageParam: (lastPage) => lastPage.nextCursor,
             initialData: { pages: [initialData], pageParams: [undefined] },
+            enabled: !!term && initialData.items.length === 10,
         }
     );
 

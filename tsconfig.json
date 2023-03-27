@@ -26,7 +26,8 @@
       "node",
       "cypress",
       "cypress-file-upload",
-      "@testing-library/cypress"
+      "@testing-library/cypress",
+      "jest"
     ],
     "paths": {
       "@/*": [
@@ -34,7 +35,7 @@
       ],
       "@cypress/*": [
         "./cypress/*"
-      ],
+      ]
     }
   },
   "include": [
@@ -43,13 +44,16 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "prisma/seed.ts",
+    "prisma/seed.ts"
   ],
   "exclude": [
     "node_modules",
     "cypress/downloads/*",
     "cypress/fixtures/*",
     "cypress/videos/*",
-    "cypress/screenshots/*"
-  ]
+    "cypress/screenshots/*",
+  ],
+  "ts-node": {
+    "swc": true
+  }
 }

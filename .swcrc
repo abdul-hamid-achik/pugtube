@@ -1,0 +1,10 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript",
+      "dynamicImport": true,
+      "jsx": true
+    },
+    "target": "es2018"
+  }
+}

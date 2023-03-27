@@ -80,7 +80,7 @@ export default async function transcodeVideo({ uploadId, fileName }: { uploadId:
     await ffmpeg.run(
         '-i', inputFileName,
         '-c:v', 'h264',
-        '-profile:v', 'baseline',
+        '-profile:v', 'main',
         '-start_number', '0',
         '-vf', 'scale=w=min(720\\,iw):h=min(480\\,ih)',
         '-hls_time', '6',

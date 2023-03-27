@@ -1,9 +1,9 @@
-import { env } from '@/env/server.mjs';
-import queue from '@/server/queue';
-import * as shared from '@/utils/shared';
-import type { Video } from '@prisma/client';
-import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
+import { env } from "@/env/server.mjs";
+import queue from "@/server/queue";
+import * as shared from "@/utils/shared";
+import type { Video } from "@prisma/client";
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const videoRouter = createTRPCRouter({
   video: publicProcedure.input(z.object({
@@ -78,8 +78,7 @@ export const videoRouter = createTRPCRouter({
     category: z.string().optional(),
     thumbnailUrl: z.string().optional(),
   })).mutation(async ({ ctx, input }) => {
-
-    const video = await ctx.prisma.video.update({
+    return await ctx.prisma.video.update({
       where: {
         id: input.id,
       },
@@ -90,12 +89,10 @@ export const videoRouter = createTRPCRouter({
           `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${input.thumbnailUrl}`,
       },
     });
-
-    return video;
   }),
 
   delete: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-    queue.add('delete-video-artifacts', {
+    return await queue.add('delete-video-artifacts', {
       videoId: input,
     })
   }),

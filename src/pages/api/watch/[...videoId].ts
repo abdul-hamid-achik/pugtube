@@ -3,7 +3,7 @@ import { getSignedUrl } from '@/utils/s3';
 import { HlsSegment } from '@prisma/client';
 import ejs from 'ejs';
 import { NextApiHandler } from 'next';
-
+import status from 'http-status';
 const watchHandler: NextApiHandler = async (req, res) => {
     let { videoId } = req.query as { videoId: string[] | string };
 
@@ -49,7 +49,7 @@ const watchHandler: NextApiHandler = async (req, res) => {
         "#EXT-X-INDEPENDENT-SEGMENTS",
         "<% segments.forEach((segment, index) => { %>",
         "#EXTINF:<%= segment.duration %>,no desc",
-        "#EXT-X-BYTERANGE:<%= segment.byteRangeLength %>@<%= segment.byteRangeOffset %>",
+        "#EXT-X-BYTERANGE:<%= segment.byterangeLength %>@<%= segment.byterangeOffset %>",
         "<%- segment.url %>",
         "<% }); %>",
         "#EXT-X-ENDLIST"
@@ -59,13 +59,14 @@ const watchHandler: NextApiHandler = async (req, res) => {
         playlist,
         segments: await Promise.all(playlist.segments.map(async (segment) => ({
             duration: segment.duration,
-            byterange: segment.byterangeLength,
+            byterangeLength: segment.byterangeLength,
+            byterangeOffset: segment.byterangeOffset,
             url: await getSignedUrl(segment.url as string),
         }))),
     });
 
     res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
-    res.status(200).send(renderedPlaylist);
+    res.status(status.OK).send(renderedPlaylist);
 };
 
 export default watchHandler;
