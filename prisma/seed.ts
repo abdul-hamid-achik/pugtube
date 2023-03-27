@@ -1,6 +1,6 @@
 import { env } from '@/env/server.mjs';
 import { prisma } from "@/server/db";
-import * as functions from '@/server/functions';
+import * as jobs from '@/server/jobs';
 import { putObject } from '@/utils/s3';
 import axios from 'axios';
 import { log as logger } from 'next-axiom';
@@ -110,8 +110,8 @@ async function main() {
         })
 
         await Promise.all([
-          functions.transcodeVideo({ uploadId, fileName }),
-          functions.generateThumbnail({ uploadId, fileName })
+          jobs.transcodeVideo({ uploadId, fileName }),
+          jobs.generateThumbnail({ uploadId, fileName })
         ]);
 
         counter++;

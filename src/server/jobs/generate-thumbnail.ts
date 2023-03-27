@@ -31,7 +31,7 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
             '-vf', 'scale=480:360',
             '-vframes', '1',
             '-q:v', '2',
-            '-c:v', 'libx264',
+            '-c:v', 'png',
             '-movflags', '+faststart',
             outputFileName,
         );
@@ -45,6 +45,7 @@ export default async function generateThumbnail({ uploadId, fileName }: { upload
             Key: `thumbnails/${uploadId}.png`,
             Body: thumbnail,
             ContentType: 'image/png',
+            ContentLength: thumbnail.length,
         });
 
         const thumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/thumbnails/${uploadId}.png`;

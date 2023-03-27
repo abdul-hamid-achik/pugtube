@@ -1,4 +1,4 @@
-import * as functions from '@/server/functions';
+import * as jobs from '@/server/jobs';
 import * as Sentry from '@sentry/node';
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
@@ -36,24 +36,24 @@ const worker = new Worker(
     try {
       switch (name) {
         case 'post-upload':
-          await functions.moveUpload({ uploadId, fileName });
+          await jobs.moveUpload({ uploadId, fileName });
 
           await Promise.all([
-            functions.transcodeVideo({ uploadId, fileName }),
-            functions.generateThumbnail({ uploadId, fileName })
+            jobs.transcodeVideo({ uploadId, fileName }),
+            jobs.generateThumbnail({ uploadId, fileName })
           ]);
           break;
 
         case 'transcode-video':
-          await functions.transcodeVideo({ uploadId, fileName, ...opts });
+          await jobs.transcodeVideo({ uploadId, fileName, ...opts });
           break;
 
         case 'generate-thumbnail':
-          await functions.generateThumbnail({ uploadId, fileName, ...opts });
+          await jobs.generateThumbnail({ uploadId, fileName, ...opts });
           break;
 
         case 'delete-video-artifacts':
-          await functions.deleteVideoArtifacts({ videoId });
+          await jobs.deleteVideoArtifacts({ videoId });
           break;
 
         default:
