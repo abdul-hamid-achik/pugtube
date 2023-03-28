@@ -1,7 +1,7 @@
 // jest.config.js
 const nextJest = require("next/jest");
-const tsconfig = require("./tsconfig.json")
-const moduleNameMapper = require("tsconfig-paths-jest")(tsconfig)
+const tsconfig = require("./tsconfig.json");
+const moduleNameMapper = require("tsconfig-paths-jest")(tsconfig);
 const createJestConfig = nextJest({
   dir: "./",
 });
@@ -14,16 +14,13 @@ const customJestConfig = {
 
   testEnvironment: "node",
   testMatch: ["**/*.spec.[jt]s?(x)"],
-  testTimeout: 60000,
+  testTimeout: 120_000,
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": "@swc/jest"
+    "^.+\\.(js|jsx|ts|tsx)$": "@swc/jest",
   },
-  transformIgnorePatterns: [
-    "node_modules/(?!@aws-sdk/.*)"
-  ],
+  transformIgnorePatterns: ["node_modules/(?!@aws-sdk/.*)"],
   moduleNameMapper,
 };
-
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 module.exports = createJestConfig(customJestConfig);

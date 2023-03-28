@@ -16,7 +16,7 @@ import React, { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Head from "next/head";
-import { log } from "next-axiom";
+import { log } from "@/utils/logger";
 
 interface PageProps {
   playlistUrl: string;

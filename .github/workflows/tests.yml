@@ -88,3 +88,5 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run unit
+        env:
+          NODE_OPTION: --detectOpenHandles --forceExit
