@@ -1,82 +1,89 @@
-import { prisma } from '@/server/db';
-import { deleteObject } from '@/utils/s3';
-import { log } from 'next-axiom';
-export default async function deleteVideoArtifacts({ videoId }: { videoId: string }) {
-    log.debug(`Deleting video artifacts for video ID: ${videoId}...`)
+import { prisma } from "@/server/db";
+import { deleteObject } from "@/utils/s3";
+import { log } from "@/utils/logger";
 
-    const video = await prisma.video.findUnique({
-        where: {
-            id: videoId,
-        },
+export default async function deleteVideoArtifacts({
+  videoId,
+}: {
+  videoId: string;
+}) {
+  log.debug(`Deleting video artifacts for video ID: ${videoId}...`);
+
+  const video = await prisma.video.findUnique({
+    where: {
+      id: videoId,
+    },
+    include: {
+      upload: {
         include: {
-            upload: {
-                include: {
-                    metadata: true,
-                }
-            },
-            hlsPlaylist: {
-                include: {
-                    segments: true,
-                }
-            },
+          metadata: true,
         },
-    });
+      },
+      hlsPlaylist: {
+        include: {
+          segments: true,
+        },
+      },
+    },
+  });
 
-    const segments = video?.hlsPlaylist?.segments || [];
+  const segments = video?.hlsPlaylist?.segments || [];
 
-    log.debug(`Deleting original, thumbnail, and transcoded segments...`)
+  log.debug(`Deleting original, thumbnail, and transcoded segments...`);
 
-    await deleteObject({
+  await deleteObject({
+    Bucket: process.env.AWS_S3_BUCKET as string,
+    Key: `originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+  });
+  await deleteObject({
+    Bucket: process.env.AWS_S3_BUCKET as string,
+    Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+  });
+  await Promise.all(
+    segments.map((_, index) =>
+      deleteObject({
         Bucket: process.env.AWS_S3_BUCKET as string,
-        Key: `originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
-    });
-    await deleteObject({
-        Bucket: process.env.AWS_S3_BUCKET as string,
-        Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
-    });
-    await Promise.all(segments.map((_, index) =>
-        deleteObject({
-            Bucket: process.env.AWS_S3_BUCKET as string,
-            Key: `transcoded/${video?.upload?.id}/segment-${index}.ts`,
-        })
-    ))
-    await deleteObject({
-        Bucket: process.env.AWS_S3_BUCKET as string,
-        Key: `transcoded/${video?.upload?.id}/output.m3u8`,
-    });
-    await deleteObject({
-        Bucket: process.env.AWS_S3_BUCKET as string,
-        Key: video?.upload?.id as string,
-    });
-    log.debug(`Deleting video, upload, metadata, segments, and playlist...`)
+        Key: `transcoded/${video?.upload?.id}/segment-${index}.ts`,
+      })
+    )
+  );
+  await deleteObject({
+    Bucket: process.env.AWS_S3_BUCKET as string,
+    Key: `transcoded/${video?.upload?.id}/output.m3u8`,
+  });
+  await deleteObject({
+    Bucket: process.env.AWS_S3_BUCKET as string,
+    Key: video?.upload?.id as string,
+  });
+  log.debug(`Deleting video, upload, metadata, segments, and playlist...`);
 
-    await prisma.hlsSegment.deleteMany({
-        where: {
-            playlistId: video?.hlsPlaylist?.id as string,
-        },
-    });
+  await prisma.hlsSegment.deleteMany({
+    where: {
+      playlistId: video?.hlsPlaylist?.id as string,
+    },
+  });
 
-    await prisma.hlsPlaylist.delete({
-        where: {
-            id: video?.hlsPlaylist?.id as string,
-        },
-    });
+  await prisma.hlsPlaylist.delete({
+    where: {
+      id: video?.hlsPlaylist?.id as string,
+    },
+  });
 
-    await prisma.video.delete({
-        where: {
-            id: videoId,
-        },
-    });
-    await prisma.upload.delete({
-        where: {
-            id: video?.upload.id,
-        },
-    });
+  await prisma.video.delete({
+    where: {
+      id: videoId,
+    },
+  });
+  await prisma.upload.delete({
+    where: {
+      id: video?.upload.id,
+    },
+  });
 
-    await prisma.videoMetadata.delete({
-        where: {
-            id: video?.upload?.metadataId as string,
-        },
-    });
-    log.debug(`Deleted video artifacts for video ID: ${videoId}...`)
+  await prisma.videoMetadata.delete({
+    where: {
+      id: video?.upload?.metadataId as string,
+    },
+  });
+  log.debug(`Deleted video artifacts for video ID: ${videoId}...`);
 }

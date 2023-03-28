@@ -87,4 +87,4 @@ jobs:
         run: npm ci
 
       - name: Run Unit Tests
-        run: npm run unit --runInBand --detectOpenHandles --forceExit
+        run: npm run unit --runInBand --detectOpenHandles --forceExit --ci

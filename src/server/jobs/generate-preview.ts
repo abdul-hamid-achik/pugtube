@@ -33,7 +33,7 @@ export default async function generateThumbnail({
       "-t",
       "3",
       "-vf",
-      "fps=10,scale=scale=720:-2:flags=lanczos",
+      "fps=10,scale=720:-2:flags=lanczos",
       "-c:v",
       "gif",
       `${gifOutputFileName}`

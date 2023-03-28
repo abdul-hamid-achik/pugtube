@@ -1,7 +1,7 @@
 import { prisma } from "@/server/db";
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
 import { getObject, putObject } from "@/utils/s3";
-import { log } from "next-axiom";
+import { log } from "@/utils/logger";
 import { Readable } from "stream";
 
 export default async function generateThumbnail({

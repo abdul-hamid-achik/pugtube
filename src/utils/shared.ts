@@ -7,7 +7,7 @@ export async function getVideoData(
   videoId: string,
   ctx: { prisma: typeof prisma } = { prisma }
 ) {
-  const video = await ctx.prisma.video.findFirst({
+  const video = await ctx.prisma.video.findUniqueOrThrow({
     where: { id: String(videoId) },
     include: {
       upload: {
@@ -18,9 +18,15 @@ export async function getVideoData(
     },
   });
 
+  const metadata = await ctx.prisma.videoMetadata.findUnique({
+    where: {
+      uploadId: video?.uploadId as string,
+    },
+  });
+
   const userId = video?.userId as string;
 
-  const [author, like, thumbnailUrl] = await Promise.all([
+  const [author, like, thumbnailUrl, previewUrl] = await Promise.all([
     clerkClient.users.getUser(userId),
     ctx.prisma.like.findFirst({
       where: {
@@ -29,6 +35,7 @@ export async function getVideoData(
       },
     }),
     video?.thumbnailUrl ? getSignedUrl(video?.thumbnailUrl) : "",
+    video?.previewUrl ? getSignedUrl(video?.previewUrl) : "",
   ]);
 
   return {
@@ -38,10 +45,11 @@ export async function getVideoData(
         upload: {
           ...video?.upload,
           metadata: {
-            ...video?.upload?.metadata,
+            ...(metadata || {}),
           },
         },
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl,
+        previewUrl,
       })
     ),
     like,

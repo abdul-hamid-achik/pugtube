@@ -1,14 +1,15 @@
-import { env } from '@/env/server.mjs';
-import { prisma } from '@/server/db';
-import queue from '@/server/queue';
-import type { Upload, VideoMetadata } from '@prisma/client';
-import { S3Store } from '@tus/s3-store';
-import { EVENTS, Server } from '@tus/server';
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { log } from 'next-axiom';
-import { v4 as uuidv4 } from 'uuid';
+import { env } from "@/env/server.mjs";
+import { prisma } from "@/server/db";
+import queue from "@/server/queue";
+import type { Upload, VideoMetadata } from "@prisma/client";
+import { S3Store } from "@tus/s3-store";
+import { EVENTS, Server } from "@tus/server";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { log } from "@/utils/logger";
+import { v4 as uuidv4 } from "uuid";
+
 interface PatchedUpload extends Upload {
-  metadata: VideoMetadata
+  metadata: VideoMetadata;
 }
 
 export const config = {
@@ -17,36 +18,54 @@ export const config = {
   },
 };
 
-
-interface MetadataValidation { ok: boolean, expected: string, received: string }
+interface MetadataValidation {
+  ok: boolean;
+  expected: string;
+  received: string;
+}
 
 const validateMetadata = (upload: PatchedUpload): MetadataValidation => {
-  const received = upload?.metadata?.fileName || '';
-  const validFileTypes = ['video/mp4', 'video/quicktime'];
-  const validFileName = /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*$/.test(upload?.metadata?.fileName || '');
-  const validFileType = validFileTypes.includes(upload?.metadata?.type || '');
+  const received = upload?.metadata?.fileName || "";
+  const validFileTypes = ["video/mp4", "video/quicktime"];
+  const validFileName = /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*$/.test(
+    upload?.metadata?.fileName || ""
+  );
+  const validFileType = validFileTypes.includes(upload?.metadata?.type || "");
 
   if (!validFileName) {
-    throw { status_code: 500, body: `Invalid filename: ${received || 'its just empty bro'}` };
+    throw {
+      status_code: 500,
+      body: `Invalid filename: ${received || "its just empty bro"}`,
+    };
   }
 
   if (!validFileType) {
-    throw { status_code: 500, body: `Invalid filetype: ${upload?.metadata?.type || `these are the allowed filetypes: ${validFileTypes.join(', ')}`}` };
+    throw {
+      status_code: 500,
+      body: `Invalid filetype: ${
+        upload?.metadata?.type ||
+        `these are the allowed filetypes: ${validFileTypes.join(", ")}`
+      }`,
+    };
   }
 
   return {
     ok: validFileName === validFileType,
-    expected: `${validFileName ? 'valid filename' : ''} ${validFileType ? 'valid filetype' : ''}`,
+    expected: `${validFileName ? "valid filename" : ""} ${
+      validFileType ? "valid filetype" : ""
+    }`,
     received,
   };
 };
 
 const tusServer = new Server({
-  path: '/api/upload',
+  path: "/api/upload",
   respectForwardedHeaders: false,
   async onUploadCreate(_, response, upload) {
-    const { ok, expected, received } = validateMetadata(upload as unknown as PatchedUpload);
-    log.info(`Upload created: ${upload.id} ${ok ? '✅' : '❌'}`);
+    const { ok, expected, received } = validateMetadata(
+      upload as unknown as PatchedUpload
+    );
+    log.info(`Upload created: ${upload.id} ${ok ? "✅" : "❌"}`);
 
     if (!ok) {
       const body = `Expected "${expected}" in "Metadata" but received "${received}"`;
@@ -60,17 +79,19 @@ const tusServer = new Server({
   async onUploadFinish(_request, response, upload) {
     try {
       log.info(`Upload finished: ${upload.id}`);
-      log.info(`Metadata: ${upload?.metadata?.filename} ${upload?.metadata?.type} ${upload?.metadata?.relativePath}`)
+      log.info(
+        `Metadata: ${upload?.metadata?.filename} ${upload?.metadata?.type} ${upload?.metadata?.relativePath}`
+      );
 
       const newUpload = await prisma.upload.create({
         data: {
           id: upload.id,
           size: upload.size,
           offset: upload.offset,
-        }
+        },
       });
 
-      log.info(`Upload created: ${newUpload.id} ✅`)
+      log.info(`Upload created: ${newUpload.id} ✅`);
 
       const newMetadata = await prisma.videoMetadata.create({
         data: {
@@ -80,17 +101,17 @@ const tusServer = new Server({
           name: upload?.metadata?.name as string,
           fileType: upload?.metadata?.filetype as string,
           uploadId: newUpload.id,
-        }
+        },
       });
 
-      log.info(`Metadata created: ${newMetadata.id} ✅`)
+      log.info(`Metadata created: ${newMetadata.id} ✅`);
 
       return response;
     } catch (error: any) {
-      log.error('Upload failed: ', {
+      log.error("Upload failed: ", {
         error: error.message,
         stack: error.stack,
-      })
+      });
       throw { status_code: 500, body: error };
     }
   },
@@ -111,13 +132,17 @@ const tusServer = new Server({
 tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
   log.info(`Event received: post-finish`, upload);
 
+  await queue.add("post-upload", {
+    uploadId: upload.id,
+    fileName: upload?.metadata?.filename as string,
+  });
 
-  await queue.add("post-upload", { uploadId: upload.id, fileName: upload?.metadata?.filename as string });
-
-  log.info(`Event sent: post-upload ✅`)
+  log.info(`Event sent: post-upload ✅`);
 });
 
-export default function handler(request: NextApiRequest, response: NextApiResponse) {
+export default function handler(
+  request: NextApiRequest,
+  response: NextApiResponse
+) {
   return tusServer.handle(request, response);
 }
-
