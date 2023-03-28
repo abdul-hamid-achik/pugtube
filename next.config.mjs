@@ -23,6 +23,14 @@ const config = {
       },
       {
         protocol: "https",
+        hostname: "tailwindui.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
         hostname: "cloudflare-ipfs.com",
       },
       {
