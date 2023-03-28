@@ -52,7 +52,9 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
 
   const fetchMoreData = () => {
     if (hasNextPage) {
-      fetchNextPage();
+      fetchNextPage().catch((err) => {
+        console.error(err);
+      });
     }
   };
 

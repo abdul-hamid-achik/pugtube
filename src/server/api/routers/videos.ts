@@ -61,6 +61,7 @@ export const videoRouter = createTRPCRouter({
         category: z.string().optional(),
         duration: z.number().optional(),
         thumbnailUrl: z.string().optional(),
+        previewUrl: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -90,6 +91,7 @@ export const videoRouter = createTRPCRouter({
         description: z.string().optional(),
         category: z.string().optional(),
         thumbnailUrl: z.string().optional(),
+        previewUrl: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -104,6 +106,12 @@ export const videoRouter = createTRPCRouter({
             input.thumbnailUrl?.startsWith("http://")
               ? input.thumbnailUrl
               : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${input.thumbnailUrl}`,
+
+          previewUrl:
+            input.previewUrl?.startsWith("https://") ||
+            input.previewUrl?.startsWith("http://")
+              ? input.previewUrl
+              : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_REGION}.amazonaws.com/${input.previewUrl}`,
         },
       });
     }),

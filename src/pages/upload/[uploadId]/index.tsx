@@ -69,13 +69,27 @@ export default function Page() {
         });
       },
     },
+
+    {
+      label: "Preview",
+      value: !!video?.previewUrl,
+      onClick() {
+        enqueue({
+          name: "generate-preview",
+          payload: {
+            uploadId: uploadId as string,
+            fileName: upload?.metadata?.fileName,
+          },
+        });
+      },
+    },
   ];
 
   const isDone =
     statusIcons.every(({ value }) => value) || (job && job.finishedOn);
 
   return (
-    <div className="container mx-auto max-w-xl bg-gray-600 p-8">
+    <div className="container mx-auto max-w-2xl bg-gray-600 p-8">
       <h1 className="mb-4 text-xl text-white">{video?.title}</h1>
       <p className="mb-4 text-lg text-white">{video?.description}</p>
       <p className="mb-4 text-lg text-white">
