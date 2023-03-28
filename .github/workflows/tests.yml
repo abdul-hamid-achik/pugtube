@@ -29,7 +29,7 @@ env:
   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
   AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
-  AXIOM_DATASET: component-testing
+  AXIOM_DATASET: test
   PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
   AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
@@ -89,4 +89,4 @@ jobs:
       - name: Run Unit Tests
         run: npm run unit
         env:
-          NODE_OPTION: --detectOpenHandles --forceExit
+          NODE_OPTION: --runInBand --detectOpenHandles --forceExit
