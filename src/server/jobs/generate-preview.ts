@@ -33,12 +33,11 @@ export default async function generateThumbnail({
       "-t",
       "3",
       "-vf",
-      "fps=10,scale=w=min(720\\,iw):h=min(480\\,ih):flags=lanczos",
+      "fps=10,scale=scale=720:-2:flags=lanczos",
       "-c:v",
       "gif",
       `${gifOutputFileName}`
     );
-
     log.info(`preview generated for upload ID: ${uploadId}`);
 
     const gif = await ffmpeg.FS("readFile", gifOutputFileName);

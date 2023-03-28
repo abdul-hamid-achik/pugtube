@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     username: [username as string],
   });
 
-  const video = await prisma.video.findUnique({
+  const video = await prisma.video.findUniqueOrThrow({
     where: {
       id: videoId as string,
     },
@@ -58,15 +58,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      user: JSON.parse(JSON.stringify(user)),
-      video: JSON.parse(
-        JSON.stringify({
-          ...video,
-          thumbnailUrl: video.thumbnailUrl
-            ? await getSignedUrl(video.thumbnailUrl)
-            : null,
-        })
-      ),
+      user: {
+        username: user.username,
+      },
+      video: {
+        ...video,
+        thumbnailUrl: video.thumbnailUrl
+          ? await getSignedUrl(video.thumbnailUrl)
+          : null,
+        previewUrl: video.previewUrl
+          ? await getSignedUrl(video.previewUrl)
+          : null,
+      },
     },
   };
 };
@@ -100,34 +103,31 @@ function Page(props: PageProps) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     let { thumbnailUrl } = data;
-    try {
-      const response = await fetch(`/api/video/${props.video!.id}/thumbnail`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": (thumbnailUrl as unknown as File).type,
-        },
-      });
 
-      if (!response.ok) {
-        throw new Error("Failed to get presigned URL");
-      }
+    const response = await fetch(`/api/video/${props.video!.id}/thumbnail`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": (thumbnailUrl as unknown as File).type,
+      },
+    });
 
-      const { url: presignedPutUrl } = await response.json();
-
-      await fetch(presignedPutUrl, {
-        method: "PUT",
-        body: thumbnailUrl as unknown as File,
-        headers: new Headers({
-          "Content-Type": (thumbnailUrl as unknown as File).type,
-        }),
-      });
-
-      thumbnailUrl = `thumbnails/${props.video!.id}.png`;
-    } catch (error) {
-      console.error("Error uploading thumbnail:", error);
-      return;
+    if (!response.ok) {
+      throw new Error("Failed to get presigned URL");
     }
+
+    const { url: presignedPutUrl } = await response.json();
+
+    await fetch(presignedPutUrl, {
+      method: "PUT",
+      body: thumbnailUrl as unknown as File,
+      headers: new Headers({
+        "Content-Type": (thumbnailUrl as unknown as File).type,
+      }),
+    });
+
+    thumbnailUrl = `thumbnails/${props.video!.id}.png`;
+
     mutate({
       ...data,
       id: props.video!.id,

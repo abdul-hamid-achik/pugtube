@@ -4,7 +4,7 @@ import type { Video } from "@prisma/client";
 import { DateTime } from "luxon";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
 interface VideoCardProps {
@@ -21,10 +21,14 @@ export default function VideoCard({
   searchResult = false,
 }: VideoCardProps) {
   const [failedToLoad, setFailedToLoad] = useState(false);
+  const [playGif, setPlayGif] = useState(false);
   const { userId, isSignedIn } = useAuth();
 
-  const onError = (event: React.SyntheticEvent<HTMLImageElement>) =>
+  const onError = (_: React.SyntheticEvent<HTMLImageElement>) =>
     setFailedToLoad(true);
+
+  const onMouseEnter = () => setPlayGif(true);
+  const onMouseLeave = () => setPlayGif(false);
 
   return (
     <div
@@ -43,12 +47,18 @@ export default function VideoCard({
       >
         {video.thumbnailUrl && !failedToLoad ? (
           <Image
-            src={video.thumbnailUrl as string}
+            src={
+              playGif && video.previewUrl
+                ? (video.previewUrl as string)
+                : (video.thumbnailUrl as string)
+            }
             alt={video.title}
             onError={onError}
             width={searchResult ? 170 : 420}
             height={searchResult ? 96 : 240}
             className="h-auto w-full"
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
           />
         ) : (
           <Image

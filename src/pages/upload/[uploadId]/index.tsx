@@ -72,7 +72,7 @@ export default function Page() {
   ];
 
   const isDone =
-    statusIcons.every(({ value }) => value) && job && job.finishedOn;
+    statusIcons.every(({ value }) => value) || (job && job.finishedOn);
 
   return (
     <div className="container mx-auto max-w-xl bg-gray-600 p-8">
