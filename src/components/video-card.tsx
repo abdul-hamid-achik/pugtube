@@ -59,7 +59,9 @@ export default function VideoCard({
             width={searchResult ? 170 : 420}
             height={searchResult ? 96 : 240}
             style={style}
-            className="h-60 w-96 object-cover"
+            className={
+              searchResult ? "h-24 w-40 object-cover" : "h-60 w-96 object-cover"
+            }
             onError={onError}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -67,7 +69,9 @@ export default function VideoCard({
         ) : (
           <Image
             src="/images/video-placeholder.jpg"
-            className="h-60 w-96 object-cover"
+            className={
+              searchResult ? "h-24 w-40 object-cover" : "h-60 w-96 object-cover"
+            }
             alt={video.title}
             width={searchResult ? 170 : 420}
             height={searchResult ? 96 : 240}
