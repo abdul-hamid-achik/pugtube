@@ -5,7 +5,6 @@ import { api } from "@/utils/api";
 import { User } from "@clerk/nextjs/api";
 import { Video } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 type InitialData = {
@@ -13,12 +12,12 @@ type InitialData = {
     video: Video;
     author: User;
   }>;
-  nextCursor: null;
+  nextCursor: string | null;
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps(_: GetServerSidePropsContext) {
   const { getFeed } = await import("@/utils/shared");
-  const { items } = await getFeed({
+  const { items, nextCursor } = await getFeed({
     limit: 9,
     skip: 0,
   });
@@ -27,7 +26,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       initialData: {
         items: JSON.parse(JSON.stringify(items)),
-        nextCursor: null,
+        nextCursor,
       },
     },
   };
@@ -36,17 +35,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
   initialData,
 }) => {
-  const [enabled, setEnabled] = useState(false);
   const { data, error, isError, isLoading, fetchNextPage } =
     api.videos.feed.useInfiniteQuery(
       {
         limit: 9,
-        skip: 9,
+        skip: initialData.items.length,
       },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         initialData: { pages: [initialData], pageParams: [undefined] },
-        enabled: enabled,
+        enabled: false,
       }
     );
 
@@ -62,12 +60,8 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
   const hasNextPage = !!lastPage?.nextCursor;
   const items = data?.pages.flatMap((page) => page.items) || [];
 
-  const handleScroll = () => {
-    setEnabled(true);
-  };
-
   return (
-    <section className="" onScroll={handleScroll}>
+    <section className="">
       {isError && (
         <div className="bg-red-400 text-white">
           <div className="p-4">
