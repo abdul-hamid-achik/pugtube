@@ -17,7 +17,7 @@ type InitialData = {
 
 export async function getServerSideProps(_: GetServerSidePropsContext) {
   const { getFeed } = await import("@/utils/shared");
-  const { items, nextCursor } = await getFeed({
+  const { items, nextCursor = null } = await getFeed({
     limit: 9,
     skip: 0,
   });

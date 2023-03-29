@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const { getVideoData, getComments } = await import("@/utils/shared");
   const { videoId } = params as { videoId: string };
   const { video, author, like } = await getVideoData(videoId);
-  const { items, nextCursor } = await getComments({
+  const { items, nextCursor = null } = await getComments({
     videoId,
     limit: 9,
   });
@@ -227,7 +227,7 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:video:tag" content={props.description} />
         <meta property="og:video:tag" content="PugTube" />
       </Head>
-      <div className="m-0 mx-auto flex h-fit w-fit bg-gray-700">
+      <div className="m-0 mx-auto flex h-fit w-fit flex-col bg-gray-700 md:flex-row">
         <div className="mx-auto flex flex-1 flex-col p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
           <div className="flex flex-col p-4 ">
@@ -309,7 +309,7 @@ const Page: NextPageWithLayout<PageProps> = ({
         </div>
 
         {commentItems?.length > 0 && (
-          <div className="h-fit w-full max-w-sm flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4">
+          <div className="h-fit w-full max-w-sm flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4 md:border-r md:border-gray-50">
             {isCommentLoading && (
               <div className="w-fit py-4">
                 <Spinner />

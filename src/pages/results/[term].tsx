@@ -27,7 +27,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getSearchResults } = await import("@/utils/shared");
 
   const searchTerm = context.query.term as string;
-  const { items, nextCursor } = await getSearchResults({
+  const { items, nextCursor = null } = await getSearchResults({
     searchTerm,
     limit: 10,
     skip: 0,
