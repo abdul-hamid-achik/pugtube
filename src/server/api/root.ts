@@ -1,7 +1,7 @@
-import { jobsRouter } from './routers/jobs';
-import { socialRouter } from './routers/social';
-import { videoRouter } from './routers/videos';
-import { createTRPCRouter } from './trpc';
+import { backgroundRouter } from "./routers/background";
+import { socialRouter } from "./routers/social";
+import { videoRouter } from "./routers/videos";
+import { createTRPCRouter } from "./trpc";
 
 /**
  * This is the primary router for your server.
@@ -11,7 +11,7 @@ import { createTRPCRouter } from './trpc';
 export const appRouter = createTRPCRouter({
   videos: videoRouter,
   social: socialRouter,
-  jobs: jobsRouter,
+  background: backgroundRouter,
 });
 
 // export type definition of API

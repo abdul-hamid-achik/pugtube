@@ -131,7 +131,8 @@ export default function Upload() {
       });
     }
     return uppyInstance;
-  }, [isResumable, getToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isResumable]);
 
   const onSubmit = async (data: FormData) => {
     const { successful } = await uppy.upload();

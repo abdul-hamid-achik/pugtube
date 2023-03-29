@@ -3,6 +3,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import {
   Bars3Icon,
   BellIcon,
+  DocumentArrowUpIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -83,6 +84,12 @@ export default function Header({
           />
         </form>
         <div className="flex items-center gap-x-4 lg:gap-x-6">
+          {isSignedIn && (
+            <Link href="/upload" className="flex justify-between text-white">
+              <DocumentArrowUpIcon className="mr-2 h-6 w-6" aria-hidden />{" "}
+              <span>Upload</span>
+            </Link>
+          )}
           <button
             type="button"
             className="-m-2.5 p-2.5 text-gray-200 hover:text-gray-300"

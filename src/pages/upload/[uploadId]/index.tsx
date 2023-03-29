@@ -4,11 +4,15 @@ import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { type Job } from "bullmq";
+import { DateTime } from "luxon";
 
 export default function Page() {
   const {
     query: { uploadId },
   } = useRouter();
+  const [jobs, setJobs] = useState<Job[]>([]);
   const { data: upload } = api.videos.upload.useQuery(uploadId as string, {
     enabled: !!uploadId,
     refetchInterval: 5_000,
@@ -31,17 +35,24 @@ export default function Page() {
   );
 
   const { data: { id: jobId } = {}, mutate: enqueue } =
-    api.jobs.enqueue.useMutation();
+    api.background.enqueue.useMutation({
+      onSuccess: (data) => {
+        setJobs((jobs) => [...jobs, data]);
+      },
+    });
 
-  const { data: job } = api.jobs.job.useQuery(jobId as string, {
-    enabled: !!jobId,
-    refetchInterval: 2_000,
-  });
+  const { data: results = [] } = api.background.jobs.useQuery(
+    jobs?.map(({ id }) => id!),
+    {
+      enabled: !!jobId,
+      refetchInterval: 2_000,
+    }
+  );
 
   const statusIcons = [
     {
-      label: "Transcoded",
-      value: upload?.transcoded,
+      label: "Segments",
+      value: segments.length > 0,
       onClick() {
         enqueue({
           name: "transcode-video",
@@ -51,10 +62,6 @@ export default function Page() {
           },
         });
       },
-    },
-    {
-      label: "Segments",
-      value: segments.length > 0,
     },
     {
       label: "Thumbnail",
@@ -86,7 +93,11 @@ export default function Page() {
   ];
 
   const isDone =
-    statusIcons.every(({ value }) => value) || (job && job.finishedOn);
+    !video?.transcoded ||
+    statusIcons.every(({ value }) => value) ||
+    jobs?.every((job) => ({
+      completed: !!job.finishedOn,
+    }));
 
   return (
     <div className="container mx-auto max-w-2xl bg-gray-600 p-8">
@@ -122,9 +133,7 @@ export default function Page() {
         {statusIcons.map(({ label, value, onClick }) => (
           <li
             key={label}
-            className={`${
-              onClick ? "cursor-pointer" : ""
-            } flex items-center justify-center rounded-lg bg-gray-500 p-4 shadow`}
+            className="flex cursor-pointer items-center justify-center rounded-lg bg-gray-500 p-4 shadow"
             onClick={onClick}
           >
             <span
@@ -136,6 +145,30 @@ export default function Page() {
           </li>
         ))}
       </ul>
+      {results?.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-white">Jobs</h3>
+          <ul>
+            {results
+              ?.filter((result) => result)
+              .map((result) => (
+                <li
+                  key={result!.id}
+                  className="flex w-full flex-row justify-between text-white"
+                >
+                  <h2>{result!.name}</h2>
+                  {result!.finishedOn ? (
+                    <p>
+                      {DateTime.fromMillis(result!.finishedOn).toRelative()}
+                    </p>
+                  ) : (
+                    <Spinner className="h-4 w-4" />
+                  )}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
