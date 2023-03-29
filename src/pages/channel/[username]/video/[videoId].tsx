@@ -99,7 +99,7 @@ function Page(props: PageProps) {
   });
   const { mutate: deleteVideo } = api.videos.delete.useMutation();
 
-  const { mutate: enqueue } = api.jobs.enqueue.useMutation({});
+  const { mutate: enqueue } = api.background.enqueue.useMutation({});
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     let { thumbnailUrl } = data;

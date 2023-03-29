@@ -7,7 +7,7 @@ import { NextPageWithLayout } from "@/pages/_app";
 import { api } from "@/utils/api";
 import { useAuth } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
-import { Comment } from "@prisma/client";
+import { Comment, Prisma } from "@prisma/client";
 import { DateTime, Duration } from "luxon";
 import { GetServerSideProps, Metadata } from "next";
 import Image from "next/image";
@@ -17,6 +17,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Head from "next/head";
 import { log } from "@/utils/logger";
+import { prisma } from "@/server/db";
+import { getAuth } from "@clerk/nextjs/server";
+import VideoFindManyArgs = Prisma.VideoFindManyArgs;
 
 interface PageProps {
   playlistUrl: string;
@@ -91,11 +94,45 @@ async function generateMetadata({
   };
 }
 
+function getRandomIndex(arrayLength: number) {
+  return Math.floor(Math.random() * arrayLength);
+}
+
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   params,
+  req,
 }) => {
   const { getVideoData, getComments } = await import("@/utils/shared");
-  const { videoId } = params as { videoId: string };
+  const { userId } = await getAuth(req);
+  let { videoId } = params as { videoId: string };
+  if (videoId === "random") {
+    let findManyArgs: VideoFindManyArgs = {
+      select: {
+        id: true,
+      },
+    };
+
+    if (userId) {
+      findManyArgs = {
+        ...findManyArgs,
+        where: {
+          userId: userId!,
+        },
+      } as VideoFindManyArgs;
+    }
+
+    const videos = await prisma.video.findMany(findManyArgs);
+
+    const randomIndex = getRandomIndex(videos.length);
+    const randomVideoId = videos[randomIndex]!.id;
+
+    return {
+      redirect: {
+        destination: `/watch/${randomVideoId}`,
+        permanent: false,
+      },
+    };
+  }
   const { video, author, like } = await getVideoData(videoId);
   const { items, nextCursor = null } = await getComments({
     videoId,
@@ -233,8 +270,13 @@ const Page: NextPageWithLayout<PageProps> = ({
           <div className="flex flex-col p-4 ">
             <div className="mb-2 flex items-center justify-between">
               <div className="flex flex-row">
-                <h1 className="text-xl text-white">{props?.title}</h1>
-                <p className="ml-4 pt-1 align-middle text-sm text-gray-300">
+                <h1 className="text-xl text-white" data-testid="video-title">
+                  {props?.title}
+                </h1>
+                <p
+                  className="ml-4 pt-1 align-middle text-sm text-gray-300"
+                  data-testid="video-created-at"
+                >
                   {DateTime.fromISO(props?.createdAt).toRelative()}
                 </p>
               </div>
@@ -244,7 +286,12 @@ const Page: NextPageWithLayout<PageProps> = ({
                   likeId={props.likeId}
                   refresh={refresh}
                 />
-                <span className="mr-4 text-xs text-white">{likes || 0}</span>
+                <span
+                  className="mr-4 text-xs text-white"
+                  data-testid="video-likes"
+                >
+                  {likes || 0}
+                </span>
                 {isSignedIn && userId === props.author && (
                   <Link
                     href={`/channel/${props.author}/video/${props.videoId}`}
@@ -255,7 +302,10 @@ const Page: NextPageWithLayout<PageProps> = ({
               </div>
             </div>
             {props?.author && (
-              <div className="flex items-center py-2">
+              <div
+                className="flex items-center py-2"
+                data-testid="video-author"
+              >
                 <Image
                   className="h-10 w-10 rounded-full object-cover shadow-sm"
                   src={props?.authorProfileImageUrl as string}
@@ -266,13 +316,18 @@ const Page: NextPageWithLayout<PageProps> = ({
                 <Link
                   href={`/channel/${props?.author}`}
                   className="ml-2 font-medium text-gray-300 hover:text-gray-200"
+                  data-testid="video-author-channel"
                 >
                   @{props?.author}
                 </Link>
               </div>
             )}
             {isSignedIn ? (
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="mt-4"
+                data-testid="video-add-comment-form"
+              >
                 <div className="mb-4">
                   <textarea
                     {...register("text")}
@@ -340,7 +395,10 @@ const Page: NextPageWithLayout<PageProps> = ({
                 </p>
               }
             >
-              <div className="flex w-full flex-col items-center justify-center gap-4 overflow-y-auto">
+              <div
+                className="flex w-full flex-col items-center justify-center gap-4 overflow-y-auto"
+                data-testid="video-comments"
+              >
                 {!isCommentLoading &&
                   !isCommentError &&
                   commentItems

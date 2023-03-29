@@ -39,6 +39,7 @@ export default function VideoCard({
           ? "m-auto flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
           : "h-fit rounded-md bg-white shadow-md"
       }
+      data-testid="video-card"
     >
       <Link
         style={style}
@@ -114,6 +115,7 @@ export default function VideoCard({
             <Link
               href={`/channel/${author?.username}`}
               className="ml-2 text-sm text-gray-400 hover:text-gray-600"
+              data-testid="video-card-author"
             >
               @{author?.username}
             </Link>

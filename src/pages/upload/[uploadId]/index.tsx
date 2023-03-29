@@ -7,16 +7,19 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { type Job } from "bullmq";
 import { DateTime } from "luxon";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Page() {
   const {
     query: { uploadId },
   } = useRouter();
+  const { userId, isSignedIn } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const { data: upload } = api.videos.upload.useQuery(uploadId as string, {
     enabled: !!uploadId,
     refetchInterval: 5_000,
   });
+
   const { data: segments = [] } = api.videos.segments.useQuery(
     uploadId as string,
     {
@@ -33,6 +36,11 @@ export default function Page() {
       refetchInterval: 5_000,
     }
   );
+
+  const { data: author } = api.social.author.useQuery(video?.userId as string, {
+    enabled: !!video?.userId,
+    refetchInterval: 5_000,
+  });
 
   const { data: { id: jobId } = {}, mutate: enqueue } =
     api.background.enqueue.useMutation({
@@ -128,6 +136,14 @@ export default function Page() {
         ) : (
           <Spinner />
         )}
+        {isDone && isSignedIn && author?.id === userId && (
+          <Link
+            href={`/channel/${author?.username}/video/${video?.id}`}
+            className="text-white underline hover:text-gray-300"
+          >
+            Edit here
+          </Link>
+        )}
       </div>
       <ul className="grid grid-cols-3 gap-4">
         {statusIcons.map(({ label, value, onClick }) => (
@@ -146,19 +162,19 @@ export default function Page() {
         ))}
       </ul>
       {results?.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-white">Jobs</h3>
+        <div className="mt-4 bg-black p-2">
+          <h3 className="p-2 pt-0 text-gray-50">Jobs</h3>
           <ul>
             {results
               ?.filter((result) => result)
               .map((result) => (
                 <li
                   key={result!.id}
-                  className="flex w-full flex-row justify-between text-white"
+                  className="flex w-full flex-row justify-between border-t border-dashed border-gray-200 p-2 text-white"
                 >
                   <h2>{result!.name}</h2>
                   {result!.finishedOn ? (
-                    <p>
+                    <p className="text-gray-50">
                       {DateTime.fromMillis(result!.finishedOn).toRelative()}
                     </p>
                   ) : (
