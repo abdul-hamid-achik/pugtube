@@ -10,7 +10,9 @@ export async function createFFmpeg(): Promise<FFmpeg> {
   let ffmpeg: FFmpeg | undefined;
   try {
     ffmpeg = originalCreateFFmpeg({
-      log: process.env.NODE_ENV === "development",
+      log:
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test",
       wasmPath: "./node_modules/@ffmpeg/ffmpeg/dist/ffmpeg-core.wasm",
       logger: ({ type, message }: { type: string; message: string }) => {
         switch (type) {

@@ -32,7 +32,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "unit": "jest",
     "prepare": "husky install",
-    "seed": "npx prisma db seed"
+    "seed": "npx prisma db seed",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@aws-crypto/sha256-browser": "^4.0.0",
@@ -60,6 +61,9 @@
     "@sentry/tracing": "^7.45.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tanstack/react-query": "^4.20.0",
+    "@tensorflow-models/mobilenet": "^2.1.0",
+    "@tensorflow/tfjs": "^4.2.0",
+    "@tensorflow/tfjs-node": "^4.2.0",
     "@trpc/client": "^10.8.1",
     "@trpc/next": "^10.8.1",
     "@trpc/react-query": "^10.8.1",
@@ -91,6 +95,7 @@
     "m3u8-parser": "^6.0.0",
     "next": "^13.2.4",
     "next-axiom": "^0.17.0",
+    "next-sitemap": "^4.0.6",
     "node-fetch": "^3.3.1",
     "pexels": "^1.4.0",
     "react": "18.2.0",

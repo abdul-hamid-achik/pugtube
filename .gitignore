@@ -48,3 +48,7 @@ cypress/screenshots/*
 # Sentry
 .sentryclirc
 .idea
+
+public/robots.txt
+public/sitemap.xml
+public/sitemap-*.xml

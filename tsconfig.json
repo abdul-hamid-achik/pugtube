@@ -45,7 +45,7 @@
     "**/*.cjs",
     "**/*.mjs",
     "prisma/seed.ts"
-  ],
+, "next-sitemap.config.js"  ],
   "exclude": [
     "node_modules",
     "cypress/downloads/*",
