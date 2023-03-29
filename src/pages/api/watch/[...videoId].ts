@@ -1,72 +1,79 @@
-import { prisma } from '@/server/db';
-import { getSignedUrl } from '@/utils/s3';
-import { HlsSegment } from '@prisma/client';
-import ejs from 'ejs';
-import { NextApiHandler } from 'next';
-import status from 'http-status';
+import { prisma } from "@/server/db";
+import { getSignedUrl } from "@/utils/s3";
+import { HlsSegment } from "@prisma/client";
+import ejs from "ejs";
+import { NextApiHandler } from "next";
+import status from "http-status";
+
 const watchHandler: NextApiHandler = async (req, res) => {
-    let { videoId } = req.query as { videoId: string[] | string };
+  let { videoId } = req.query as { videoId: string[] | string };
 
-    videoId = videoId[0] || ''
+  videoId = videoId[0] || "";
 
-    if (videoId && videoId.endsWith('.m3u8')) {
-        videoId = videoId.replace('.m3u8', '');
-    }
+  if (videoId && videoId.endsWith(".m3u8")) {
+    videoId = videoId.replace(".m3u8", "");
+  }
 
-    const playlist = await prisma.hlsPlaylist.findFirst({
-        where: { videoId },
-        include: {
-            segments: {
-                orderBy: { key: 'asc' },
-            },
-        },
-    });
+  const playlist = await prisma.hlsPlaylist.findFirst({
+    where: { videoId },
+    include: {
+      segments: {
+        orderBy: { key: "asc" },
+      },
+    },
+  });
 
-    if (!playlist) {
-        res.status(404).send('Not found');
-        return;
-    }
+  if (!playlist) {
+    res.status(404).send("Not found");
+    return;
+  }
 
-    const segments = await prisma.hlsSegment.findMany({
-        where: { playlistId: playlist.id },
-        orderBy: { key: 'asc' },
-    });
+  const segments = await prisma.hlsSegment.findMany({
+    where: { playlistId: playlist.id },
+    orderBy: { key: "asc" },
+  });
 
-    const targetDuration = segments.reduce((maxDuration: number, segment: HlsSegment) => {
-        if (segment.duration && segment.duration > maxDuration) {
-            return segment.duration;
-        }
-        return maxDuration;
-    }, 0);
+  const targetDuration = segments.reduce(
+    (maxDuration: number, segment: HlsSegment) => {
+      if (segment.duration && segment.duration > maxDuration) {
+        return segment.duration;
+      }
+      return maxDuration;
+    },
+    0
+  );
 
-    const playlistTemplate = [
-        "#EXTM3U",
-        "#EXT-X-VERSION:6",
-        "#EXT-X-MEDIA-SEQUENCE:0",
-        "#EXT-X-ALLOW-CACHE:YES",
-        "#EXT-X-TARGETDURATION:<%= targetDuration %>",
-        "#EXT-X-PLAYLIST-TYPE:VOD",
-        "#EXT-X-INDEPENDENT-SEGMENTS",
-        "<% segments.forEach((segment, index) => { %>",
-        "#EXTINF:<%= segment.duration %>,no desc",
-        "#EXT-X-BYTERANGE:<%= segment.byterangeLength %>@<%= segment.byterangeOffset %>",
-        "<%- segment.url %>",
-        "<% }); %>",
-        "#EXT-X-ENDLIST"
-    ].join('\n');
-    const renderedPlaylist = ejs.render(playlistTemplate, {
-        targetDuration,
-        playlist,
-        segments: await Promise.all(playlist.segments.map(async (segment) => ({
-            duration: segment.duration,
-            byterangeLength: segment.byterangeLength,
-            byterangeOffset: segment.byterangeOffset,
-            url: await getSignedUrl(segment.url as string),
-        }))),
-    });
+  const playlistTemplate = [
+    "#EXTM3U",
+    "#EXT-X-VERSION:6",
+    "#EXT-X-MEDIA-SEQUENCE:0",
+    "#EXT-X-ALLOW-CACHE:YES",
+    "#EXT-X-TARGETDURATION:<%= targetDuration %>",
+    "#EXT-X-PLAYLIST-TYPE:VOD",
+    "#EXT-X-INDEPENDENT-SEGMENTS",
+    "<% segments.forEach((segment, index) => { %>",
+    "#EXTINF:<%= segment.duration %>,no desc",
+    // FIXME: seems like the byterange is not working
+    // "#EXT-X-BYTERANGE:<%= segment.byterangeLength %>@<%= segment.byterangeOffset %>",
+    "<%- segment.url %>",
+    "<% }); %>",
+    "#EXT-X-ENDLIST",
+  ].join("\n");
+  const renderedPlaylist = ejs.render(playlistTemplate, {
+    targetDuration,
+    playlist,
+    segments: await Promise.all(
+      playlist.segments.map(async (segment) => ({
+        duration: segment.duration,
+        byterangeLength: segment.byterangeLength,
+        byterangeOffset: segment.byterangeOffset,
+        url: await getSignedUrl(segment.url as string),
+      }))
+    ),
+  });
 
-    res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
-    res.status(status.OK).send(renderedPlaylist);
+  res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
+  res.status(status.OK).send(renderedPlaylist);
 };
 
 export default watchHandler;
