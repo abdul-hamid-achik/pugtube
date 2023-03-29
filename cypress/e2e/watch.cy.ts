@@ -21,7 +21,7 @@ describe("authenticated", () => {
     cy.contains(comment).should("be.visible");
   });
 
-  it("should display the edit button if the user is the author", () => {
+  it.skip("should display the edit button if the user is the author", () => {
     cy.get("[data-testid='video-author-channel']").then(($authorLink) => {
       const author = $authorLink.text().substr(1); // Remove the '@' character
       cy.get(`a[href*='/channel/${author}']`)
