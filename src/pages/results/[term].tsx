@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { NextPageWithLayout } from "../_app";
+import Head from "next/head";
 
 interface ItemType {
   video: Video;
@@ -26,7 +27,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getSearchResults } = await import("@/utils/shared");
 
   const searchTerm = context.query.term as string;
-  const { items } = await getSearchResults({
+  const { items, nextCursor } = await getSearchResults({
     searchTerm,
     limit: 10,
     skip: 0,
@@ -36,7 +37,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       initialData: {
         items: JSON.parse(JSON.stringify(items)),
-        nextCursor: null,
+        nextCursor,
       },
     },
   };
@@ -56,7 +57,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
         initialData: { pages: [initialData], pageParams: [undefined] },
-        enabled: !!term && initialData.items.length === 10,
+        enabled: false,
       }
     );
 
@@ -64,56 +65,77 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
 
   const fetchMoreSearchResults = () => {
     if (hasNextPage) {
-      fetchNextPage();
+      fetchNextPage().catch(
+        (err) => console.error(err) // eslint-disable-line no-console
+      );
     }
   };
 
   const items = data?.pages.flatMap((page) => page.items) || [];
 
   return (
-    <div>
-      {isLoading && (
-        <div className="p-4">
-          <Spinner />
-        </div>
-      )}
-      {isError && (
-        <div className="p-4 text-center text-lg text-white">
-          <b>Something went wrong</b>
-        </div>
-      )}
-      {items.length !== 0 ? (
-        <InfiniteScroll
-          dataLength={items.length}
-          next={fetchMoreSearchResults}
-          hasMore={hasNextPage && items.length >= 10 && items.length % 10 === 0}
-          className="mx-auto max-w-xl"
-          loader={
-            <div className="p-4">
-              <Spinner />
-            </div>
-          }
-          endMessage={
-            <p className="p-4 text-center text-lg text-white">
-              <b>No more results</b>
-            </p>
-          }
-        >
-          {items.map(({ video, author }) => (
-            <VideoCard
-              key={video.id}
-              video={video}
-              author={author}
-              searchResult
-            />
-          ))}
-        </InfiniteScroll>
-      ) : (
-        <div className="p-4 text-center text-lg text-white">
-          <b>No results found</b>
-        </div>
-      )}
-    </div>
+    <>
+      <Head>
+        <title>Search results for {term}</title>
+
+        <meta name="description" content={`Search results for ${term}`} />
+        <meta property="og:title" content={`Search results for ${term}`} />
+        <meta
+          property="og:description"
+          content={`Search results for ${term}`}
+        />
+        <meta
+          property="og:url"
+          content={`https://pugtube.dev/results/${term}`}
+        />
+        <meta property="og:type" content="website" />
+      </Head>
+      <div>
+        {isLoading && (
+          <div className="p-4">
+            <Spinner />
+          </div>
+        )}
+        {isError && (
+          <div className="p-4 text-center text-lg text-white">
+            <b>Something went wrong</b>
+          </div>
+        )}
+        {items.length !== 0 ? (
+          <InfiniteScroll
+            dataLength={items.length}
+            next={fetchMoreSearchResults}
+            hasMore={
+              hasNextPage && items.length >= 10 && items.length % 10 === 0
+            }
+            className="mx-auto max-w-xl"
+            loader={
+              <div className="p-4">
+                <Spinner />
+              </div>
+            }
+            endMessage={
+              <p className="p-4 text-center text-lg text-white">
+                <b>No more results</b>
+              </p>
+            }
+          >
+            {items.map(({ video, author }) => (
+              <VideoCard
+                key={video.id}
+                video={video}
+                author={author}
+                searchResult
+              />
+            ))}
+          </InfiniteScroll>
+        ) : (
+          <div className="p-4 text-center text-lg text-white">
+            <b>No results found</b>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

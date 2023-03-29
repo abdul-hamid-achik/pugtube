@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const { getVideoData, getComments } = await import("@/utils/shared");
   const { videoId } = params as { videoId: string };
   const { video, author, like } = await getVideoData(videoId);
-  const { items } = await getComments({
+  const { items, nextCursor } = await getComments({
     videoId,
     limit: 9,
   });
@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       duration: video?.duration || 0,
       initialData: {
         items: items as CommentItem[],
-        nextCursor: null,
+        nextCursor,
       },
     },
   };
@@ -152,7 +152,7 @@ const Page: NextPageWithLayout<PageProps> = ({
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
       initialData: { pages: [initialData], pageParams: [] },
       refetchInterval: 10000,
-      enabled: initialData.items.length === 9,
+      enabled: false,
     }
   );
 
