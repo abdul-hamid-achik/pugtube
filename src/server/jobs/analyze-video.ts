@@ -3,7 +3,6 @@ import { log } from "@/utils/logger";
 import { getObject, putObject } from "@/utils/s3";
 import { PrismaClient } from "@prisma/client";
 import mobilnet from "@tensorflow-models/mobilenet";
-import tf from "@tensorflow/tfjs";
 import tfnode from "@tensorflow/tfjs-node";
 import { Readable } from "stream";
 
@@ -53,7 +52,7 @@ export default async function analzyeVideo({
 
     // Use fs module to read the thumbnail file as a buffer
 
-    const tfimage = tfnode.node.decodeImage(thumbnailBuffer) as tf.Tensor3D;
+    const tfimage = tfnode.node.decodeImage(thumbnailBuffer) as tfnode.Tensor3D;
     // @ts-ignore
     const predictions = await model.classify(tfimage);
 

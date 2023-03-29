@@ -48,7 +48,7 @@ export default function Header({
 
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-500 bg-gray-700 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-      <Link href="/" className="font-bold text-white">
+      <Link href="/" className="hidden font-bold text-white sm:block">
         Pugtube
       </Link>
       <button
@@ -77,7 +77,7 @@ export default function Header({
           />
           <input
             id="term"
-            className="block h-full w-full border-0 bg-gray-700 py-0 pl-8 pr-0 text-gray-200 placeholder:text-gray-100 focus:ring-0 sm:text-sm"
+            className="block h-full w-full border-0 bg-gray-700 py-0 pl-8 pr-0 text-gray-200 placeholder:text-gray-100 focus:ring-0 sm:text-sm "
             placeholder="Search..."
             data-testid="search-input"
             type="search"
@@ -86,7 +86,10 @@ export default function Header({
         </form>
         <div className="flex items-center gap-x-4 lg:gap-x-6">
           {isSignedIn && (
-            <Link href="/upload" className="flex justify-between text-white">
+            <Link
+              href="/upload"
+              className="hidden justify-between text-white sm:flex"
+            >
               <DocumentArrowUpIcon className="mr-2 h-6 w-6" aria-hidden />{" "}
               <span>Upload</span>
             </Link>

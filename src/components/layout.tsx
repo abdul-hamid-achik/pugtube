@@ -115,8 +115,16 @@ function Layout({ children }: { children: ReactNode }) {
                         src="/favicon.ico"
                         width={32}
                         height={32}
-                        alt="Your Company"
+                        alt="pugtube logo"
                       />
+
+                      <h2 className="ml-2 text-xl text-white md:hidden">
+                        Pugtube
+                      </h2>
+
+                      <h2 className="ml-2 hidden text-xl text-white lg:block">
+                        Menu
+                      </h2>
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
