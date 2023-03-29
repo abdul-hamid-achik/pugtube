@@ -309,7 +309,7 @@ const Page: NextPageWithLayout<PageProps> = ({
         </div>
 
         {commentItems?.length > 0 && (
-          <div className="h-fit w-full max-w-sm flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4 md:border-r md:border-gray-50">
+          <div className="h-fit w-full flex-1 flex-col items-center justify-center gap-4 overflow-y-auto border-r-0 border-solid border-gray-50 p-4 sm:max-w-full md:max-w-sm md:border-r md:border-gray-50">
             {isCommentLoading && (
               <div className="w-fit py-4">
                 <Spinner />
