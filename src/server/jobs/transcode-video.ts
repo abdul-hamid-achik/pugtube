@@ -165,7 +165,7 @@ export default async function transcodeVideo({
   log.info(`Saving ${parsedPlaylist.segments.length} segments...`);
   log.debug(JSON.stringify(parsedPlaylist, null, 2), parsedPlaylist);
   try {
-    await Promise.all(
+    const hlsSegmentsData = await Promise.all(
       parsedPlaylist.segments.map(
         async (parsedSegment: ParsedSegment, index: number) => {
           try {
@@ -173,42 +173,6 @@ export default async function transcodeVideo({
             const segmentPath = `output/segment-${index}.ts`;
             const segment = ffmpeg.FS("readFile", segmentPath);
             const segmentKey = `transcoded/${uploadId}/segment-${index}.ts`;
-
-            await prisma.hlsSegment.create({
-              data: {
-                playlist: {
-                  connect: {
-                    id: playlist.id,
-                  },
-                },
-                video: {
-                  connect: {
-                    id: video.id,
-                  },
-                },
-                url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
-                segmentNumber: index,
-                resolution: parsedPlaylist.resolution,
-                key: segmentKey,
-                duration: parsedSegment.duration,
-                byterangeOffset: parsedSegment.byterange?.offset,
-                byterangeLength: parsedSegment.byterange?.length,
-                discontinuity: parsedSegment.discontinuity,
-                uri: parsedSegment.uri,
-                timeline: parsedSegment.timeline,
-                keyMethod: parsedSegment.key?.method,
-                keyUri: parsedSegment.key?.uri,
-                keyIv: parsedSegment.key?.iv,
-                mapUri: parsedSegment.map?.uri,
-                mapByterangeOffset: parsedSegment.map?.byterange?.offset,
-                mapByterangeLength: parsedSegment.map?.byterange?.length,
-                cueOut: parsedSegment["cue-out"],
-                cueOutCont: parsedSegment["cue-out-cont"],
-                cueIn: parsedSegment["cue-in"],
-                custom: parsedSegment.custom,
-              },
-            });
-
             await putObject({
               Bucket: process.env.AWS_S3_BUCKET,
               Key: segmentKey,
@@ -218,6 +182,29 @@ export default async function transcodeVideo({
             log.info(
               `Transcoded segment uploaded to S3 for upload ID: ${uploadId} - segment ${index}`
             );
+            await ffmpeg.FS("unlink", segmentPath);
+            return {
+              url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
+              segmentNumber: index,
+              resolution: parsedPlaylist.resolution,
+              key: segmentKey,
+              duration: parsedSegment.duration,
+              byterangeOffset: parsedSegment.byterange?.offset,
+              byterangeLength: parsedSegment.byterange?.length,
+              discontinuity: parsedSegment.discontinuity,
+              uri: parsedSegment.uri,
+              timeline: parsedSegment.timeline,
+              keyMethod: parsedSegment.key?.method,
+              keyUri: parsedSegment.key?.uri,
+              keyIv: parsedSegment.key?.iv,
+              mapUri: parsedSegment.map?.uri,
+              mapByterangeOffset: parsedSegment.map?.byterange?.offset,
+              mapByterangeLength: parsedSegment.map?.byterange?.length,
+              cueOut: parsedSegment["cue-out"],
+              cueOutCont: parsedSegment["cue-out-cont"],
+              cueIn: parsedSegment["cue-in"],
+              custom: parsedSegment.custom,
+            };
           } catch (error) {
             log.error(
               `Error saving segment ${index} for playlist ${playlist.id}`,
@@ -227,6 +214,24 @@ export default async function transcodeVideo({
         }
       )
     );
+
+    await prisma.hlsSegment.createMany({
+      data: hlsSegmentsData.map(
+        (segmentData: { playlistId: string; videoId: string }) => ({
+          ...segmentData,
+          playlist: {
+            connect: {
+              id: segmentData.playlistId,
+            },
+          },
+          video: {
+            connect: {
+              id: segmentData.videoId,
+            },
+          },
+        })
+      ),
+    });
 
     log.info("Original video uploaded to S3", { uploadId });
 
