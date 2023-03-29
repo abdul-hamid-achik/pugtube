@@ -248,7 +248,6 @@ export default async function transcodeVideo({
     );
   } catch (error) {
     log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
-    ffmpeg.exit();
-    throw error;
   }
+  ffmpeg?.exit();
 }

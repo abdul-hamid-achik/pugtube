@@ -4,37 +4,39 @@ import * as jobs from "@/server/jobs";
 import { putObject } from "@/utils/s3";
 import axios from "axios";
 import { log } from "@/utils/logger";
-import { createClient } from "pexels";
+import { createClient, Video, Videos } from "pexels";
 import { v4 as uuidv4 } from "uuid";
 
 const client = createClient(env.PEXELS_API_KEY as string);
 
-process.setMaxListeners(20);
-
 process.on("uncaughtException", (err) => {
-  console.error("Uncaught exception:", err);
+  log.error("Uncaught exception:", err);
 });
 
 async function main() {
-  for (let page = 1; page <= 10; page++) {
+  for (
+    let page = process.env.SEED_PAGE
+      ? parseInt(process.env.SEED_PAGE as string)
+      : 1;
+    page <= 10;
+    page++
+  ) {
     let per_page = process.env.SEED_PER_PAGE
       ? parseInt(process.env.SEED_PER_PAGE)
       : 5;
 
-    const videos = await client.videos.popular({ per_page, page });
+    const videos = (await client.videos.popular({ per_page, page })) as Videos;
     // @ts-ignore
     log.debug(`Fetched ${videos.videos?.length} videos from Pexels...`);
 
     // Iterate through each video
     let counter = 0;
     let videoId;
-    // @ts-ignore
     for (const video of videos.videos) {
       try {
         videoId = video.id;
         log.debug(
           `Processing video ${counter + 1} of ${
-            // @ts-ignore
             videos && videos.videos ? videos.videos.length : undefined
           }`
         );
@@ -52,13 +54,15 @@ async function main() {
 
         // Download the highest resolution video file
         // @ts-ignore
-        const videoFile = video_files.sort((a, b) => b.width - a.width)[0];
+        const videoFile: Video = video_files.sort(
+          (a, b) => b.width! - a.width!
+        )[0];
         const {
           file_type,
           width: videoWidth,
           height: videoHeight,
           link,
-        } = videoFile;
+        } = videoFile as Video & { link: string; file_type: string };
         log.debug(`Video ID: ${id} has been downloaded...`);
 
         // Fetch the video and store it in a buffer
@@ -106,14 +110,12 @@ async function main() {
 
         log.debug(`Video Metadata: ${id} has been added to the database...`);
 
-        // Add a job to the queue for video transcoding
-
         log.debug(`Video ID: ${id} has been added to the queue...`);
 
         await prisma.video.create({
           data: {
             title: fileName,
-            description: video.description || "Uploaded from Pexels",
+            description: "Uploaded from Pexels",
             duration: duration,
             uploadId: uploadId,
             userId:

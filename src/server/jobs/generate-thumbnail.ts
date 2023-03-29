@@ -73,7 +73,7 @@ export default async function generateThumbnail({
 
     log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
   } catch (err: any) {
-    ffmpeg?.exit();
     log.error(err);
   }
+  ffmpeg?.exit();
 }

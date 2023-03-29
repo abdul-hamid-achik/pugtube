@@ -29,16 +29,19 @@ export default function VideoCard({
 
   const onMouseEnter = () => setPlayGif(true);
   const onMouseLeave = () => setPlayGif(false);
-
+  const style = {
+    maxHeight: searchResult ? "96px" : "240px",
+  };
   return (
     <div
       className={
         searchResult
-          ? "flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
+          ? "m-auto flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
           : "h-fit rounded-md bg-white shadow-md"
       }
     >
       <Link
+        style={style}
         href={
           channel && isSignedIn && userId === author.id
             ? `/channel/${author.username}/video/${video.id}`
@@ -53,20 +56,21 @@ export default function VideoCard({
                 : (video.thumbnailUrl as string)
             }
             alt={video.title}
-            onError={onError}
             width={searchResult ? 170 : 420}
             height={searchResult ? 96 : 240}
-            className="h-auto w-full"
+            style={style}
+            className="h-60 w-96 object-cover"
+            onError={onError}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           />
         ) : (
           <Image
             src="/images/video-placeholder.jpg"
+            className="h-60 w-96 object-cover"
             alt={video.title}
             width={searchResult ? 170 : 420}
             height={searchResult ? 96 : 240}
-            className="h-auto w-full"
           />
         )}
       </Link>
