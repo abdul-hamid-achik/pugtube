@@ -165,7 +165,7 @@ export default function Upload() {
       onSubmit={handleSubmit(onSubmit)}
       className="flex w-full justify-center align-middle"
     >
-      <div className="mb-8 flex w-full flex-col justify-between">
+      <div className="mb-8 flex w-full flex-col justify-between lg:max-w-3xl">
         <div className="flex w-full flex-col sm:px-2 md:px-4 lg:px-8">
           <div className="mb-6">
             <label
@@ -255,36 +255,32 @@ export default function Upload() {
               id="upload"
               uppy={uppy}
               plugins={["Tus", "AwsS3Multipart"]}
-              // style={{
-              //   width: "100%",
-              // }}
               width="100%"
               className="w-full"
-              height={200}
               hideUploadButton
             />
           </div>
         </div>
-        <div className="xs:w-full">
+        <div className="xs:w-full mx-auto">
           <button
             type="submit"
             className={`rounded ${
               errors.title || errors.category || errors.description
                 ? "bg-red-500"
                 : "bg-gray-50"
-            } w-full py-2 px-4 text-black focus:outline-none lg:w-96`}
+            } w-full py-2 px-4 text-black focus:outline-none lg:w-60`}
           >
             Upload
           </button>
         </div>
-        <div className="mt-6 flex flex-col justify-between align-bottom">
+        <div className="mx-auto mt-6 flex flex-col justify-between align-bottom">
           <p className="self-end text-sm text-gray-200">
             By uploading, you agree to our&nbsp;
-            <Link href="/terms-of-service" className="text-blue-600">
+            <Link href="/terms-of-service" className="text-blue-400">
               Terms of Service
             </Link>
             &nbsp;and&nbsp;
-            <Link href="/privacy-policy" className="text-blue-600">
+            <Link href="/privacy-policy" className="text-blue-400">
               Privacy Policy
             </Link>
           </p>

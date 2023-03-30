@@ -7,3 +7,7 @@ README.md
 .next
 .git
 src-tauri
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
