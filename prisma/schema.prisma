@@ -31,7 +31,7 @@ model Video {
   upload        Upload       @relation(fields: [uploadId], references: [id])
   createdAt     DateTime     @default(now()) @updatedAt @map("created_at")
   hlsSegments   HlsSegment[]
-  Thumbnail     Thumbnail[]
+  thumbnails    Thumbnail[]
 
   @@index([userId], name: "user_id")
   @@index([uploadId], name: "upload_id")
@@ -160,6 +160,7 @@ model Thumbnail {
   id          String       @id @default(cuid())
   timestamp   Int          @map("timestamp")
   url         String       @map("url")
+  key         String       @map("key")
   video       Video        @relation(fields: [videoId], references: [id])
   videoId     String       @map("video_id")
   contentTags ContentTag[]

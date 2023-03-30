@@ -43,7 +43,9 @@ const video = {
   userId: faker.random.alphaNumeric(),
   uploadId: faker.random.alphaNumeric(),
   hlsPlaylistId: faker.random.alphaNumeric(),
-  previewUrl: "",
+  previewUrl: faker.image.imageUrl(),
+  analyzedAt: new Date(),
+  publishedAt: new Date(),
 };
 
 describe("VideoCard", () => {

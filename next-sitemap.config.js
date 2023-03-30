@@ -1,3 +1,11 @@
+const importantPaths = [
+  "/",
+  "/watch/*",
+  "/results/*",
+  "/channel/*",
+  "/api/playlist/*",
+];
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: process.env.SITE_URL || "pugtube.dev",
@@ -11,4 +19,14 @@ module.exports = {
     "/sign-up/*",
     "/upload/*",
   ],
+  robotsTxtOptions: {
+    policies: importantPaths.map((path) => ({
+      userAgent: "*",
+      allow: path,
+    })),
+  },
+  additionalPaths: async (config) =>
+    await Promise.all(
+      importantPaths.map((path) => config.transform(config, path))
+    ),
 };

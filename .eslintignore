@@ -1,3 +1,4 @@
-*.cy.tsx
-*.cy.ts
 node_modules
+*.spec.ts
+*.cy.ts
+*.cy.tsx

@@ -98,10 +98,23 @@ export default function Page() {
         });
       },
     },
+    {
+      label: "Analyzed",
+      value: !!video?.analyzedAt,
+      onClick() {
+        enqueue({
+          name: "analyze-video",
+          payload: {
+            uploadId: uploadId as string,
+            fileName: upload?.metadata?.fileName,
+          },
+        });
+      },
+    },
   ];
 
   const isDone =
-    !video?.transcoded ||
+    !video?.upload?.transcoded ||
     statusIcons.every(({ value }) => value) ||
     jobs?.every((job) => ({
       completed: !!job.finishedOn,
@@ -125,7 +138,7 @@ export default function Page() {
           />
         )}
       </div>
-      <div className="mb-4">
+      <div className="mb-4 flex w-full justify-between">
         {isDone ? (
           <Link
             href={`/watch/${video?.id}`}
@@ -145,11 +158,11 @@ export default function Page() {
           </Link>
         )}
       </div>
-      <ul className="grid grid-cols-3 gap-4">
+      <ul>
         {statusIcons.map(({ label, value, onClick }) => (
           <li
             key={label}
-            className="flex cursor-pointer items-center justify-center rounded-lg bg-gray-500 p-4 shadow"
+            className="flex cursor-pointer items-center justify-center border-b-0 border-dashed border-gray-400 bg-gray-900 p-4 shadow"
             onClick={onClick}
           >
             <span

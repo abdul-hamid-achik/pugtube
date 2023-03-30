@@ -10,6 +10,11 @@ export async function getVideoData(
   const video = await ctx.prisma.video.findUniqueOrThrow({
     where: { id: String(videoId) },
     include: {
+      thumbnails: {
+        include: {
+          contentTags: true,
+        },
+      },
       upload: {
         include: {
           metadata: true,
@@ -39,19 +44,22 @@ export async function getVideoData(
   ]);
 
   return {
-    video: JSON.parse(
-      JSON.stringify({
-        ...video,
-        upload: {
-          ...video?.upload,
-          metadata: {
-            ...(metadata || {}),
-          },
+    video: {
+      ...video,
+      upload: {
+        ...video?.upload,
+        metadata: {
+          ...(metadata || {}),
         },
-        thumbnailUrl,
-        previewUrl,
-      })
-    ),
+      },
+      thumbnailUrl,
+      previewUrl,
+      analyzedAt: video?.analyzedAt?.toISOString(),
+      createdAt: video?.createdAt?.toISOString(),
+      thumbnails: video?.thumbnails.map((thumbnail) => ({
+        ...thumbnail,
+      })),
+    },
     like,
     author,
   };
@@ -142,6 +150,18 @@ export async function getSearchResults({
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      thumbnails: {
+        include: {
+          contentTags: true,
+        },
+      },
+      upload: {
+        include: {
+          metadata: true,
+        },
+      },
+    },
     where: {
       OR: [
         {
@@ -157,6 +177,19 @@ export async function getSearchResults({
         {
           category: {
             contains: searchTerm,
+          },
+        },
+        {
+          thumbnails: {
+            some: {
+              contentTags: {
+                some: {
+                  name: {
+                    contains: searchTerm,
+                  },
+                },
+              },
+            },
           },
         },
       ],

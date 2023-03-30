@@ -18,7 +18,7 @@ export const videoRouter = createTRPCRouter({
         throw new Error("Must provide either uploadId or videoId");
       }
       if (input.uploadId) {
-        const video = await ctx?.prisma?.video.findFirst({
+        const video = await ctx?.prisma?.video.findUniqueOrThrow({
           where: {
             uploadId: input.uploadId,
           },
@@ -27,7 +27,7 @@ export const videoRouter = createTRPCRouter({
           },
         });
 
-        return await shared.getVideoData(video!.id, ctx);
+        return await shared.getVideoData(video.id, ctx);
       }
 
       return await shared.getVideoData(input.videoId!, ctx);

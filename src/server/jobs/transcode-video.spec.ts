@@ -6,7 +6,7 @@ import { getObject } from "@/utils/s3";
 jest.mock("@/server/db", () => ({
   prisma: {
     video: {
-      findFirst: jest.fn().mockResolvedValue({
+      findUniqueOrThrow: jest.fn().mockResolvedValue({
         id: "0000000-0000-0000-0000-000000000000",
         userId: "0000000-0000-0000-0000-000000000000",
         uploadId: "0000000-0000-0000-0000-000000000000",
@@ -32,7 +32,7 @@ jest.mock("@/server/db", () => ({
       }),
     },
     hlsPlaylist: {
-      create: jest.fn().mockReturnValue({
+      upsert: jest.fn().mockReturnValue({
         id: "0000000-0000-0000-0000-000000000000",
         video: {
           connect: {
@@ -65,7 +65,7 @@ describe("transcodeVideo", () => {
     await transcodeVideo({ uploadId, fileName });
 
     // Verify that prisma functions were called with the expected parameters
-    expect(prisma.video.findFirst).toHaveBeenCalledWith({
+    expect(prisma.video.findUniqueOrThrow).toHaveBeenCalledWith({
       where: {
         uploadId: {
           equals: uploadId,
@@ -73,7 +73,7 @@ describe("transcodeVideo", () => {
       },
     });
 
-    expect(prisma.hlsPlaylist.create).toHaveBeenCalled();
+    expect(prisma.hlsPlaylist.upsert).toHaveBeenCalled();
     expect(prisma.hlsSegment.createMany).toHaveBeenCalled();
     expect(prisma.upload.update).toHaveBeenCalled();
 

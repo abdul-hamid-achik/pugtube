@@ -76,8 +76,6 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
   return (
     <>
       <Head>
-        <title>Search results for {term}</title>
-
         <meta name="description" content={`Search results for ${term}`} />
         <meta property="og:title" content={`Search results for ${term}`} />
         <meta

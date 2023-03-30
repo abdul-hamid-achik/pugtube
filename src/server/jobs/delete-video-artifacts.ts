@@ -14,6 +14,11 @@ export default async function deleteVideoArtifacts({
       id: videoId,
     },
     include: {
+      thumbnails: {
+        include: {
+          contentTags: true,
+        },
+      },
       upload: {
         include: {
           metadata: true,
@@ -28,6 +33,7 @@ export default async function deleteVideoArtifacts({
   });
 
   const segments = video?.hlsPlaylist?.segments || [];
+  const thumbnails = video?.thumbnails || [];
 
   log.debug(`Deleting original, thumbnail, and transcoded segments...`);
 
@@ -39,6 +45,16 @@ export default async function deleteVideoArtifacts({
     Bucket: process.env.AWS_S3_BUCKET as string,
     Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
   });
+
+  await Promise.all(
+    thumbnails.map((thumbnail) =>
+      deleteObject({
+        Bucket: process.env.AWS_S3_BUCKET as string,
+        Key: thumbnail.key,
+      })
+    )
+  );
+
   await Promise.all(
     segments.map((_, index) =>
       deleteObject({
@@ -69,11 +85,26 @@ export default async function deleteVideoArtifacts({
     },
   });
 
+  await prisma.contentTag.deleteMany({
+    where: {
+      thumbnailId: {
+        in: thumbnails.map((thumbnail) => thumbnail.id),
+      },
+    },
+  });
+
+  await prisma.thumbnail.deleteMany({
+    where: {
+      videoId: videoId,
+    },
+  });
+
   await prisma.video.delete({
     where: {
       id: videoId,
     },
   });
+
   await prisma.upload.delete({
     where: {
       id: video?.upload.id,

@@ -63,6 +63,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
       video: {
         ...video,
+        upload: {
+          ...video.upload,
+          creationDate: video.upload.creationDate!.toISOString(),
+        },
+        analyzedAt: video.analyzedAt?.toISOString(),
+        createdAt: video.createdAt.toISOString(),
         thumbnailUrl: video.thumbnailUrl
           ? await getSignedUrl(video.thumbnailUrl)
           : null,

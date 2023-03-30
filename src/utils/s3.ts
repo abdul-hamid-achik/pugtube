@@ -109,7 +109,7 @@ export async function getSignedUrl(s3ObjectUrl: string) {
   return formatUrl(signedUrl);
 }
 
-function parseS3ObjectUrl(s3ObjectUrl: string) {
+export function parseS3ObjectUrl(s3ObjectUrl: string) {
   const match = s3ObjectUrl.match(
     /^https:\/\/(.+)\.s3\.(.+)\.amazonaws.com\/(.+)$/
   );

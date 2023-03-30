@@ -9,7 +9,7 @@ import { useAuth } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
 import { Comment, Prisma } from "@prisma/client";
 import { DateTime, Duration } from "luxon";
-import { GetServerSideProps, Metadata } from "next";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import React, { ReactElement } from "react";
@@ -19,9 +19,11 @@ import Head from "next/head";
 import { log } from "@/utils/logger";
 import { prisma } from "@/server/db";
 import { getAuth } from "@clerk/nextjs/server";
-import VideoFindManyArgs = Prisma.VideoFindManyArgs;
+import { useRouter } from "next/router";
+import { Disclosure } from "@headlessui/react";
 
 interface PageProps {
+  keywords: string[];
   playlistUrl: string;
   likeId: string | null;
   videoId: string;
@@ -52,48 +54,6 @@ const MemoizedCommentCard = React.memo(CommentCard);
 
 const MemoizedLikeButton = React.memo(LikeButton);
 
-async function generateMetadata({
-  params,
-}: {
-  params: { videoId: string };
-}): Promise<Metadata> {
-  const { getVideoData } = await import("@/utils/shared");
-  const { videoId } = params;
-  const { video, author } = await getVideoData(videoId);
-
-  return {
-    title: video!.title,
-    description: video!.description,
-    applicationName: "PugTube",
-    keywords: video!.category, // TODO: Add more keywords
-    authors: [
-      {
-        name: author.username!,
-        url: `https://pugtube.dev/channel/${author.username}`,
-      },
-    ],
-    twitter: {
-      site: "@pugtube",
-      title: video!.title,
-      description: video!.description as string,
-      images: video!.thumbnailUrl,
-      creator: `@${author.username!}`,
-      creatorId: author.id,
-    },
-    openGraph: {
-      type: "video.other",
-      siteName: "PugTube",
-      url: `https://pugtube.dev/watch/${video.id}`,
-      title: video!.title,
-      description: video!.description as string,
-      images: video!.thumbnailUrl,
-    },
-    category: video!.category as string,
-    creator: author.username!,
-    publisher: "PugTube",
-  };
-}
-
 function getRandomIndex(arrayLength: number) {
   return Math.floor(Math.random() * arrayLength);
 }
@@ -106,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const { userId } = await getAuth(req);
   let { videoId } = params as { videoId: string };
   if (videoId === "random") {
-    let findManyArgs: VideoFindManyArgs = {
+    let findManyArgs: Prisma.VideoFindManyArgs = {
       select: {
         id: true,
       },
@@ -118,7 +78,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         where: {
           userId: userId!,
         },
-      } as VideoFindManyArgs;
+      } as Prisma.VideoFindManyArgs;
     }
 
     const videos = await prisma.video.findMany(findManyArgs);
@@ -139,10 +99,22 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     limit: 9,
   });
 
+  // TODO: This is a hack to get the keywords to show up in the meta tags
+  const keywords = Array.from(
+    new Set(
+      video?.thumbnails?.flatMap((t: any) =>
+        t.contentTags.flatMap((ct: any) =>
+          ct.name.split(",").map((keyword: string) => keyword.trim())
+        )
+      ) || []
+    )
+  );
+
   const isVideoReady = video?.upload?.transcoded;
   return {
     props: {
       videoId,
+      keywords: keywords,
       likeId: like?.id || null,
       uploadId: video?.upload?.id,
       playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : "",
@@ -153,7 +125,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       authorProfileImageUrl: author.profileImageUrl || "",
       createdAt:
         typeof video?.createdAt === "object"
-          ? video?.createdAt?.toISOString() || new Date().toISOString()
+          ? (video?.createdAt as Date).toISOString() || new Date().toISOString()
           : video?.createdAt,
       poster: video?.thumbnailUrl || "",
       duration: video?.duration || 0,
@@ -170,6 +142,7 @@ const Page: NextPageWithLayout<PageProps> = ({
   initialData,
   ...props
 }) => {
+  const router = useRouter();
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const { isSignedIn, userId } = useAuth();
   const {
@@ -263,44 +236,101 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:video:tag" content={props.title} />
         <meta property="og:video:tag" content={props.description} />
         <meta property="og:video:tag" content="PugTube" />
+        <meta name="keywords" content={props.keywords.join(", ")} />
       </Head>
       <div className="m-0 mx-auto flex h-fit w-fit flex-col bg-gray-700 md:flex-row">
         <div className="mx-auto flex flex-1 flex-col p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
           <div className="flex flex-col p-4 ">
-            <div className="mb-2 flex items-center justify-between">
-              <div className="flex flex-row">
-                <h1 className="text-xl text-white" data-testid="video-title">
-                  {props?.title}
-                </h1>
-                <p
-                  className="ml-4 pt-1 align-middle text-sm text-gray-300"
-                  data-testid="video-created-at"
-                >
-                  {DateTime.fromISO(props?.createdAt).toRelative()}
-                </p>
-              </div>
-              <div className="flex items-center self-end">
-                <MemoizedLikeButton
-                  videoId={props.videoId}
-                  likeId={props.likeId}
-                  refresh={refresh}
-                />
-                <span
-                  className="mr-4 text-xs text-white"
-                  data-testid="video-likes"
-                >
-                  {likes || 0}
-                </span>
-                {isSignedIn && userId === props.author && (
-                  <Link
-                    href={`/channel/${props.author}/video/${props.videoId}`}
-                  >
-                    Edit
-                  </Link>
-                )}
-              </div>
-            </div>
+            <Disclosure>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="block">
+                    <div className="mb-2 flex w-full items-center justify-between">
+                      <div className="flex flex-row">
+                        <h1
+                          className="text-xl text-white"
+                          data-testid="video-title"
+                        >
+                          {props?.title}
+                        </h1>
+                        <p
+                          className="ml-4 pt-1 align-middle text-sm text-gray-300"
+                          data-testid="video-created-at"
+                        >
+                          {DateTime.fromISO(props?.createdAt).toRelative()}
+                        </p>
+                      </div>
+                      <div className="flex items-center self-end">
+                        <MemoizedLikeButton
+                          videoId={props.videoId}
+                          likeId={props.likeId}
+                          refresh={refresh}
+                        />
+                        <span
+                          className="mr-4 text-xs text-white"
+                          data-testid="video-likes"
+                        >
+                          {likes || 0}
+                        </span>
+                        {isSignedIn && userId === props.author && (
+                          <Link
+                            href={`/channel/${props.author}/video/${props.videoId}`}
+                          >
+                            Edit
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex w-full justify-end">
+                      <p className="text-white">...more</p>
+                    </div>
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-300">
+                    <div className="flex flex-col">
+                      <div className="flex flex-row">
+                        <p className="text-sm text-gray-300">Category:</p>
+                        <p className="ml-2 text-sm text-white">
+                          {props.category}
+                        </p>
+                      </div>
+                      <div className="flex flex-row">
+                        <p className="text-sm text-gray-300">Author:</p>
+                        <p className="ml-2 text-sm text-white">
+                          <Link href={`/channel/${props.author}`}>
+                            {props.author}
+                          </Link>
+                        </p>
+                      </div>
+                      <div className="flex flex-row">
+                        <p className="text-sm text-gray-300">Description:</p>
+                        <p className="ml-2 text-sm text-white">
+                          {props.description}
+                        </p>
+                      </div>
+                      <div className="flex flex-row">
+                        <p className="text-sm text-gray-300">Keywords:</p>
+                        <div className="max-w-md sm:max-w-sm">
+                          {props.keywords?.map((keyword) => (
+                            <span
+                              key={keyword}
+                              onClick={() => {
+                                router
+                                  .push(`/results/${keyword}`)
+                                  .catch((err) => log.error(err));
+                              }}
+                              className="inline-flex cursor-pointer items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800 hover:underline"
+                            >
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
             {props?.author && (
               <div
                 className="flex items-center py-2"
@@ -466,3 +496,45 @@ Page.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default Page;
+
+// async function generateMetadata({
+//   params,
+// }: {
+//   params: { videoId: string };
+// }): Promise<Metadata> {
+//   const { getVideoData } = await import("@/utils/shared");
+//   const { videoId } = params;
+//   const { video, author } = await getVideoData(videoId);
+//
+//   return {
+//     title: video!.title,
+//     description: video!.description,
+//     applicationName: "PugTube",
+//     keywords: video!.category, // TODO: Add more keywords
+//     authors: [
+//       {
+//         name: author.username!,
+//         url: `https://pugtube.dev/channel/${author.username}`,
+//       },
+//     ],
+//     twitter: {
+//       site: "@pugtube",
+//       title: video!.title,
+//       description: video!.description as string,
+//       images: video!.thumbnailUrl,
+//       creator: `@${author.username!}`,
+//       creatorId: author.id,
+//     },
+//     openGraph: {
+//       type: "video.other",
+//       siteName: "PugTube",
+//       url: `https://pugtube.dev/watch/${video.id}`,
+//       title: video!.title,
+//       description: video!.description as string,
+//       images: video!.thumbnailUrl,
+//     },
+//     category: video!.category as string,
+//     creator: author.username!,
+//     publisher: "PugTube",
+//   };
+// }

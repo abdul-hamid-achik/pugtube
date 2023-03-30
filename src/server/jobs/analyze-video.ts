@@ -1,11 +1,10 @@
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
 import { log } from "@/utils/logger";
 import { getObject, putObject } from "@/utils/s3";
-import { load as loadMobilenet } from "@tensorflow-models/mobilenet";
-import { node as tfnode, type Tensor3D } from "@tensorflow/tfjs-node";
 import { Readable } from "stream";
 import { prisma } from "@/server/db";
 import { v4 as uuid } from "uuid";
+import { type Tensor3D } from "@tensorflow/tfjs-node";
 import type { Prisma } from "@prisma/client";
 
 export default async function analyzeVideo({
@@ -15,6 +14,8 @@ export default async function analyzeVideo({
   uploadId: string;
   fileName: string;
 }) {
+  const { load: loadMobilenet } = await import("@tensorflow-models/mobilenet");
+  const { node: tfnode, dispose } = await import("@tensorflow/tfjs-node");
   const ffmpeg = await createFFmpeg();
   const model = await loadMobilenet({
     version: 2,
@@ -79,6 +80,7 @@ export default async function analyzeVideo({
       id: thumbnailId,
       timestamp: Number(timestamp), // TODO: calculate timestamp here
       url: fullThumbnailUrl,
+      key: thumbnailKey,
       videoId: videoId,
     });
 
@@ -125,5 +127,6 @@ export default async function analyzeVideo({
       analyzedAt: new Date(),
     },
   });
+  dispose();
   ffmpeg?.exit();
 }

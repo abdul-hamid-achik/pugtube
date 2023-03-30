@@ -17,10 +17,27 @@
     {
       "files": [
         "*.ts",
-        "*.tsx"
+        "*.tsx",
+        "!**/*.spec.ts",
+        "!**/*.spec.tsx",
+        "!**/*.test.ts",
+        "!**/*.test.tsx",
+        "!**/*.stories.ts",
+        "!**/*.stories.tsx",
+        "!**/*.cy.ts",
+        "!**/*.cy.tsx"
       ],
       "excludedFiles": [
-        "cypress/downloads/*.ts"
+        "cypress/downloads/*.ts",
+        "cypress/fixtures/*.ts",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.stories.ts",
+        "**/*.stories.tsx",
+        "**/*.cy.ts",
+        "**/*.cy.tsx"
       ],
       "rules": {}
     }

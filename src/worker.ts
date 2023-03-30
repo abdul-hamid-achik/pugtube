@@ -37,14 +37,18 @@ const worker = new Worker(
     try {
       switch (name) {
         case "post-upload":
+          // TODO: move this to a flow
+          // TODO: refactor args to ony need a videoId instead of uploadId and fileName
           await jobs.moveUpload({ uploadId, fileName });
-
-          await Promise.all([
-            jobs.transcodeVideo({ uploadId, fileName }),
-            jobs.generateThumbnail({ uploadId, fileName }),
-          ]);
+          await jobs.analyzeVideo({ uploadId, fileName });
+          await jobs.transcodeVideo({ uploadId, fileName });
+          await jobs.generateThumbnail({ uploadId, fileName });
+          await jobs.generatePreview({ uploadId, fileName });
           break;
 
+        case "analyze-video":
+          await jobs.analyzeVideo({ uploadId, fileName });
+          break;
         case "transcode-video":
           await jobs.transcodeVideo({ uploadId, fileName, ...opts });
           break;

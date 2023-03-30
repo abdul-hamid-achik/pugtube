@@ -125,6 +125,7 @@ async function main() {
           },
         });
 
+        await jobs.analyzeVideo({ uploadId, fileName });
         await jobs.transcodeVideo({ uploadId, fileName });
         await jobs.generateThumbnail({ uploadId, fileName });
         await jobs.generatePreview({ uploadId, fileName });
