@@ -11,8 +11,8 @@ function Layout({ children }: { children: ReactNode }) {
         <Sidebar show={sidebarOpen} update={setSidebarOpen} />
         <div>
           <Header setSidebarOpen={setSidebarOpen} />
-          <main className="py-4">
-            <div className="flex justify-center px-4 sm:px-6 lg:px-8">
+          <main className="xs:max-w-xs py-4 md:w-screen">
+            <div className="flex justify-center sm:px-2 lg:px-8">
               {children}
             </div>
           </main>

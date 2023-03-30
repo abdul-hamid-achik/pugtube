@@ -163,14 +163,14 @@ export default function Upload() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex justify-center p-4 align-middle"
+      className="flex w-full justify-center align-middle"
     >
-      <div className="mb-8 flex max-w-screen-md flex-col justify-between rounded-lg bg-white p-6 shadow">
-        <div className="flex w-full flex-col px-8">
+      <div className="mb-8 flex w-full flex-col justify-between">
+        <div className="flex w-full flex-col sm:px-2 md:px-4 lg:px-8">
           <div className="mb-6">
             <label
               htmlFor="title"
-              className="mb-2 block font-medium text-gray-700"
+              className="mb-2 block font-medium text-gray-50"
             >
               Title
             </label>
@@ -181,13 +181,13 @@ export default function Upload() {
             )}
             <input
               {...register("title", { required: true })}
-              className=" w-full rounded-lg border py-2 px-3 leading-tight text-gray-700 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
           <div className="mb-6">
             <label
               htmlFor="description"
-              className="mb-2 block font-medium text-gray-700"
+              className="mb-2 block font-medium text-gray-50"
             >
               Description
             </label>
@@ -198,13 +198,13 @@ export default function Upload() {
             )}
             <textarea
               {...register("description", { required: true })}
-              className=" w-full rounded-lg border py-2 px-3 leading-tight text-gray-700 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
           <div className="mb-6">
             <label
               htmlFor="category"
-              className="mb-2 block font-medium text-gray-700"
+              className="mb-2 block font-medium text-gray-50"
             >
               Category
             </label>
@@ -215,32 +215,20 @@ export default function Upload() {
             )}
             <input
               {...register("category", { required: true })}
-              className=" w-full rounded-lg border py-2 px-3 leading-tight text-gray-700 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
-          <div className="mb-6 flex flex-col justify-between align-bottom">
-            <p className="self-end text-sm">
-              By uploading, you agree to our&nbsp;
-              <Link href="/terms-of-service" className="text-blue-600">
-                Terms of Service
-              </Link>
-              &nbsp;and&nbsp;
-              <Link href="/privacy-policy" className="text-blue-600">
-                Privacy Policy
-              </Link>
-            </p>
-          </div>
         </div>
-        <div className="flex flex-col px-4">
+        <div className="flex flex-col sm:px-2 md:px-4 lg:px-8">
           <div className="mb-4">
             <div className="flex items-center justify-between">
               <Popover className="relative inline-block">
                 <Popover.Button>
-                  <span className="cursor-pointer text-gray-600">
+                  <span className="cursor-pointer text-gray-200">
                     Resumable Uploads
                   </span>
                 </Popover.Button>
-                <Popover.Panel className="absolute z-10 mt-1 rounded-md bg-gray-800 p-2 text-sm text-gray-700 shadow-md">
+                <Popover.Panel className="absolute z-10 mt-1 rounded-md bg-gray-800 p-2 text-sm text-gray-50 shadow-md">
                   Resumable uploads may not work at the moment, but you can try
                   them if you want.
                 </Popover.Panel>
@@ -250,43 +238,56 @@ export default function Upload() {
                 checked={isResumable}
                 onChange={setIsResumable}
                 className={`${
-                  isResumable ? "bg-blue-600" : "bg-gray-200"
+                  isResumable ? "bg-blue-600" : "bg-gray-50"
                 } relative inline-flex h-6 w-11 items-center rounded-full`}
               >
                 <span
                   className={`${
                     isResumable ? "translate-x-6" : "translate-x-1"
-                  } inline-block h-4 w-4 rounded-full bg-white`}
+                  } inline-block h-4 w-4 rounded-full bg-gray-200`}
                 />
               </Switch>
             </div>
           </div>
 
-          <div className="mb-6 flex justify-center">
+          <div className="mb-6 flex w-full justify-center">
             <Dashboard
               id="upload"
               uppy={uppy}
               plugins={["Tus", "AwsS3Multipart"]}
+              // style={{
+              //   width: "100%",
+              // }}
+              width="100%"
+              className="w-full"
+              height={200}
               hideUploadButton
             />
           </div>
         </div>
-
-        <div className="ml-4">
+        <div className="xs:w-full">
           <button
             type="submit"
             className={`rounded ${
               errors.title || errors.category || errors.description
                 ? "bg-red-500"
-                : "bg-gray-700"
-            } py-2 px-4 font-bold text-white ${
-              errors.title || errors.category || errors.description
-                ? "bg-red-500"
-                : "hover:bg-gray-500"
-            } focus:outline-none`}
+                : "bg-gray-50"
+            } w-full py-2 px-4 text-black focus:outline-none lg:w-96`}
           >
             Upload
           </button>
+        </div>
+        <div className="mt-6 flex flex-col justify-between align-bottom">
+          <p className="self-end text-sm text-gray-200">
+            By uploading, you agree to our&nbsp;
+            <Link href="/terms-of-service" className="text-blue-600">
+              Terms of Service
+            </Link>
+            &nbsp;and&nbsp;
+            <Link href="/privacy-policy" className="text-blue-600">
+              Privacy Policy
+            </Link>
+          </p>
         </div>
       </div>
     </form>

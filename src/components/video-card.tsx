@@ -37,7 +37,7 @@ export default function VideoCard({
       className={
         searchResult
           ? "m-auto flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
-          : "mb-4 h-fit w-96 rounded-md bg-white shadow-md sm:mb-0"
+          : "border-b-1 shadow-xs mb-4 h-fit w-96 rounded-md border-gray-200 bg-gray-800 shadow-md sm:mb-0"
       }
       data-testid="video-card"
     >
@@ -89,7 +89,7 @@ export default function VideoCard({
         <div className="flex-1 p-4 pr-0">
           <Link
             className={`block text-lg font-medium hover:text-gray-400 ${
-              searchResult ? "text-white" : "text-black"
+              searchResult ? "text-white" : "text-white"
             } `}
             href={`/watch/${video.id}`}
           >

@@ -205,7 +205,6 @@ const Page: NextPageWithLayout<PageProps> = ({
   return (
     <>
       <Head>
-        <title>{props.title} - PugTube</title>
         <meta name="description" content={props.description} />
         <meta name="keywords" content={props.category} />
         <meta name="application-name" content="PugTube" />
@@ -238,16 +237,16 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:video:tag" content="PugTube" />
         <meta name="keywords" content={props.keywords.join(", ")} />
       </Head>
-      <div className="m-0 mx-auto flex h-fit w-fit flex-col bg-gray-700 md:flex-row">
-        <div className="mx-auto flex flex-1 flex-col p-4">
+      <div className="m-0 mx-auto flex h-fit w-full flex-col bg-gray-700 md:flex-row">
+        <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
-          <div className="flex flex-col p-4 ">
+          <div className="flex flex-col bg-gray-500 p-4 sm:p-0">
             <Disclosure>
               {({ open }) => (
                 <>
                   <Disclosure.Button className="block">
                     <div className="mb-2 flex w-full items-center justify-between">
-                      <div className="flex flex-row">
+                      <div className="flex flex-1 flex-row">
                         <h1
                           className="text-xl text-white"
                           data-testid="video-title"
@@ -282,11 +281,35 @@ const Page: NextPageWithLayout<PageProps> = ({
                         )}
                       </div>
                     </div>
-                    <div className="flex w-full justify-end">
-                      <p className="text-white">...more</p>
-                    </div>
+                    {props?.author && (
+                      <div
+                        className="flex items-center py-2"
+                        data-testid="video-author"
+                      >
+                        <Image
+                          className="h-10 w-10 rounded-full object-cover shadow-sm"
+                          src={props?.authorProfileImageUrl as string}
+                          alt={props?.author as string}
+                          width={40}
+                          height={40}
+                        />
+                        <Link
+                          href={`/channel/${props?.author}`}
+                          className="ml-2 font-medium text-gray-300 hover:text-gray-200"
+                          data-testid="video-author-channel"
+                        >
+                          @{props?.author}
+                        </Link>
+
+                        <div className="flex w-full justify-end">
+                          <p className="text-white">
+                            {!open ? "...more" : "close"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </Disclosure.Button>
-                  <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-300">
+                  <Disclosure.Panel className="p-4 text-sm text-gray-300 sm:p-2">
                     <div className="flex flex-col">
                       <div className="flex flex-row">
                         <p className="text-sm text-gray-300">Category:</p>
@@ -331,27 +354,7 @@ const Page: NextPageWithLayout<PageProps> = ({
                 </>
               )}
             </Disclosure>
-            {props?.author && (
-              <div
-                className="flex items-center py-2"
-                data-testid="video-author"
-              >
-                <Image
-                  className="h-10 w-10 rounded-full object-cover shadow-sm"
-                  src={props?.authorProfileImageUrl as string}
-                  alt={props?.author as string}
-                  width={40}
-                  height={40}
-                />
-                <Link
-                  href={`/channel/${props?.author}`}
-                  className="ml-2 font-medium text-gray-300 hover:text-gray-200"
-                  data-testid="video-author-channel"
-                >
-                  @{props?.author}
-                </Link>
-              </div>
-            )}
+
             {isSignedIn ? (
               <form
                 onSubmit={handleSubmit(onSubmit)}
