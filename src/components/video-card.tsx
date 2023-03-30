@@ -36,8 +36,8 @@ export default function VideoCard({
     <div
       className={
         searchResult
-          ? "m-auto flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
-          : "mb-4 h-fit w-96 rounded-md border-b-2 border-gray-200 bg-gray-800 shadow-md sm:mb-0"
+          ? "m-auto flex flex-row items-center border-gray-200 bg-gray-800 shadow-sm"
+          : "mb-4 h-fit w-96 rounded-md border-b-2 border-gray-600 bg-gray-800 shadow-md sm:mb-0"
       }
       data-testid="video-card"
     >
