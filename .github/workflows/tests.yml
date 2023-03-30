@@ -47,8 +47,6 @@ jobs:
 
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
-        with:
-          load-mode: strict
 
       - name: Cypress Component Tests
         uses: cypress-io/github-action@v5

@@ -4,7 +4,3 @@ node_modules
 README.md
 .next
 .git
-.env*
-.flaskenv*
-!.env.project
-!.env.vault
