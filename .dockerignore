@@ -1,13 +1,8 @@
-.env
 Dockerfile
 .dockerignore
 node_modules
-npm-debug.log
 README.md
 .next
 .git
-src-tauri
 .env*
-.flaskenv*
-!.env.project
 !.env.vault
