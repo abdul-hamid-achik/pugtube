@@ -17,6 +17,8 @@ model Video {
   title         String
   description   String?
   duration      Int?
+  analyzedAt    DateTime?    @map("analyzed_at")
+  publishedAt   DateTime?    @map("published_at")
   thumbnailUrl  String?      @map("thumbnail_url")
   previewUrl    String?      @map("preview_url")
   category      String?
@@ -155,12 +157,24 @@ model Upload {
 }
 
 model Thumbnail {
-  id        String @id @default(cuid())
-  timestamp Int    @map("timestamp")
-  url       String @map("url")
-  video     Video  @relation(fields: [videoId], references: [id])
-  videoId   String @map("video_id")
+  id          String       @id @default(cuid())
+  timestamp   Int          @map("timestamp")
+  url         String       @map("url")
+  video       Video        @relation(fields: [videoId], references: [id])
+  videoId     String       @map("video_id")
+  contentTags ContentTag[]
 
   @@index([videoId], name: "video_id")
   @@map("thumbnails")
+}
+
+model ContentTag {
+  id          String    @id @default(cuid())
+  name        String
+  confidence  Float
+  thumbnail   Thumbnail @relation(fields: [thumbnailId], references: [id])
+  thumbnailId String    @map("thumbnail_id")
+
+  @@index([thumbnailId], name: "thumbnail_id")
+  @@map("content_tags")
 }

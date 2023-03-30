@@ -1,14 +1,14 @@
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
 import { log } from "@/utils/logger";
 import { getObject, putObject } from "@/utils/s3";
-import { PrismaClient } from "@prisma/client";
-import mobilnet from "@tensorflow-models/mobilenet";
-import tfnode from "@tensorflow/tfjs-node";
+import { load as loadMobilenet } from "@tensorflow-models/mobilenet";
+import { node as tfnode, type Tensor3D } from "@tensorflow/tfjs-node";
 import { Readable } from "stream";
+import { prisma } from "@/server/db";
+import { v4 as uuid } from "uuid";
+import type { Prisma } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
-export default async function analzyeVideo({
+export default async function analyzeVideo({
   uploadId,
   fileName,
 }: {
@@ -16,7 +16,20 @@ export default async function analzyeVideo({
   fileName: string;
 }) {
   const ffmpeg = await createFFmpeg();
-  const model = await mobilnet.load();
+  const model = await loadMobilenet({
+    version: 2,
+    alpha: 1,
+  });
+  const { id: videoId, duration } = await prisma.video.findUniqueOrThrow({
+    where: {
+      uploadId,
+    },
+    select: {
+      id: true,
+      duration: true,
+    },
+  });
+
   const video = await getObject({
     Bucket: process.env.AWS_S3_BUCKET as string,
     Key: `originals/${uploadId}/${fileName}`,
@@ -40,8 +53,11 @@ export default async function analzyeVideo({
   const thumbnails = ffmpeg
     .FS("readdir", "output")
     .filter((file) => file.endsWith(".jpg"));
+  const thumbnailsData: Prisma.ThumbnailCreateManyInput[] = [];
+  const contentTagsData: Prisma.ContentTagCreateManyInput[] = [];
   log.info("found thumbnails", thumbnails);
   for (let i = 0; i < thumbnails.length; i++) {
+    log.debug(`analyzing thumbnail ${i}/${thumbnails.length}`);
     const thumbnailFileName = thumbnails[i];
     const timestamp = thumbnailFileName!.split("-")[1]!.split(".")[0];
 
@@ -50,26 +66,28 @@ export default async function analzyeVideo({
       `output/${thumbnailFileName}`
     );
 
-    // Use fs module to read the thumbnail file as a buffer
-
-    const tfimage = tfnode.node.decodeImage(thumbnailBuffer) as tfnode.Tensor3D;
+    const tfimage = tfnode.decodeImage(thumbnailBuffer) as Tensor3D;
     // @ts-ignore
     const predictions = await model.classify(tfimage);
 
     log.debug("found predictions", predictions);
 
     const thumbnailKey = `thumbnails/${thumbnailFileName}`;
+    const fullThumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/${thumbnailKey}`;
+    const thumbnailId = uuid();
+    thumbnailsData.push({
+      id: thumbnailId,
+      timestamp: Number(timestamp), // TODO: calculate timestamp here
+      url: fullThumbnailUrl,
+      videoId: videoId,
+    });
 
-    await prisma.thumbnail.create({
-      data: {
-        timestamp: Number(timestamp),
-        url: thumbnailKey,
-        video: {
-          connect: {
-            uploadId: uploadId,
-          },
-        },
-      },
+    predictions.forEach((prediction) => {
+      contentTagsData.push({
+        name: prediction.className,
+        confidence: prediction.probability,
+        thumbnailId: thumbnailId,
+      });
     });
 
     await putObject({
@@ -81,8 +99,31 @@ export default async function analzyeVideo({
     });
 
     ffmpeg.FS("unlink", `output/${thumbnailFileName}`);
-    ffmpeg.FS("unlink", "output");
-    ffmpeg.FS("unlink", fileName);
   }
+  ffmpeg.FS("unlink", fileName);
+
+  log.debug("Saving thumbnails and contentTags to db", [
+    thumbnailsData,
+    contentTagsData,
+  ]);
+
+  await prisma.thumbnail.createMany({
+    data: thumbnailsData,
+    skipDuplicates: true,
+  });
+
+  await prisma.contentTag.createMany({
+    data: contentTagsData,
+    skipDuplicates: true,
+  });
+
+  await prisma.video.update({
+    where: {
+      id: videoId,
+    },
+    data: {
+      analyzedAt: new Date(),
+    },
+  });
   ffmpeg?.exit();
 }
