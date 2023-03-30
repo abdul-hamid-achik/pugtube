@@ -45,11 +45,30 @@ jobs:
       - name: Load environment variables
         run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
 
+      - id: dotenv
+        uses: falti/dotenv-action
+
       - name: Cypress Component Tests
         uses: cypress-io/github-action@v5
         with:
           component: true
           record: true
+          AXIOM_DATASET: test
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ steps.dotenv.output.CYPRESS_RECORD_KEY }}
+          DATABASE_URL: ${{ steps.dotenv.output.DATABASE_URL }}
+          GITHUB_ID: ${{ steps.dotenv.output.CLERK_GITHUB_ID }}
+          GITHUB_SECRET: ${{ steps.dotenv.output.CLERK_GITHUB_SECRET }}
+          DISCORD_ID: ${{ steps.dotenv.output.DISCORD_ID }}
+          DISCORD_SECRET: ${{ steps.dotenv.output.DISCORD_SECRET }}
+          CLERK_SECRET_KEY: ${{ steps.dotenv.output.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ steps.dotenv.output.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          AXIOM_TOKEN: ${{ steps.dotenv.output.AXIOM_TOKEN }}
+          PEXELS_API_KEY: ${{ steps.dotenv.output.PEXELS_API_KEY }}
+          AWS_S3_BUCKET: ${{ steps.dotenv.output.AWS_S3_BUCKET }}
+          AWS_REGION: ${{ steps.dotenv.output.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ steps.dotenv.output.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.dotenv.output.AWS_SECRET_ACCESS_KEY }}
 
   unit:
     runs-on: ubuntu-latest
