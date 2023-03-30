@@ -12,7 +12,7 @@ function Layout({ children }: { children: ReactNode }) {
         <div>
           <Header setSidebarOpen={setSidebarOpen} />
           <main className="py-4">
-            <div className="flex justify-center sm:px-2 lg:px-8">
+            <div className="flex justify-center sm:px-2 md:max-w-6xl lg:mx-auto lg:max-w-7xl lg:px-8">
               {children}
             </div>
           </main>

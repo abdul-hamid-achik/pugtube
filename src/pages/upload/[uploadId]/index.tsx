@@ -60,7 +60,7 @@ export default function Page() {
   const statusIcons = [
     {
       label: "Segments",
-      value: segments.length > 0,
+      value: segments.length > 0 || upload?.transcoded,
       onClick() {
         enqueue({
           name: "transcode-video",
@@ -127,7 +127,7 @@ export default function Page() {
   ];
 
   const isDone =
-    !video?.upload?.transcoded ||
+    upload?.transcoded ||
     statusIcons.every(({ value }) => value) ||
     jobs?.every((job) => ({
       completed: !!job.finishedOn,
