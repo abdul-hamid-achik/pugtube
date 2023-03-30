@@ -5,6 +5,11 @@ import IORedis from "ioredis";
 import fetch from "node-fetch";
 import { log } from "@/utils/logger";
 
+// @ts-ignore
+import dotenv from "dotenv-vault-core";
+
+dotenv.config();
+
 const { env } = require("./env/server.mjs");
 
 Sentry.init({
