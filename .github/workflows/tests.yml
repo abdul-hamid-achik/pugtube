@@ -43,7 +43,7 @@ jobs:
           node-version: ${{ steps.versions.outputs.nodejs}}
 
       - name: Load environment variables
-        run: npx dotenv-vault pull ci .env --yes
+        run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
 
       - name: Cypress Component Tests
         uses: cypress-io/github-action@v5
@@ -61,17 +61,16 @@ jobs:
         uses: marocchino/tool-versions-action@v1
         id: versions
 
-      - name: Use Node.js ${{ steps.versions.outputs.nodejs}}
+      - name: Use Node.js ${{ steps.versions.outputs.nodejs }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ steps.versions.outputs.nodejs}}
-
+          node-version: ${{ steps.versions.outputs.nodejs }}
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Load environment variables
-        run: npx dotenv-vault pull ci .env --yes
+        run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
 
       - name: Run Unit Tests
         run: npm run unit --runInBand --detectOpenHandles --forceExit --ci
