@@ -1,12 +1,9 @@
 import * as jobs from "@/server/jobs";
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
-import dotenv from "dotenv";
 import IORedis from "ioredis";
 import fetch from "node-fetch";
 import { log } from "@/utils/logger";
-
-dotenv.config();
 
 const { env } = require("./env/server.mjs");
 

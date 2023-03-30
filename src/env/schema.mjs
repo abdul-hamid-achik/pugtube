@@ -1,5 +1,9 @@
 // @ts-check
+// @ts-ignore
+import { config as configDotenvVault } from "dotenv-vault-core";
 import { z } from "zod";
+
+configDotenvVault()
 
 /**
  * Specify your server-side environment variables schema here.
