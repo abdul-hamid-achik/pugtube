@@ -99,6 +99,19 @@ export default function Page() {
       },
     },
     {
+      label: "Thumbnails",
+      value: video?.thumbnails?.length! > 0,
+      onClick() {
+        enqueue({
+          name: "extract-thumbnails",
+          payload: {
+            uploadId: uploadId as string,
+            fileName: upload?.metadata?.fileName,
+          },
+        });
+      },
+    },
+    {
       label: "Analyzed",
       value: !!video?.analyzedAt,
       onClick() {

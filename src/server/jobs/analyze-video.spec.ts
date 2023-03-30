@@ -29,10 +29,15 @@ jest.mock("@/server/db", () => ({
             duration: 10,
           },
         },
+
+        thumbnails: Array.from({ length: 12 }, (_, index) => {
+          const key = `thumbnails/0000000-0000-0000-0000-000000000000-thumbnail-${
+            index + 1
+          }.jpg`;
+          const id = index;
+          return { key, id };
+        }),
       }),
-    },
-    thumbnail: {
-      createMany: jest.fn(),
     },
     contentTag: {
       createMany: jest.fn(),
@@ -45,14 +50,13 @@ describe("analyzeVideo", () => {
     jest.clearAllMocks();
   });
 
-  it("should generate a thumbnail for every sec and upload all to S3", async () => {
+  it("should analyze content with `mobilenet` for each thumbnail of every second of the video", async () => {
     const uploadId = "0000000-0000-0000-0000-000000000000";
     const fileName =
       "mixkit-speeding-down-a-highway-in-point-of-view-44659.mp4";
 
     await analyzeVideo({ uploadId, fileName });
 
-    expect(prisma.thumbnail.createMany).toHaveBeenCalled();
     expect(prisma.contentTag.createMany).toHaveBeenCalled();
     expect(prisma.video.update).toHaveBeenCalled();
   });
