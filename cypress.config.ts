@@ -1,5 +1,6 @@
+// @ts-ignore
+import dotenv from "dotenv-vault-core";
 import { defineConfig } from "cypress";
-import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export default defineConfig({
     },
     env: {
       NODE_ENV: "production",
-    }
+    },
   },
 
   component: {
@@ -21,9 +22,9 @@ export default defineConfig({
       framework: "next",
       bundler: "webpack",
     },
-    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
+    specPattern: "src/**/*.cy.{js,jsx,ts,tsx}",
     env: {
-      NODE_ENV: "test",
-    }
+      NODE_ENV: "development",
+    },
   },
 });
