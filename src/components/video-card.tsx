@@ -37,7 +37,7 @@ export default function VideoCard({
       className={
         searchResult
           ? "m-auto flex flex-row items-center border-b-2 border-gray-200 bg-gray-800 shadow-sm"
-          : "border-b-1 shadow-xs mb-4 h-fit w-96 rounded-md border-gray-200 bg-gray-800 shadow-md sm:mb-0"
+          : "mb-4 h-fit w-96 rounded-md border-b-2 border-gray-200 bg-gray-800 shadow-md sm:mb-0"
       }
       data-testid="video-card"
     >

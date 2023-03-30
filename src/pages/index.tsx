@@ -61,7 +61,7 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
   const items = data?.pages.flatMap((page) => page.items) || [];
 
   return (
-    <section className="min-w-screen-sd sm:w-sm">
+    <section className="w-full">
       {isError && (
         <div className="bg-red-400 text-white">
           <div className="p-4">

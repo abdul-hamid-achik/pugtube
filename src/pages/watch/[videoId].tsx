@@ -237,10 +237,10 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:video:tag" content="PugTube" />
         <meta name="keywords" content={props.keywords.join(", ")} />
       </Head>
-      <div className="m-0 mx-auto flex h-fit w-full flex-col bg-gray-700 md:flex-row">
+      <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:max-w-3xl md:flex-row">
         <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
-          <div className="flex flex-col bg-gray-500 p-4 sm:p-0">
+          <div className="flex flex-col bg-gray-500 p-2">
             <Disclosure>
               {({ open }) => (
                 <>
