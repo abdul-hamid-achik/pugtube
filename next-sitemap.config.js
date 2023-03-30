@@ -1,3 +1,7 @@
+import dotenv from "dotenv-vault-core";
+
+dotenv.config();
+
 const importantPaths = [
   "/",
   "/watch/*",
