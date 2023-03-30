@@ -12,8 +12,7 @@ jest.mock("@/server/db", () => ({
 
 describe("generatePreview", () => {
   beforeEach(() => {
-    // Remove this line:
-    // jest.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("should generate a preview and upload to S3", async () => {

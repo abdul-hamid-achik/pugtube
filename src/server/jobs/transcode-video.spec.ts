@@ -67,9 +67,7 @@ describe("transcodeVideo", () => {
     // Verify that prisma functions were called with the expected parameters
     expect(prisma.video.findUniqueOrThrow).toHaveBeenCalledWith({
       where: {
-        uploadId: {
-          equals: uploadId,
-        },
+        uploadId: uploadId,
       },
     });
 
