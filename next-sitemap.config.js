@@ -26,8 +26,8 @@ module.exports = {
     })),
   },
   additionalPaths: async (config) => {
+    global.fetch = await import("node-fetch").then(({ default }) => default);
     await import("dotenv-vault-core").then(({ config }) => config());
-    global.fetch = await import("node-fetch").default;
     const { connect } = await import("@planetscale/database");
     const { clerkClient } = await import("@clerk/clerk-sdk-node");
     const connection = connect({
