@@ -1,7 +1,3 @@
-import dotenv from "dotenv-vault-core";
-
-dotenv.config();
-
 const importantPaths = [
   "/",
   "/watch/*",
@@ -30,6 +26,7 @@ module.exports = {
     })),
   },
   additionalPaths: async (config) => {
+    await import("dotenv-vault-core").config();
     const { default: fetch } = await import("node-fetch");
     global.fetch = fetch;
     const { connect } = await import("@planetscale/database");
