@@ -42,6 +42,9 @@ jobs:
         with:
           node-version: ${{ steps.versions.outputs.nodejs}}
 
+      - name: Load environment variables
+        run: npx dotenv-vault pull ci .env --yes
+
       - name: Cypress Component Tests
         uses: cypress-io/github-action@v5
         with:
@@ -63,8 +66,12 @@ jobs:
         with:
           node-version: ${{ steps.versions.outputs.nodejs}}
 
+
       - name: Install Dependencies
         run: npm ci
+
+      - name: Load environment variables
+        run: npx dotenv-vault pull ci .env --yes
 
       - name: Run Unit Tests
         run: npm run unit --runInBand --detectOpenHandles --forceExit --ci
