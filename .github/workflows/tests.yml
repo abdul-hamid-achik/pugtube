@@ -55,6 +55,7 @@ jobs:
         with:
           component: true
           record: true
+        env:
           AXIOM_DATASET: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
