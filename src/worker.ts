@@ -1,12 +1,9 @@
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
-import IORedis from "ioredis";
-import fetch from "node-fetch";
 import { log } from "@/utils/logger";
+import { connection } from "@/utils/redis";
 
-// @ts-ignore
 import dotenv from "dotenv-vault-core";
-import * as jobs from "@/server/jobs";
 
 dotenv.config();
 
@@ -15,34 +12,20 @@ const { env } = require("./env/server.mjs");
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 });
 
-// @ts-ignore
-global.fetch = fetch;
-
-export const connection = new IORedis(env.REDIS_URL as string, {
-  maxRetriesPerRequest: null,
-});
-
-const registry: {
-  [key: string]: (data: any) => Promise<void>;
-} = {};
-
-// @ts-ignore
-Object.keys(jobs).forEach((job) => (registry[job] = jobs[job]));
-
 const worker = new Worker(
-  "hls",
+  process.env.WORKER_NAME || "hls",
   async (job) => {
+    const { getJob, isJobRegistered } = await import("@/server/jobs");
     const { name, data } = job;
     log.info(`Processing job: ${name}`);
+    log.debug(`Job data: ${JSON.stringify(data)}`);
     try {
-      if (registry[name]) {
-        await registry[name]!(data);
+      if (isJobRegistered(name)) {
+        const job = getJob(name)!;
+        await job(data);
       } else {
         log.error(`Unknown job name: ${name}`);
       }
@@ -58,7 +41,6 @@ worker.on("ready", () => {
   log.info(`Worker ID: ${worker.id}`);
   log.info(`Worker name: ${worker.name}`);
   log.info(`Worker is ready`);
-  log.info(`Job registry: ${JSON.stringify(registry)}`);
 });
 
 worker.on("completed", (job) => {
@@ -68,7 +50,7 @@ worker.on("completed", (job) => {
 
 worker.on("failed", async (job, error) => {
   const name = job?.name;
-  log.warn(`Job failed: ${name}`, error);
+  log.error(`Job failed: ${name}`, error);
   process.exit(1);
   await worker.close();
 });

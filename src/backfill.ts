@@ -16,12 +16,27 @@ async function main() {
         },
       },
     },
+    where: {
+      analyzedAt: null,
+    },
+  });
+
+  const uploads = await prisma.upload.findMany({
+    where: {
+      transcoded: false,
+      id: {
+        in: videos.map((v) => v.uploadId),
+      },
+    },
   });
 
   const medatada = await prisma.videoMetadata.findMany({
     where: {
       uploadId: {
         in: videos.map((v) => v.uploadId),
+      },
+      upload: {
+        transcoded: false,
       },
     },
   });
@@ -33,7 +48,10 @@ async function main() {
     const metadata = medatada[i]!;
     const uploadId = metadata.uploadId;
     const fileName = metadata.fileName;
-    await createBackfillFlow(uploadId, fileName);
+    await createBackfillFlow({
+      uploadId,
+      fileName,
+    });
   }
 
   log.info("backfill queued");

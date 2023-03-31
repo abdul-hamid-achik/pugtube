@@ -25,8 +25,6 @@
     "worker": "tsx src/worker.ts",
     "logs:production": "axiom stream production",
     "logs:test": "axiom stream test",
-    "logs:worker": "npx pm2 logs worker",
-    "background": "npx pm2 start ./src/worker.ts --name worker --interpreter tsx",
     "godmode": "start-server-and-test serve http://localhost:3000 \"cypress open --e2e\"",
     "e2e-open": "start-server-and-test dev http://localhost:3000 \"cypress open --e2e\"",
     "e2e": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
@@ -37,7 +35,14 @@
     "prepare": "husky install",
     "seed": "npx prisma db seed",
     "tunnel": "ngrok http --hostname=tunnel.pugtube.dev 3000",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "reset": "npx prisma migrate reset --force --skip-seed",
+    "logs:worker": "npx pm2 logs ${WORKER_NAME:-worker}",
+    "start:worker": "npx pm2 start ./src/worker.ts --name ${WORKER_NAME:-worker} --interpreter tsx",
+    "restart:worker": "npx pm2 restart ${WORKER_NAME:-worker} ",
+    "stop:worker": "npx pm2 stop ${WORKER_NAME:-worker}",
+    "status:worker": "npx pm2 status ${WORKER_NAME:-worker}",
+    "remove:worker": "npx pm2 delete ${WORKER_NAME:-worker}"
   },
   "dependencies": {
     "@aws-crypto/sha256-browser": "^4.0.0",

@@ -133,7 +133,10 @@ export default async function handler(
         },
       });
 
-      await createPostUploadFlow(key, filename);
+      await createPostUploadFlow({
+        uploadId: key,
+        fileName: filename as string,
+      });
     } else {
       res
         .status(status.BAD_REQUEST)

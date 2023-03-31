@@ -21,7 +21,7 @@ import { prisma } from "@/server/db";
 import { getAuth } from "@clerk/nextjs/server";
 import { useRouter } from "next/router";
 import { Disclosure } from "@headlessui/react";
-import { env } from "@/env/server.mjs";
+import { connection } from "@/utils/redis";
 
 interface PageProps {
   keywords: string[];
@@ -65,9 +65,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 }) => {
   const { getVideoData, getComments } = await import("@/utils/shared");
   const IORedis = await import("ioredis").then((m) => m.default);
-  const connection = new IORedis(env.REDIS_URL as string, {
-    maxRetriesPerRequest: null,
-  });
   const { userId } = await getAuth(req);
   let { videoId } = params as { videoId: string };
   if (videoId === "random") {

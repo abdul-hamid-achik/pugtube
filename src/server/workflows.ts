@@ -2,24 +2,28 @@ import { FlowProducer } from "bullmq";
 
 const flowProducer = new FlowProducer();
 export const createPostUploadFlow = async (
-  uploadId: string,
-  fileName: string
+  data: { uploadId: string; fileName: string },
+  queueName: string = "hls"
 ) => {
   return await flowProducer.add({
-    name: "post-upload",
-    queueName: "hls",
+    name: "postUpload",
+    queueName,
+    data,
     children: [
       {
         name: "moveUpload",
-        queueName: "hls",
+        queueName,
+        data,
         children: [
           {
             name: "extractThumbnails",
-            queueName: "hls",
+            queueName,
+            data,
             children: [
               {
                 name: "analyzeVideo",
-                queueName: "hls",
+                queueName,
+                data,
               },
             ],
           },
@@ -27,50 +31,64 @@ export const createPostUploadFlow = async (
       },
       {
         name: "transcodeVideo",
-        queueName: "hls",
+        queueName,
+        data,
       },
       {
         name: "generatePreview",
-        queueName: "hls",
+        queueName,
+        data,
       },
       {
         name: "generateThumbnail",
-        queueName: "hls",
+        queueName,
+        data,
       },
     ],
   });
 };
 
 export const createBackfillFlow = async (
-  uploadId: string,
-  fileName: string
+  data: { uploadId: string; fileName: string },
+  queueName: string = "hls"
 ) => {
   return await flowProducer.add({
     name: "backfill",
-    queueName: "hls",
+    queueName,
+    data,
     children: [
       {
         name: "extractThumbnails",
-        queueName: "hls",
+        queueName,
+        data,
         children: [
           {
             name: "analyzeVideo",
-            queueName: "hls",
+            queueName,
+            data,
           },
         ],
       },
       {
         name: "transcodeVideo",
-        queueName: "hls",
+        queueName,
+        data,
       },
       {
         name: "generatePreview",
-        queueName: "hls",
+        queueName,
+        data,
       },
       {
         name: "generateThumbnail",
-        queueName: "hls",
+        queueName,
+        data,
       },
     ],
   });
+};
+
+export const workflows = {
+  postUpload: createPostUploadFlow,
+  backfill: createBackfillFlow,
 };

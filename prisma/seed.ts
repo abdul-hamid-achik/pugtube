@@ -2,11 +2,10 @@ import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
 import { putObject } from "@/utils/s3";
 import axios from "axios";
-import { log } from "@/utils/logger";
 import { createClient, Video, Videos } from "pexels";
 import { v4 as uuidv4 } from "uuid";
-import queue from "@/server/queue";
 import { Prisma } from "@prisma/client";
+import { log } from "@/utils/logger";
 
 const client = createClient(env.PEXELS_API_KEY as string);
 
@@ -44,6 +43,7 @@ async function main() {
         const { id, width, height, duration, video_files } = video;
         // Create a unique key for the video
         const uploadId = uuidv4();
+        const metadataId = uuidv4();
         log.debug(
           `Video ID: ${id} has been assigned an upload ID: ${uploadId}...`
         );
@@ -89,6 +89,7 @@ async function main() {
           creationDate: new Date(),
           transcoded: false,
           id: uploadId,
+          metadataId: metadataId,
         });
 
         log.debug(`Video ID: ${id} has been added to the database...`);
@@ -101,11 +102,10 @@ async function main() {
           fileName: fileName,
           relativePath: uploadId,
           uploadId: uploadId,
+          id: metadataId,
         });
 
         log.debug(`Video Metadata: ${id} has been added to the database...`);
-
-        log.debug(`Video ID: ${id} has been added to the queue...`);
 
         videoData.push({
           title: fileName,
@@ -118,11 +118,6 @@ async function main() {
               : (`user_2MUdNAWDRBjKG78KlxxnIwgWo6i` as string), // TODO: Replace with a random user
         });
 
-        await queue.add("backfill", {
-          uploadId,
-          fileName,
-        });
-
         counter++;
       } catch (error: any) {
         counter++;
@@ -131,6 +126,10 @@ async function main() {
     }
   }
 
+  await prisma.videoMetadata.createMany({
+    data: metadataData,
+  });
+
   await prisma.upload.createMany({
     data: uploadData,
   });
@@ -138,6 +137,9 @@ async function main() {
   await prisma.video.createMany({
     data: videoData,
   });
+
+  await import("@/backfill");
+
   log.info(`enqueued jobs and created uploads and videos complete!`);
 }
 

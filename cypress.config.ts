@@ -1,4 +1,3 @@
-// @ts-ignore
 import dotenv from "dotenv-vault-core";
 import { defineConfig } from "cypress";
 
