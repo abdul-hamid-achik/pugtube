@@ -1,7 +1,7 @@
-import { faker } from "@faker-js/faker";
-import VideoCard from "./video-card";
 import { ClerkProvider } from "@clerk/nextjs";
 import MockRouter from "@cypress/utils/mock-router";
+import { faker } from "@faker-js/faker";
+import VideoCard from "./video-card";
 
 const author = {
   id: faker.random.alphaNumeric(),
@@ -46,6 +46,9 @@ const video = {
   previewUrl: faker.image.imageUrl(),
   analyzedAt: new Date(),
   publishedAt: new Date(),
+  private: false,
+  premium: false,
+  channelId: faker.random.alphaNumeric(),
 };
 
 describe("VideoCard", () => {

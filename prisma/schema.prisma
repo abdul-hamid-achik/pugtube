@@ -13,29 +13,32 @@ datasource db {
 }
 
 model Video {
-  id            String       @id @default(cuid())
+  id            String            @id @default(cuid())
   title         String
   description   String?
   duration      Int?
-  analyzedAt    DateTime?    @map("analyzed_at")
-  publishedAt   DateTime?    @map("published_at")
-  thumbnailUrl  String?      @map("thumbnail_url")
-  previewUrl    String?      @map("preview_url")
+  analyzedAt    DateTime?         @map("analyzed_at")
+  publishedAt   DateTime?         @map("published_at")
+  thumbnailUrl  String?           @map("thumbnail_url")
+  previewUrl    String?           @map("preview_url")
   category      String?
-  userId        String       @map("user_id")
+  userId        String            @map("user_id")
   comments      Comment[]
   likes         Like[]
-  hlsPlaylist   HlsPlaylist? @relation(fields: [hlsPlaylistId], references: [id])
-  hlsPlaylistId String?      @unique @map("hls_playlist_id")
-  uploadId      String       @unique @map("upload_id")
-  upload        Upload       @relation(fields: [uploadId], references: [id])
-  createdAt     DateTime     @default(now()) @updatedAt @map("created_at")
+  hlsPlaylist   HlsPlaylist?      @relation(fields: [hlsPlaylistId], references: [id])
+  hlsPlaylistId String?           @unique @map("hls_playlist_id")
+  uploadId      String            @unique @map("upload_id")
+  upload        Upload            @relation(fields: [uploadId], references: [id])
+  createdAt     DateTime          @default(now()) @updatedAt @map("created_at")
   hlsSegments   HlsSegment[]
   thumbnails    Thumbnail[]
-  channel       Channel?     @relation(fields: [channelId], references: [id])
+  channel       Channel?          @relation(fields: [channelId], references: [id])
   channelId     String?
-  private       Boolean?     @default(false)
-  premium       Boolean?     @default(false) @map("subscription_required")
+  private       Boolean?          @default(false)
+  premium       Boolean?          @default(false) @map("subscription_required")
+  playlists     VideoInPlaylist[]
+  views         View[]
+  watchTime     WatchTime[]
 
   @@index([userId], name: "user_id")
   @@index([uploadId], name: "upload_id")
@@ -237,4 +240,57 @@ model Subscription {
   @@index([channelId], name: "channel_id")
   @@index([planId], name: "plan_id")
   @@map("subscriptions")
+}
+
+model Playlist {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  private     Boolean           @default(false)
+  premium     Boolean           @default(false)
+  userId      String            @map("user_id")
+  videos      VideoInPlaylist[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@index([userId], name: "user_id")
+  @@map("playlists")
+}
+
+model VideoInPlaylist {
+  id         String   @id @default(cuid())
+  videoId    String   @map("video_id")
+  video      Video    @relation(fields: [videoId], references: [id])
+  playlistId String   @map("playlist_id")
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([videoId], name: "video_id")
+  @@index([playlistId], name: "playlist_id")
+  @@map("videos_in_playlists")
+}
+
+model View {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  videoId   String   @map("video_id")
+  video     Video    @relation(fields: [videoId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId], name: "user_id")
+  @@index([videoId], name: "video_id")
+  @@map("views")
+}
+
+model WatchTime {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  videoId   String   @map("video_id")
+  video     Video    @relation(fields: [videoId], references: [id])
+  duration  Int // in seconds
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId], name: "user_id")
+  @@index([videoId], name: "video_id")
+  @@map("watch_times")
 }
