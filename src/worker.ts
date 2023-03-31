@@ -3,6 +3,11 @@ import { connection } from "@/utils/redis";
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
 import dotenv from "dotenv-vault-core";
+import fetch from "node-fetch";
+
+// @ts-ignore
+global.fetch = fetch
+
 dotenv.config();
 
 const { env } = require("./env/server.mjs");
