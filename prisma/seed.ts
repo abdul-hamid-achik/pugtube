@@ -1,19 +1,19 @@
 import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
-import * as jobs from "@/server/jobs";
 import { putObject } from "@/utils/s3";
 import axios from "axios";
 import { log } from "@/utils/logger";
 import { createClient, Video, Videos } from "pexels";
 import { v4 as uuidv4 } from "uuid";
+import queue from "@/server/queue";
+import { Prisma } from "@prisma/client";
 
 const client = createClient(env.PEXELS_API_KEY as string);
 
-process.on("uncaughtException", (err) => {
-  log.error("Uncaught exception:", err);
-});
-
 async function main() {
+  const videoData: Prisma.VideoCreateManyInput[] = [];
+  const uploadData: Prisma.UploadCreateManyInput[] = [];
+  const metadataData: Prisma.VideoMetadataCreateManyInput[] = [];
   for (
     let page = process.env.SEED_PAGE
       ? parseInt(process.env.SEED_PAGE as string)
@@ -83,53 +83,45 @@ async function main() {
 
         log.debug(`Video ID: ${id} has been uploaded to S3...`);
 
-        // Create an upload entry in the database
-        await prisma.upload.create({
-          data: {
-            size: videoBuffer.length,
-            offset: 0,
-            creationDate: new Date(),
-            transcoded: false,
-            id: uploadId,
-          },
+        uploadData.push({
+          size: videoBuffer.length,
+          offset: 0,
+          creationDate: new Date(),
+          transcoded: false,
+          id: uploadId,
         });
 
         log.debug(`Video ID: ${id} has been added to the database...`);
 
         // Create video metadata entry in the database
-        await prisma.videoMetadata.create({
-          data: {
-            name: fileName,
-            type: file_type,
-            fileType: file_type,
-            fileName: fileName,
-            relativePath: uploadId,
-            uploadId: uploadId,
-          },
+        metadataData.push({
+          name: fileName,
+          type: file_type,
+          fileType: file_type,
+          fileName: fileName,
+          relativePath: uploadId,
+          uploadId: uploadId,
         });
 
         log.debug(`Video Metadata: ${id} has been added to the database...`);
 
         log.debug(`Video ID: ${id} has been added to the queue...`);
 
-        await prisma.video.create({
-          data: {
-            title: fileName,
-            description: "Uploaded from Pexels",
-            duration: duration,
-            uploadId: uploadId,
-            userId:
-              env.NODE_ENV === "production"
-                ? `user_2N5clkHn2NZ5L2VkTd17F9kWU0w`
-                : (`user_2MUdNAWDRBjKG78KlxxnIwgWo6i` as string), // TODO: Replace with a random user
-          },
+        videoData.push({
+          title: fileName,
+          description: "Uploaded from Pexels",
+          duration: duration,
+          uploadId: uploadId,
+          userId:
+            env.NODE_ENV === "production"
+              ? `user_2N5clkHn2NZ5L2VkTd17F9kWU0w`
+              : (`user_2MUdNAWDRBjKG78KlxxnIwgWo6i` as string), // TODO: Replace with a random user
         });
 
-        await jobs.extractThumbnails({ uploadId, fileName });
-        await jobs.analyzeVideo({ uploadId, fileName });
-        await jobs.transcodeVideo({ uploadId, fileName });
-        await jobs.generateThumbnail({ uploadId, fileName });
-        await jobs.generatePreview({ uploadId, fileName });
+        await queue.add("backfill", {
+          uploadId,
+          fileName,
+        });
 
         counter++;
       } catch (error: any) {
@@ -138,6 +130,15 @@ async function main() {
       }
     }
   }
+
+  await prisma.upload.createMany({
+    data: uploadData,
+  });
+
+  await prisma.video.createMany({
+    data: videoData,
+  });
+  log.info(`enqueued jobs and created uploads and videos complete!`);
 }
 
 main()
@@ -145,7 +146,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    log.error(e);
     await prisma.$disconnect();
     process.exit(1);
   });
