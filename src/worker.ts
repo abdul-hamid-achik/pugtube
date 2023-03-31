@@ -38,6 +38,16 @@ const worker = new Worker(
     log.info(`Processing job: ${name}`);
     try {
       switch (name) {
+        case "backfill":
+          // TODO: move this to a flow
+          // TODO: refactor args to ony need a videoId instead of uploadId and fileName
+          await jobs.extractThumbnails({ uploadId, fileName });
+          await jobs.analyzeVideo({ uploadId, fileName });
+          await jobs.transcodeVideo({ uploadId, fileName });
+          await jobs.generateThumbnail({ uploadId, fileName });
+          await jobs.generatePreview({ uploadId, fileName });
+          break;
+
         case "post-upload":
           // TODO: move this to a flow
           // TODO: refactor args to ony need a videoId instead of uploadId and fileName
@@ -77,6 +87,7 @@ const worker = new Worker(
           log.error(`Unknown job name: ${name}`);
           break;
       }
+
       log.info(`Finished Job: ${name}`);
     } catch (err) {
       Sentry.captureException(err, { tags: { job: name } });
@@ -95,10 +106,12 @@ worker.on("completed", (job) => {
   log.info(`Job completed: ${name}`);
 });
 
-worker.on("failed", (job, err) => {
-  const { name } = job?.data;
-  Sentry.captureException(err, { tags: { job: name } });
-  log.warn(`Job failed: ${name}`, err);
+worker.on("failed", async (job, error) => {
+  const name = job?.name;
+  log.warn(`Job failed: ${name}`, error);
+  process.exitCode = 1;
+  process.exit(1);
+  await worker.close();
 });
 
 export default worker;

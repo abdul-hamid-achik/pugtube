@@ -62,7 +62,7 @@ export default async function extractThumbnails({
     );
 
     const thumbnailKey = `thumbnails/${uploadId}-${thumbnailFileName}`;
-    const fullThumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/${thumbnailKey}`;
+    const fullThumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${thumbnailKey}`;
     const thumbnailId = uuid();
     thumbnailsData.push({
       id: thumbnailId,

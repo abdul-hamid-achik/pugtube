@@ -1,7 +1,9 @@
 import { prisma } from "@/server/db";
-import * as jobs from "@/server/jobs";
+import queue from "@/server/queue";
+import { log } from "@/utils/logger";
 
 async function main() {
+  log.info("start backfill, adding jobs to queue");
   const videos = await prisma.video.findMany({
     include: {
       upload: {
@@ -11,17 +13,30 @@ async function main() {
       },
     },
   });
-  for (let i = 0; i < videos.length; i++) {
-    const video = videos[i]!;
-    const uploadId = video.uploadId;
-    const fileName = video.upload?.metadata?.fileName!;
 
-    await jobs.extractThumbnails({ uploadId, fileName });
-    await jobs.analyzeVideo({ uploadId, fileName });
-    await jobs.transcodeVideo({ uploadId, fileName });
-    await jobs.generateThumbnail({ uploadId, fileName });
-    await jobs.generatePreview({ uploadId, fileName });
+  const medatada = await prisma.videoMetadata.findMany({
+    where: {
+      uploadId: {
+        in: videos.map((v) => v.uploadId),
+      },
+    },
+  });
+
+  log.debug(`found videos ${videos.length}`);
+  log.debug(`found metadata ${medatada.length}`);
+
+  for (let i = 0; i < medatada.length; i++) {
+    const metadata = medatada[i]!;
+    const uploadId = metadata.uploadId;
+    const fileName = metadata.fileName;
+    await queue.add("backfill", {
+      uploadId,
+      fileName,
+    });
   }
+
+  log.info("backfill queued");
+  process.exitCode = 0;
 }
 
 main()

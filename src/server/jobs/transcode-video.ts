@@ -70,6 +70,8 @@ export default async function transcodeVideo({
     "fast",
     "-profile:v",
     "main",
+    "-level:v",
+    "3.1",
     "-start_number",
     "0",
     "-vf",

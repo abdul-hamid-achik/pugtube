@@ -1,6 +1,5 @@
 import { prisma } from "@/server/db";
 import { getSignedUrl } from "@/utils/s3";
-import { HlsSegment } from "@prisma/client";
 import ejs from "ejs";
 import { NextApiHandler } from "next";
 import status from "http-status";
@@ -29,18 +28,17 @@ const watchHandler: NextApiHandler = async (req, res) => {
   }
 
   const segments = await prisma.hlsSegment.findMany({
-    where: { playlistId: playlist.id },
+    where: { playlistId: playlist.id! },
     orderBy: { key: "asc" },
   });
 
-  const targetDuration = segments.reduce(
-    (maxDuration: number, segment: HlsSegment) => {
+  const targetDuration = Math.ceil(
+    segments.reduce((maxDuration, segment) => {
       if (segment.duration && segment.duration > maxDuration) {
         return segment.duration;
       }
       return maxDuration;
-    },
-    0
+    }, 0)
   );
 
   const playlistTemplate = [
