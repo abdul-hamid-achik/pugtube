@@ -4,24 +4,24 @@ import LikeButton from "@/components/like";
 import Spinner from "@/components/spinner";
 import VideoPlayer from "@/components/video-player";
 import { NextPageWithLayout } from "@/pages/_app";
+import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
+import { log } from "@/utils/logger";
+import { connection } from "@/utils/redis";
 import { useAuth } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
+import { getAuth } from "@clerk/nextjs/server";
+import { Disclosure } from "@headlessui/react";
 import { Comment, Prisma } from "@prisma/client";
 import { DateTime, Duration } from "luxon";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Head from "next/head";
-import { log } from "@/utils/logger";
-import { prisma } from "@/server/db";
-import { getAuth } from "@clerk/nextjs/server";
-import { useRouter } from "next/router";
-import { Disclosure } from "@headlessui/react";
-import { connection } from "@/utils/redis";
 
 interface PageProps {
   keywords: string[];
@@ -257,7 +257,7 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:video:tag" content="PugTube" />
         <meta name="keywords" content={props.keywords.join(", ")} />
       </Head>
-      <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:max-w-3xl md:flex-row">
+      <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:flex-row lg:max-w-6xl">
         <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
           <div className="flex flex-col bg-gray-500 py-2 px-4">

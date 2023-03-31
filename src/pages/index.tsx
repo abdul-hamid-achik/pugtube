@@ -75,7 +75,7 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
         next={fetchMoreData}
         hasMore={hasNextPage}
         loader={
-          <div className="p-4">
+          <div className="flex justify-center p-4">
             <Spinner />
           </div>
         }

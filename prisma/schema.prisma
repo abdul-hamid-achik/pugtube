@@ -32,9 +32,14 @@ model Video {
   createdAt     DateTime     @default(now()) @updatedAt @map("created_at")
   hlsSegments   HlsSegment[]
   thumbnails    Thumbnail[]
+  channel       Channel?     @relation(fields: [channelId], references: [id])
+  channelId     String?
+  private       Boolean?     @default(false)
+  premium       Boolean?     @default(false) @map("subscription_required")
 
   @@index([userId], name: "user_id")
   @@index([uploadId], name: "upload_id")
+  @@index([channelId])
   @@map("videos")
 }
 
@@ -107,7 +112,7 @@ model Comment {
 
   createdAt DateTime @default(now()) @updatedAt @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  Like      Like[]
+  likes     Like[]
 
   @@index([userId], name: "user_id")
   @@index([videoId], name: "video_id")
@@ -179,4 +184,57 @@ model ContentTag {
 
   @@index([thumbnailId], name: "thumbnail_id")
   @@map("content_tags")
+}
+
+model Channel {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  userId        String         @map("user_id")
+  videos        Video[]
+  subscriptions Subscription[]
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@index([userId], name: "user_id")
+  @@map("channels")
+}
+
+model SubscriptionPlan {
+  id            String                    @id @default(cuid())
+  name          String
+  stripePriceId String                    @unique @map("stripe_price_id")
+  price         Float
+  createdAt     DateTime                  @default(now()) @map("created_at")
+  updatedAt     DateTime                  @updatedAt @map("updated_at")
+  subscriptions Subscription[]
+  benefits      SubscriptionPlanBenefit[]
+
+  @@map("subscription_plans")
+}
+
+model SubscriptionPlanBenefit {
+  id                 String           @id @default(cuid())
+  benefit            String
+  subscriptionPlan   SubscriptionPlan @relation(fields: [subscriptionPlanId], references: [id])
+  subscriptionPlanId String           @map("subscription_plan_id")
+
+  @@index([subscriptionPlanId], name: "subscription_plan_id")
+  @@map("subscription_plan_benefits")
+}
+
+model Subscription {
+  id                   String           @id @default(cuid())
+  userId               String           @map("user_id")
+  channelId            String           @map("channel_id")
+  planId               String           @map("plan_id")
+  stripeSubscriptionId String           @unique @map("stripe_subscription_id")
+  channel              Channel          @relation(fields: [channelId], references: [id])
+  subscriptionPlan     SubscriptionPlan @relation(fields: [planId], references: [id])
+  createdAt            DateTime         @default(now()) @map("created_at")
+
+  @@index([userId], name: "user_id")
+  @@index([channelId], name: "channel_id")
+  @@index([planId], name: "plan_id")
+  @@map("subscriptions")
 }
