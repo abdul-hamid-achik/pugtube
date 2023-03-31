@@ -3,7 +3,7 @@ name: End to End Tests
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 */6 * * *"
 
 defaults:
   run:
@@ -32,6 +32,12 @@ jobs:
         with:
           node-version: ${{ steps.versions.outputs.nodejs }}
 
+      - name: Load environment variables
+        run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+
       - name: Testing
         uses: cypress-io/github-action@v5
         with:
@@ -41,3 +47,4 @@ jobs:
           HUSKY: 0
           CYPRESS_BASE_URL: https://pugtube.dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
