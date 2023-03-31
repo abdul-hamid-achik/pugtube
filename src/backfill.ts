@@ -36,12 +36,12 @@ async function main() {
   }
 
   log.info("backfill queued");
-  process.exitCode = 0;
 }
 
 main()
   .then(async () => {
     await prisma.$disconnect();
+    process.exit();
   })
   .catch(async (e) => {
     console.error(e);

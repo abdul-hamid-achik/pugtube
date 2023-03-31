@@ -109,7 +109,6 @@ worker.on("completed", (job) => {
 worker.on("failed", async (job, error) => {
   const name = job?.name;
   log.warn(`Job failed: ${name}`, error);
-  process.exitCode = 1;
   process.exit(1);
   await worker.close();
 });
