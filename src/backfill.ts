@@ -1,10 +1,6 @@
 import { prisma } from "@/server/db";
 import { log } from "@/utils/logger";
 import { createBackfillFlow } from "@/server/workflows";
-import fetch from "node-fetch";
-
-// @ts-ignore
-global.fetch = fetch;
 
 async function main() {
   log.info("start backfill, adding jobs to queue");

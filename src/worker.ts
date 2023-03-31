@@ -1,10 +1,8 @@
-import * as Sentry from "@sentry/node";
-import { Worker } from "bullmq";
 import { log } from "@/utils/logger";
 import { connection } from "@/utils/redis";
-
+import * as Sentry from "@sentry/node";
+import { Worker } from "bullmq";
 import dotenv from "dotenv-vault-core";
-
 dotenv.config();
 
 const { env } = require("./env/server.mjs");
@@ -52,7 +50,6 @@ worker.on("failed", async (job, error) => {
   const name = job?.name;
   log.error(`Job failed: ${name}`, error);
   process.exit(1);
-  await worker.close();
 });
 
 export default worker;
