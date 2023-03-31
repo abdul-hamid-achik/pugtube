@@ -35,7 +35,11 @@ jest.mock("@/server/db", () => ({
             index + 1
           }.jpg`;
           const id = index;
-          return { key, id };
+          return {
+            key,
+            id,
+            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
+          };
         }),
       }),
     },

@@ -161,6 +161,7 @@ model Thumbnail {
   timestamp   Int          @map("timestamp")
   url         String       @map("url")
   key         String       @map("key")
+  caption     String?      @map("caption")
   video       Video        @relation(fields: [videoId], references: [id])
   videoId     String       @map("video_id")
   contentTags ContentTag[]

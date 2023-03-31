@@ -30,6 +30,7 @@
     "unit": "jest",
     "prepare": "husky install",
     "seed": "npx prisma db seed",
+    "tunnel": "ngrok http --hostname=tunnel.pugtube.dev 3000",
     "postbuild": "next-sitemap"
   },
   "dependencies": {

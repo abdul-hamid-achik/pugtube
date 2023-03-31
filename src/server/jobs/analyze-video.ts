@@ -1,10 +1,11 @@
 import { log } from "@/utils/logger";
-import { getObject } from "@/utils/s3";
+import { getObject, getSignedUrl } from "@/utils/s3";
 import { prisma } from "@/server/db";
 import { type Tensor3D } from "@tensorflow/tfjs-node";
 import type { Prisma } from "@prisma/client";
 import { streamToBuffer } from "@/utils/ffmpeg";
 import { Readable } from "stream";
+import Replicate from "replicate";
 
 export default async function analyzeVideo({
   uploadId,
@@ -19,6 +20,11 @@ export default async function analyzeVideo({
     version: 2,
     alpha: 1,
   });
+
+  const replicate = new Replicate({
+    auth: process.env.REPLICATE_API_TOKEN as string,
+  });
+
   const { id: videoId, thumbnails } = await prisma.video.findUniqueOrThrow({
     where: {
       uploadId,
@@ -30,6 +36,7 @@ export default async function analyzeVideo({
         select: {
           id: true,
           key: true,
+          url: true,
           contentTags: {
             select: {
               id: true,
@@ -44,6 +51,7 @@ export default async function analyzeVideo({
   const contentTagsData: Prisma.ContentTagCreateManyInput[] = [];
   log.info("found thumbnails", thumbnails);
   for (let i = 0; i < thumbnails.length; i++) {
+    const thumbnailId = thumbnails[i]!.id;
     const thumbnail = await getObject({
       Bucket: process.env.AWS_S3_BUCKET as string,
       Key: thumbnails[i]!.key,
@@ -54,13 +62,28 @@ export default async function analyzeVideo({
     ) as Tensor3D;
     // @ts-ignore
     const predictions = await model.classify(tfimage);
+    const replicateModelVersion =
+      "de37751f75135f7ebbe62548e27d6740d5155dfefdf6447db35c9865253d7e06";
+    const webhookUrl = `${
+      process.env.NODE_ENV === "production"
+        ? "https://pugtube.dev"
+        : "https://tunnel.pugtube.dev"
+    }/api/replicate/webhook/${thumbnailId}`;
 
-    log.debug("found predictions", predictions);
+    const prediction = await replicate.predictions.create({
+      version: replicateModelVersion,
+      input: {
+        image: await getSignedUrl(thumbnails[i]!.url),
+      },
+      webhook_completed: webhookUrl,
+    });
+    log.debug("replicate prediction", prediction);
+    log.debug("found mobilenet predictions", predictions);
     predictions.forEach((prediction) => {
       contentTagsData.push({
         name: prediction.className,
         confidence: prediction.probability,
-        thumbnailId: thumbnails[i]!.id,
+        thumbnailId: thumbnailId,
       });
     });
   }
