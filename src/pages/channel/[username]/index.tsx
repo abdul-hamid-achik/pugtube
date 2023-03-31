@@ -64,7 +64,7 @@ const Page: NextPageWithLayout<PageProps> = (props) => {
   return (
     <div className="m-0 w-full bg-gray-700">
       <h1 className="p-4 text-white">@{props.user.username} - Channel Page:</h1>
-      <div className="grid h-screen w-full justify-center gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid h-screen w-full justify-center gap-4 sm:grid-cols-1 md:grid-cols-3">
         {props.videos.map((video) => (
           <VideoCard key={video.id} video={video} author={props.user} channel />
         ))}

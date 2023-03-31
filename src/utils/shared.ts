@@ -192,6 +192,15 @@ export async function getSearchResults({
             },
           },
         },
+        {
+          thumbnails: {
+            some: {
+              caption: {
+                contains: searchTerm,
+              },
+            },
+          },
+        },
       ],
       upload: {
         transcoded: true,

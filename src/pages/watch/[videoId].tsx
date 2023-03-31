@@ -102,11 +102,14 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   // TODO: This is a hack to get the keywords to show up in the meta tags
   const keywords = Array.from(
     new Set(
-      video?.thumbnails?.flatMap((t: any) =>
-        t.contentTags.flatMap((ct: any) =>
-          ct.name.split(",").map((keyword: string) => keyword.trim())
-        )
-      ) || []
+      video?.thumbnails
+        ?.flatMap((t: any) => [
+          ...t.contentTags.flatMap((ct: any) =>
+            ct.name.split(",").map((keyword: string) => keyword.trim())
+          ),
+          t.caption,
+        ])
+        .filter((keyword: string) => keyword.length > 0) || []
     )
   );
 
@@ -240,7 +243,7 @@ const Page: NextPageWithLayout<PageProps> = ({
       <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:max-w-3xl md:flex-row">
         <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
           <VideoPlayer src={playlistUrl} poster={props.poster} />
-          <div className="flex flex-col bg-gray-500 p-2">
+          <div className="flex flex-col bg-gray-500 py-2 px-4">
             <Disclosure>
               {({ open }) => (
                 <>
@@ -295,7 +298,7 @@ const Page: NextPageWithLayout<PageProps> = ({
                         />
                         <Link
                           href={`/channel/${props?.author}`}
-                          className="ml-2 font-medium text-gray-300 hover:text-gray-200"
+                          className="ml-2 w-40 font-medium text-gray-300 hover:text-gray-200"
                           data-testid="video-author-channel"
                         >
                           @{props?.author}
@@ -309,7 +312,7 @@ const Page: NextPageWithLayout<PageProps> = ({
                       </div>
                     )}
                   </Disclosure.Button>
-                  <Disclosure.Panel className="p-4 text-sm text-gray-300 sm:p-2">
+                  <Disclosure.Panel className="text-sm text-gray-300 sm:p-2">
                     <div className="flex flex-col">
                       <div className="flex flex-row">
                         <p className="text-sm text-gray-300">Category:</p>
@@ -318,7 +321,7 @@ const Page: NextPageWithLayout<PageProps> = ({
                         </p>
                       </div>
                       <div className="flex flex-row">
-                        <p className="text-sm text-gray-300">Author:</p>
+                        <p className="text-sm text-gray-200">Author:</p>
                         <p className="ml-2 text-sm text-white">
                           <Link href={`/channel/${props.author}`}>
                             {props.author}
@@ -326,14 +329,14 @@ const Page: NextPageWithLayout<PageProps> = ({
                         </p>
                       </div>
                       <div className="flex flex-row">
-                        <p className="text-sm text-gray-300">Description:</p>
+                        <p className="text-sm text-gray-200">Description:</p>
                         <p className="ml-2 text-sm text-white">
                           {props.description}
                         </p>
                       </div>
                       <div className="flex flex-row">
-                        <p className="text-sm text-gray-300">Keywords:</p>
-                        <div className="max-w-md sm:max-w-sm">
+                        <p className="text-sm text-gray-200">Keywords:</p>
+                        <div className="ml-4 max-h-96 overflow-y-auto">
                           {props.keywords?.map((keyword) => (
                             <span
                               key={keyword}
@@ -376,17 +379,17 @@ const Page: NextPageWithLayout<PageProps> = ({
                 </button>
               </form>
             ) : (
-              <div className="mt-4 flex max-w-xs flex-row justify-evenly">
+              <div className="mt-4 flex w-96 flex-row">
                 <Link
                   href="/sign-in/"
-                  className="flex text-white underline hover:bg-gray-600"
+                  className="mr-1 flex text-white underline hover:bg-gray-600"
                 >
                   Sign in
                 </Link>
-                <p className="text-white">or</p>
+                <p className="mr-1 text-white">or</p>
                 <Link
                   href="/sign-up/"
-                  className="flex text-white underline hover:bg-gray-600"
+                  className="mr-1 flex text-white underline hover:bg-gray-600"
                 >
                   Sign up
                 </Link>

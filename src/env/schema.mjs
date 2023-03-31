@@ -57,7 +57,7 @@ export const serverEnv = {
  */
 export const clientSchema = z.object({
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
-  NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string(),
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
 });
 
 /**

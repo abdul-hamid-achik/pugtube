@@ -37,7 +37,7 @@ export default function VideoCard({
       className={
         searchResult
           ? "m-auto flex flex-row items-center border-gray-200 bg-gray-800 shadow-sm"
-          : "mb-4 h-fit w-96 rounded-md border-b-2 border-gray-600 bg-gray-800 shadow-md sm:mb-0"
+          : "mx-auto h-full w-80 bg-gray-800 shadow lg:mx-4"
       }
       data-testid="video-card"
     >
@@ -61,7 +61,7 @@ export default function VideoCard({
             height={searchResult ? 96 : 240}
             style={style}
             className={
-              searchResult ? "h-24 w-40 object-cover" : "h-60 w-96 object-cover"
+              searchResult ? "h-24 w-40 object-cover" : "h-44 w-80 object-cover"
             }
             onError={onError}
             onMouseEnter={onMouseEnter}
@@ -71,7 +71,7 @@ export default function VideoCard({
           <Image
             src="/images/video-placeholder.jpg"
             className={
-              searchResult ? "h-24 w-40 object-cover" : "h-60 w-96 object-cover"
+              searchResult ? "h-24 w-40 object-cover" : "h-44 w-80 object-cover"
             }
             alt={video.title}
             width={searchResult ? 170 : 420}

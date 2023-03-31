@@ -85,7 +85,7 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
           </p>
         }
       >
-        <div className="flex-col items-center justify-center gap-4 overflow-y-auto sm:grid-cols-1 md:grid md:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto flex-col items-center justify-center gap-4 overflow-y-auto md:grid md:grid-cols-3 xl:grid-cols-3">
           {!isLoading &&
             !isError &&
             items.map(({ video, author }) => (
