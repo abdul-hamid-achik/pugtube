@@ -1,6 +1,10 @@
 import { prisma } from "@/server/db";
-import queue from "@/server/queue";
 import { log } from "@/utils/logger";
+import { createBackfillFlow } from "@/server/workflows";
+import fetch from "node-fetch";
+
+// @ts-ignore
+global.fetch = fetch;
 
 async function main() {
   log.info("start backfill, adding jobs to queue");
@@ -29,10 +33,7 @@ async function main() {
     const metadata = medatada[i]!;
     const uploadId = metadata.uploadId;
     const fileName = metadata.fileName;
-    await queue.add("backfill", {
-      uploadId,
-      fileName,
-    });
+    await createBackfillFlow(uploadId, fileName);
   }
 
   log.info("backfill queued");

@@ -1,4 +1,3 @@
-import * as jobs from "@/server/jobs";
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
 import IORedis from "ioredis";
@@ -7,6 +6,7 @@ import { log } from "@/utils/logger";
 
 // @ts-ignore
 import dotenv from "dotenv-vault-core";
+import * as jobs from "@/server/jobs";
 
 dotenv.config();
 
@@ -28,66 +28,24 @@ export const connection = new IORedis(env.REDIS_URL as string, {
   maxRetriesPerRequest: null,
 });
 
+const registry: {
+  [key: string]: (data: any) => Promise<void>;
+} = {};
+
+// @ts-ignore
+Object.keys(jobs).forEach((job) => (registry[job] = jobs[job]));
+
 const worker = new Worker(
   "hls",
   async (job) => {
-    const {
-      name,
-      data: { videoId, uploadId, fileName, ...opts },
-    } = job;
+    const { name, data } = job;
     log.info(`Processing job: ${name}`);
     try {
-      switch (name) {
-        case "backfill":
-          // TODO: move this to a flow
-          // TODO: refactor args to ony need a videoId instead of uploadId and fileName
-          await jobs.extractThumbnails({ uploadId, fileName });
-          await jobs.analyzeVideo({ uploadId, fileName });
-          await jobs.transcodeVideo({ uploadId, fileName });
-          await jobs.generateThumbnail({ uploadId, fileName });
-          await jobs.generatePreview({ uploadId, fileName });
-          break;
-
-        case "post-upload":
-          // TODO: move this to a flow
-          // TODO: refactor args to ony need a videoId instead of uploadId and fileName
-          await jobs.moveUpload({ uploadId, fileName });
-          await jobs.extractThumbnails({ uploadId, fileName });
-          await jobs.analyzeVideo({ uploadId, fileName });
-          await jobs.transcodeVideo({ uploadId, fileName });
-          await jobs.generateThumbnail({ uploadId, fileName });
-          await jobs.generatePreview({ uploadId, fileName });
-          break;
-
-        case "extract-thumbnails":
-          await jobs.extractThumbnails({ uploadId, fileName });
-          break;
-
-        case "analyze-video":
-          await jobs.analyzeVideo({ uploadId, fileName });
-          break;
-
-        case "transcode-video":
-          await jobs.transcodeVideo({ uploadId, fileName, ...opts });
-          break;
-
-        case "generate-preview":
-          await jobs.generatePreview({ uploadId, fileName, ...opts });
-          break;
-
-        case "generate-thumbnail":
-          await jobs.generateThumbnail({ uploadId, fileName, ...opts });
-          break;
-
-        case "delete-video-artifacts":
-          await jobs.deleteVideoArtifacts({ videoId });
-          break;
-
-        default:
-          log.error(`Unknown job name: ${name}`);
-          break;
+      if (registry[name]) {
+        await registry[name]!(data);
+      } else {
+        log.error(`Unknown job name: ${name}`);
       }
-
       log.info(`Finished Job: ${name}`);
     } catch (err) {
       Sentry.captureException(err, { tags: { job: name } });
@@ -96,9 +54,11 @@ const worker = new Worker(
   },
   { connection }
 );
-
 worker.on("ready", () => {
-  log.info("Worker connected");
+  log.info(`Worker ID: ${worker.id}`);
+  log.info(`Worker name: ${worker.name}`);
+  log.info(`Worker is ready`);
+  log.info(`Job registry: ${JSON.stringify(registry)}`);
 });
 
 worker.on("completed", (job) => {

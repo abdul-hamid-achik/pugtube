@@ -135,12 +135,12 @@ export default function Page() {
 
   return (
     <div className="container mx-auto max-w-2xl bg-gray-600 p-8">
-      <h1 className="mb-4 text-xl text-white">{video?.title}</h1>
       {!upload?.transcoded && !video?.analyzedAt && (
-        <h2 className="mb-4 text-sm font-bold text-white">
+        <p className="mb-4 text-sm font-bold text-white">
           Please hold, your upload is being processed...
-        </h2>
+        </p>
       )}
+      <h1 className="mb-4 text-lg text-white">{video?.title}</h1>
       <p className="mb-4 text-lg text-white">{video?.description}</p>
       <p className="mb-4 text-lg text-white">
         Upload ID:

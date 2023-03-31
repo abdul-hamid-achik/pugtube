@@ -1,12 +1,12 @@
 import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
-import queue from "@/server/queue";
 import type { Upload, VideoMetadata } from "@prisma/client";
 import { S3Store } from "@tus/s3-store";
 import { EVENTS, Server } from "@tus/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { log } from "@/utils/logger";
 import { v4 as uuidv4 } from "uuid";
+import { createPostUploadFlow } from "@/server/workflows";
 
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata;
@@ -132,10 +132,7 @@ const tusServer = new Server({
 tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
   log.info(`Event received: post-finish`, upload);
 
-  await queue.add("post-upload", {
-    uploadId: upload.id,
-    fileName: upload?.metadata?.filename as string,
-  });
+  await createPostUploadFlow(upload.id, upload?.metadata?.filename as string);
 
   log.info(`Event sent: post-upload ✅`);
 });

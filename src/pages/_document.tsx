@@ -7,7 +7,9 @@ export default function Document() {
     <Html className="h-full bg-gray-700">
       <Head>
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${
+            env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ""
+          }`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -16,7 +18,7 @@ export default function Document() {
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          gtag('config', '${env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+          gtag('config', '${env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ""}');
         `}
         </Script>
       </Head>
