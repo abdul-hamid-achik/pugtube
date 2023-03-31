@@ -1,11 +1,11 @@
+import { prisma } from "@/server/db";
+import { streamToBuffer } from "@/utils/ffmpeg";
 import { log } from "@/utils/logger";
 import { getObject, getSignedUrl } from "@/utils/s3";
-import { prisma } from "@/server/db";
-import { type Tensor3D } from "@tensorflow/tfjs-node";
 import type { Prisma } from "@prisma/client";
-import { streamToBuffer } from "@/utils/ffmpeg";
-import { Readable } from "stream";
+import { type Tensor3D } from "@tensorflow/tfjs-node";
 import Replicate from "replicate";
+import { Readable } from "stream";
 
 export default async function analyzeVideo({
   uploadId,
@@ -64,11 +64,10 @@ export default async function analyzeVideo({
     const predictions = await model.classify(tfimage);
     const replicateModelVersion =
       "de37751f75135f7ebbe62548e27d6740d5155dfefdf6447db35c9865253d7e06";
-    const webhookUrl = `${
-      process.env.NODE_ENV === "production"
-        ? "https://pugtube.dev"
-        : "https://tunnel.pugtube.dev"
-    }/api/replicate/webhook/${thumbnailId}`;
+    const webhookUrl = `${process.env.NODE_ENV === "production"
+      ? "https://pugtube.dev"
+      : "https://tunnel.pugtube.dev"
+      }/api/replicate/webhook/${thumbnailId}`;
 
     const prediction = await replicate.predictions.create({
       version: replicateModelVersion,
@@ -77,7 +76,8 @@ export default async function analyzeVideo({
       },
       webhook_completed: webhookUrl,
     });
-    log.debug("replicate prediction", prediction);
+
+    log.debug("replicate prediction", prediction.output);
     log.debug("found mobilenet predictions", predictions);
     predictions.forEach((prediction) => {
       contentTagsData.push({

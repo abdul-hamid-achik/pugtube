@@ -1,11 +1,11 @@
 import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
+import { log } from "@/utils/logger";
 import { putObject } from "@/utils/s3";
+import { Prisma } from "@prisma/client";
 import axios from "axios";
 import { createClient, Video, Videos } from "pexels";
 import { v4 as uuidv4 } from "uuid";
-import { Prisma } from "@prisma/client";
-import { log } from "@/utils/logger";
 
 const client = createClient(env.PEXELS_API_KEY as string);
 
@@ -35,8 +35,7 @@ async function main() {
       try {
         videoId = video.id;
         log.debug(
-          `Processing video ${counter + 1} of ${
-            videos && videos.videos ? videos.videos.length : undefined
+          `Processing video ${counter + 1} of ${videos && videos.videos ? videos.videos.length : undefined
           }`
         );
         log.debug(`Video ID: ${video.id}...`);
@@ -72,9 +71,8 @@ async function main() {
         log.debug(`Video ID: ${id} has been buffered...`);
 
         // upload it to S3
-        const fileName = `${id}_${videoWidth}x${videoHeight}.${
-          file_type.split("/")[1]
-        }`;
+        const fileName = `${id}_${videoWidth}x${videoHeight}.${file_type.split("/")[1]
+          }`;
         await putObject({
           Bucket: env.AWS_S3_BUCKET,
           Key: `originals/${uploadId}/${fileName}`,
@@ -149,9 +147,10 @@ main()
     process.exit();
   })
   .catch(async (e) => {
-    log.error(e);
+    log.error("Error seeding: ", e);
     await prisma.$disconnect();
     process.exit(1);
   });
 
-export {};
+export { };
+

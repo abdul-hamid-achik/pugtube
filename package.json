@@ -22,7 +22,7 @@
     "format": "eslint --fix ./src",
     "backfill": "tsx ./src/backfill.ts",
     "migrate": "npx prisma db push",
-    "worker": "tsx src/worker.ts",
+    "worker": "node --experimental-wasm-threads --experimental-wasm-modules --trace-warnings --loader tsx src/worker.ts",
     "logs:production": "axiom stream production",
     "logs:test": "axiom stream test",
     "godmode": "start-server-and-test serve http://localhost:3000 \"cypress open --e2e\"",
@@ -37,12 +37,13 @@
     "tunnel": "ngrok http --hostname=tunnel.pugtube.dev 3000",
     "postbuild": "next-sitemap",
     "reset": "npx prisma migrate reset --force --skip-seed",
-    "logs:worker": "npx pm2 logs ${WORKER_NAME:-worker}",
-    "start:worker": "npx pm2 start ./src/worker.ts --name ${WORKER_NAME:-worker} --interpreter tsx",
-    "restart:worker": "npx pm2 restart ${WORKER_NAME:-worker} ",
-    "stop:worker": "npx pm2 stop ${WORKER_NAME:-worker}",
-    "status:worker": "npx pm2 status ${WORKER_NAME:-worker}",
-    "remove:worker": "npx pm2 delete ${WORKER_NAME:-worker}"
+    "worker:logs": "npx pm2 logs ${WORKER_NAME:-pugtube-worker}",
+    "worker:start": "npx pm2 start ecosystem.config.js --name ${WORKER_NAME:-pugtube-worker}",
+    "worker:restart": "npx pm2 restart ${WORKER_NAME:-pugtube-worker} ",
+    "worker:stop": "npx pm2 stop ${WORKER_NAME:-pugtube-worker}",
+    "worker:status": "npx pm2 status ${WORKER_NAME:-pugtube-worker}",
+    "worker:remove": "npx pm2 delete ${WORKER_NAME:-pugtube-worker}",
+    "worker:monitor": "npx pm2 monit ${WORKER_NAME:-pugtube-worker}"
   },
   "dependencies": {
     "@aws-crypto/sha256-browser": "^4.0.0",

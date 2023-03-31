@@ -1,9 +1,9 @@
+import { log } from "@/utils/logger";
 import type { CreateFFmpegOptions, FFmpeg } from "@ffmpeg/ffmpeg";
 import {
   createFFmpeg as originalCreateFFmpeg,
-  fetchFile,
+  fetchFile
 } from "@ffmpeg/ffmpeg";
-import { log } from "@/utils/logger";
 import { Readable } from "stream";
 
 const CRITICAL_ERRORS = [
@@ -11,24 +11,27 @@ const CRITICAL_ERRORS = [
   "abort(OOM)",
   "Pthread aborting at Error",
 ];
+
+function handleMaybeOutOfMemory(message: string, ffmpeg: FFmpeg) {
+  if (CRITICAL_ERRORS.some((e) => message?.includes(e))) {
+    log.warn("Restarting ffmpeg because it ran out of memory...");
+    ffmpeg.exit();
+    process.exit(1);
+  }
+}
+
 export async function createFFmpeg(): Promise<FFmpeg> {
   let ffmpeg: FFmpeg | undefined;
   try {
     ffmpeg = originalCreateFFmpeg({
-      log:
-        process.env.NODE_ENV === "development" ||
-        process.env.NODE_ENV === "test",
+      log: true,
       wasmPath: "./node_modules/@ffmpeg/ffmpeg/dist/ffmpeg-core.wasm",
       logger: ({ type, message }: { type: string; message: string }) => {
-        if (CRITICAL_ERRORS.some((e) => message?.includes(e))) {
-          process.exit(1);
-        }
         switch (type) {
           case "info":
             log.info(message);
             break;
           case "fferr":
-            process.stderr.write(message);
             log.error(message);
             break;
           case "ffout":
@@ -38,27 +41,15 @@ export async function createFFmpeg(): Promise<FFmpeg> {
             log.warn(message);
             break;
         }
-      },
-      progress: ({ ratio }: { ratio: number }) => {
-        const percentage = Math.floor(ratio * 100);
-        const barLength = 20;
-        const completedBar = "=".repeat(Math.floor(ratio * barLength));
-        const remainingBar = " ".repeat(barLength - completedBar.length);
-        const message = `[${completedBar}${remainingBar}] ${percentage}%`;
-        log.info(message);
+
+        handleMaybeOutOfMemory(message, ffmpeg!);
       },
     } as CreateFFmpegOptions);
 
     if (!ffmpeg.isLoaded()) await ffmpeg.load();
     return ffmpeg;
   } catch (error: any) {
-    if (CRITICAL_ERRORS.some((e) => error?.message?.includes(e))) {
-      log.warn("Restarting ffmpeg because it ran out of memory...");
-      ffmpeg?.exit();
-      process.exit(1);
-      return createFFmpeg();
-    }
-
+    handleMaybeOutOfMemory(error.message, ffmpeg!);
     throw error;
   }
 }
