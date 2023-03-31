@@ -109,7 +109,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
           ),
           t.caption,
         ])
-        .filter((keyword: string) => keyword.length > 0) || []
+        .filter((keyword: string) => keyword?.length > 0) || []
     )
   );
 
