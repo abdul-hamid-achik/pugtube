@@ -31,6 +31,10 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { thumbnailId } = req.query as { thumbnailId: string };
+  if (thumbnailId === "0000000-0000-0000-0000-000000000000") {
+    res.status(status.OK).json({ message: "OK" });
+    return;
+  }
   const body: Payload = req.body;
   await prisma.thumbnail.update({
     where: {

@@ -21,6 +21,12 @@ import { prisma } from "@/server/db";
 import { getAuth } from "@clerk/nextjs/server";
 import { useRouter } from "next/router";
 import { Disclosure } from "@headlessui/react";
+import IORedis from "ioredis";
+import { env } from "@/env/server.mjs";
+
+export const connection = new IORedis(env.REDIS_URL as string, {
+  maxRetriesPerRequest: null,
+});
 
 interface PageProps {
   keywords: string[];
@@ -100,24 +106,39 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   });
 
   // TODO: This is a hack to get the keywords to show up in the meta tags
-  const keywords = Array.from(
-    new Set(
-      video?.thumbnails
-        ?.flatMap((t: any) => [
-          ...t.contentTags.flatMap((ct: any) =>
-            ct.name.split(",").map((keyword: string) => keyword.trim())
-          ),
-          t.caption,
-        ])
-        .filter((keyword: string) => keyword?.length > 0) || []
-    )
-  );
+  const key = `video:${videoId}`;
+  let keywords: string[] | null;
+
+  // attempt to retrieve the keywords from Redis
+  const cachedKeywords = await connection.get(key);
+  if (cachedKeywords) {
+    keywords = JSON.parse(cachedKeywords);
+  } else {
+    keywords = Array.from(
+      new Set(
+        video?.thumbnails
+          ?.flatMap((t: any) => [
+            ...t.contentTags.flatMap((ct: any) =>
+              ct.name.split(",").map((keyword: string) => keyword.trim())
+            ),
+            t.caption,
+          ])
+          .filter((keyword: string) => keyword?.length > 0) || []
+      )
+    );
+    const ttl = 24 * 60 * 60; // 24 hours in seconds
+    await connection
+      .multi()
+      .set(key, JSON.stringify(keywords))
+      .expire(key, ttl)
+      .exec();
+  }
 
   const isVideoReady = video?.upload?.transcoded;
   return {
     props: {
       videoId,
-      keywords: keywords,
+      keywords: keywords || [],
       likeId: like?.id || null,
       uploadId: video?.upload?.id,
       playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : "",
