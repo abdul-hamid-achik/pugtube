@@ -1,5 +1,5 @@
 import { log } from "@/utils/logger";
-import { getConnection } from "@/utils/redis";
+import { connection } from "@/utils/redis";
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
 import dotenv from "dotenv-vault-core";
@@ -38,7 +38,7 @@ const worker = new Worker(
       throw err;
     }
   },
-  { connection: getConnection() }
+  { connection }
 );
 worker.on("ready", () => {
   log.info(`Worker ID: ${worker.id}`);

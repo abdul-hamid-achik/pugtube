@@ -1,8 +1,8 @@
 import { Queue } from "bullmq";
-import { getConnection } from "@/utils/redis";
+import { connection } from "@/utils/redis";
 
 const queue = new Queue(process.env.QUEUE_NAME || "hls", {
-  connection: getConnection(),
+  connection,
   defaultJobOptions: {
     removeOnComplete: true,
     removeOnFail: true,
@@ -14,5 +14,4 @@ const queue = new Queue(process.env.QUEUE_NAME || "hls", {
   },
 });
 
-export const getQueue = () => queue;
-export default getQueue;
+export default queue;
