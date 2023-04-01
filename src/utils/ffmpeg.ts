@@ -2,7 +2,7 @@ import { log } from "@/utils/logger";
 import type { CreateFFmpegOptions, FFmpeg } from "@ffmpeg/ffmpeg";
 import {
   createFFmpeg as originalCreateFFmpeg,
-  fetchFile
+  fetchFile,
 } from "@ffmpeg/ffmpeg";
 import { Readable } from "stream";
 
@@ -64,46 +64,54 @@ export async function streamToBuffer(stream: Readable): Promise<Buffer> {
   });
 }
 
-export async function ffprobe(fileName: string, content: Buffer) {
+export async function ffprobe(fileName: string) {
   const ffmpeg = await createFFmpeg();
 
-  ffmpeg.FS("writeFile", fileName, content);
-
   const args = [
-    '-v', 'quiet',
-    '-loglevel', process.env.production ? 'error' : 'info',
-    '-print_format', 'json',
-    '-show_format',
-    '-show_streams',
-    '-i', fileName
+    "-v",
+    "quiet",
+    "-loglevel",
+    process.env.production ? "error" : "info",
+    "-print_format",
+    "json",
+    "-show_format",
+    "-show_streams",
+    "-i",
+    fileName,
   ];
 
   await ffmpeg.run(...args);
 
-  const output = ffmpeg.FS('readFile', `${fileName}.ffprobe.json`);
+  const output = ffmpeg.FS("readFile", `${fileName}.ffprobe.json`);
 
   return JSON.parse(output.toString());
 }
 
-export async function ffprobeAt(seconds: number, fileName: string, content: Buffer) {
+export async function ffprobeAt(seconds: number, fileName: string) {
   const ffmpeg = await createFFmpeg();
 
-  ffmpeg.FS("writeFile", fileName, content);
   const args = [
-    '-hide_banner',
-    '-loglevel', process.env.production ? 'error' : 'info',
-    '-show_frames',
-    '-show_entries', 'frame=pkt_pos',
-    '-of', 'default=noprint_wrappers=1:nokey=1',
-    '-read_intervals', seconds + '%+#1',
-    '-print_format', 'json',
-    '-v', 'quiet',
-    '-i', fileName
+    "-hide_banner",
+    "-loglevel",
+    process.env.production ? "error" : "info",
+    "-show_frames",
+    "-show_entries",
+    "frame=pkt_pos",
+    "-of",
+    "default=noprint_wrappers=1:nokey=1",
+    "-read_intervals",
+    seconds + "%+#1",
+    "-print_format",
+    "json",
+    "-v",
+    "quiet",
+    "-i",
+    fileName,
   ];
 
   await ffmpeg.run(...args);
 
-  const output = ffmpeg.FS('readFile', `${fileName}.seek.json`);
+  const output = ffmpeg.FS("readFile", `${fileName}.seek.json`);
   return JSON.parse(output.toString());
 }
 

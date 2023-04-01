@@ -57,7 +57,8 @@ export default async function transcodeVideo({
   const inputFileName = fileName;
   const outputFileName = `${uploadId}.m3u8`;
   const buffer = await streamToBuffer(upload!.Body as Readable);
-  await ffmpeg.FS("writeFile", inputFileName, new Uint8Array(buffer));
+  const arrayBuffer = new Uint8Array(buffer);
+  await ffmpeg.FS("writeFile", inputFileName, arrayBuffer);
 
   ffmpeg.FS("mkdir", "output");
 
