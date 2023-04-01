@@ -6,14 +6,13 @@ import type {
 import { getAuth } from "@clerk/nextjs/server";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
-import { getQueue } from "@/server/queue";
+import queue from "@/server/queue";
 
 interface AuthContext {
   auth: SignedInAuthObject | SignedOutAuthObject;
 }
 
 export const createContextInner = async ({ auth }: AuthContext) => {
-  const queue = await getQueue();
   return {
     auth,
     prisma,
