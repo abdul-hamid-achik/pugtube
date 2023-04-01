@@ -25,7 +25,11 @@ export default async function analyzeVideo({
     auth: process.env.REPLICATE_API_TOKEN as string,
   });
 
-  const { id: videoId, thumbnails, premium } = await prisma.video.findUniqueOrThrow({
+  const {
+    id: videoId,
+    thumbnails,
+    premium,
+  } = await prisma.video.findUniqueOrThrow({
     where: {
       uploadId,
     },
@@ -65,14 +69,15 @@ export default async function analyzeVideo({
     const predictions = await model.classify(tfimage);
     const replicateModelVersion =
       "de37751f75135f7ebbe62548e27d6740d5155dfefdf6447db35c9865253d7e06";
-    const webhookUrl = `${process.env.NODE_ENV === "production"
-      ? "https://pugtube.dev"
-      : "https://tunnel.pugtube.dev"
-      }/api/replicate/webhook/${thumbnailId}`;
+    const webhookUrl = `${
+      process.env.NODE_ENV === "production"
+        ? "https://pugtube.dev"
+        : "https://tunnel.pugtube.dev"
+    }/api/replicate/webhook/${thumbnailId}`;
 
+    // only executing replicate if premium
     if (premium) {
-
-      const prediction = await replicate.predictions.create({
+      await replicate.predictions.create({
         version: replicateModelVersion,
         input: {
           image: await getSignedUrl(thumbnails[i]!.url),
@@ -82,13 +87,18 @@ export default async function analyzeVideo({
     }
 
     log.debug("found mobilenet predictions", predictions);
-    predictions.forEach((prediction) => {
-      contentTagsData.push({
-        name: prediction.className,
-        confidence: prediction.probability,
-        thumbnailId: thumbnailId,
+    predictions
+      .map((preduction) =>
+        preduction.className.split(",").map((name) => ({
+          name,
+          confidence: preduction.probability,
+          thumbnailId: thumbnailId,
+        }))
+      )
+      .flat()
+      .forEach((prediction) => {
+        contentTagsData.push(prediction);
       });
-    });
   }
 
   log.debug("Saving contentTags to db", [contentTagsData]);

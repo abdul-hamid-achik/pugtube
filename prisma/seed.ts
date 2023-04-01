@@ -35,7 +35,8 @@ async function main() {
       try {
         videoId = video.id;
         log.debug(
-          `Processing video ${counter + 1} of ${videos && videos.videos ? videos.videos.length : undefined
+          `Processing video ${counter + 1} of ${
+            videos && videos.videos ? videos.videos.length : undefined
           }`
         );
         log.debug(`Video ID: ${video.id}...`);
@@ -71,8 +72,9 @@ async function main() {
         log.debug(`Video ID: ${id} has been buffered...`);
 
         // upload it to S3
-        const fileName = `${id}_${videoWidth}x${videoHeight}.${file_type.split("/")[1]
-          }`;
+        const fileName = `${id}_${videoWidth}x${videoHeight}.${
+          file_type.split("/")[1]
+        }`;
         await putObject({
           Bucket: env.AWS_S3_BUCKET,
           Key: `originals/${uploadId}/${fileName}`,
@@ -136,8 +138,8 @@ async function main() {
     data: videoData,
   });
 
+  // FIXME: This is causing a memory leak and its not working as expected
   await import("@/backfill");
-
   log.info(`enqueued jobs and created uploads and videos complete!`);
 }
 
@@ -152,5 +154,4 @@ main()
     process.exit(1);
   });
 
-export { };
-
+export {};

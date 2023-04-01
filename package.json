@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "node -r dotenv-vault-core/config ./node_modules/.bin/next dev",
     "env": "npx dotenv-vault build -y",
-    "build": "npm run env && node -r dotenv-vault-core/config ./node_modules/.bin/next build",
+    "build": "node -r dotenv-vault-core/config ./node_modules/.bin/next build",
     "start": "node -r dotenv-vault-core/config ./node_modules/.bin/next start",
     "lint": "node -r dotenv-vault-core/config ./node_modules/.bin/next lint",
     "export": "node -r dotenv-vault-core/config ./node_modules/.bin/next export",
