@@ -1,5 +1,4 @@
 import { env } from "@/env/server.mjs";
-import queue from "@/server/queue";
 import * as shared from "@/utils/shared";
 import type { Video } from "@prisma/client";
 import { z } from "zod";
@@ -119,7 +118,7 @@ export const videoRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      return await queue.add("delete-video-artifacts", {
+      return await ctx.queue.add("delete-video-artifacts", {
         videoId: input,
       });
     }),

@@ -7,7 +7,6 @@ import { NextPageWithLayout } from "@/pages/_app";
 import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
 import { log } from "@/utils/logger";
-import { connection } from "@/utils/redis";
 import { useAuth } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
 import { getAuth } from "@clerk/nextjs/server";
@@ -64,7 +63,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   req,
 }) => {
   const { getVideoData, getComments } = await import("@/utils/shared");
-  const IORedis = await import("ioredis").then((m) => m.default);
+  const { getConnection } = await import("@/utils/redis");
   const { userId } = await getAuth(req);
   let { videoId } = params as { videoId: string };
   if (videoId === "random") {
@@ -106,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   let keywords: string[] | null;
 
   // attempt to retrieve the keywords from Redis
+  const connection = getConnection();
   const cachedKeywords = await connection.get(key);
   if (cachedKeywords) {
     keywords = JSON.parse(cachedKeywords);
