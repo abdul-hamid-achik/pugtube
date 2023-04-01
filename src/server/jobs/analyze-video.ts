@@ -25,13 +25,14 @@ export default async function analyzeVideo({
     auth: process.env.REPLICATE_API_TOKEN as string,
   });
 
-  const { id: videoId, thumbnails } = await prisma.video.findUniqueOrThrow({
+  const { id: videoId, thumbnails, premium } = await prisma.video.findUniqueOrThrow({
     where: {
       uploadId,
     },
     select: {
       id: true,
       duration: true,
+      premium: true,
       thumbnails: {
         select: {
           id: true,
@@ -69,15 +70,17 @@ export default async function analyzeVideo({
       : "https://tunnel.pugtube.dev"
       }/api/replicate/webhook/${thumbnailId}`;
 
-    const prediction = await replicate.predictions.create({
-      version: replicateModelVersion,
-      input: {
-        image: await getSignedUrl(thumbnails[i]!.url),
-      },
-      webhook_completed: webhookUrl,
-    });
+    if (premium) {
 
-    log.debug("replicate prediction", prediction.output);
+      const prediction = await replicate.predictions.create({
+        version: replicateModelVersion,
+        input: {
+          image: await getSignedUrl(thumbnails[i]!.url),
+        },
+        webhook_completed: webhookUrl,
+      });
+    }
+
     log.debug("found mobilenet predictions", predictions);
     predictions.forEach((prediction) => {
       contentTagsData.push({
