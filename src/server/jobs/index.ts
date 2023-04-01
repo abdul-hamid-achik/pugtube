@@ -1,15 +1,9 @@
-// export { default as deleteVideoArtifacts } from "./delete-video-artifacts";
-// export { default as generateThumbnail } from "./generate-thumbnail";
-// export { default as moveUpload } from "./move-upload";
-// export { default as transcodeVideo } from "./transcode-video";
-// export { default as generatePreview } from "./generate-preview";
-// export { default as analyzeVideo } from "./analyze-video";
-// export { default as extractThumbnails } from "./extract-thumbnails";
-
 import fs from "fs";
 import path from "path";
 import { workflows } from "@/server/workflows";
 import { JobNode } from "bullmq";
+
+export type JobFunction = (...args: any) => Promise<void | JobNode>;
 
 const jobsPath = path.resolve(__dirname);
 const jobFiles = fs
@@ -19,19 +13,28 @@ const jobFiles = fs
       file.endsWith(".ts") && !file.endsWith(".spec.ts") && file !== "index.ts"
   );
 
-export const jobList: { [key: string]: (data: any) => Promise<void> } = {};
-export type JobFunction = (...args: any) => Promise<void | JobNode>;
-export type JobRegistry = {
-  [K in keyof typeof jobList]: JobFunction;
+type JobName = (typeof jobFiles)[number];
+
+type RegistryType = {
+  [K in JobName]: JobFunction;
 };
-export const registry: JobRegistry = { ...workflows } as JobRegistry;
 
-const makeRegistryId = (name: string) =>
-  name.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase());
+const registry: Partial<RegistryType> & { [key: string]: JobFunction } = {
+  ...workflows,
+};
 
-for (const file of jobFiles) {
-  const moduleName = makeRegistryId(file.replace(/\.ts$/, ""));
-  registry[moduleName] = require(path.join(jobsPath, file)).default;
+Promise.all(
+  jobFiles.map(async (file) => {
+    const moduleName = makeRegistryId(file.replace(/\.ts$/, ""));
+    const importedModule = await import(path.join(jobsPath, file));
+    registry[moduleName] = importedModule.default;
+  })
+).catch((error) => {
+  console.error("Failed to load job modules:", error);
+});
+
+function makeRegistryId(name: string): string {
+  return name.replace(/-([a-z])/g, (g) => g[1]!.toUpperCase());
 }
 
 export function getJob(name: string): JobFunction | void {

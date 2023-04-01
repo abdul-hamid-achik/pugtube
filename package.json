@@ -17,7 +17,7 @@
     "export": "node -r dotenv-vault-core/config ./node_modules/.bin/next export",
     "dir": "git ls-tree -r --name-only HEAD | tree --fromfile",
     "postinstall": "prisma generate",
-    "serve": "concurrently \"npm:dev\" \"npm:background\"",
+    "serve": "concurrently \"npm:dev\" \"npm:worker\"",
     "type-check": "tsc --noEmit",
     "format": "eslint --fix ./src",
     "backfill": "tsx ./src/backfill.ts",
@@ -43,7 +43,8 @@
     "worker:stop": "npx pm2 stop ${WORKER_NAME:-pugtube-worker}",
     "worker:status": "npx pm2 status ${WORKER_NAME:-pugtube-worker}",
     "worker:remove": "npx pm2 delete ${WORKER_NAME:-pugtube-worker}",
-    "worker:monitor": "npx pm2 monit ${WORKER_NAME:-pugtube-worker}"
+    "worker:monitor": "npx pm2 monit ${WORKER_NAME:-pugtube-worker}",
+    "shell": "npx tsx"
   },
   "dependencies": {
     "@aws-crypto/sha256-browser": "^4.0.0",
