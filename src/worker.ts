@@ -28,8 +28,7 @@ const worker = new Worker(
     try {
       const execute = await getJob(name);
       const job = await execute(data);
-      log.debug(`Job ${name} enqueued: ${JSON.stringify(job)}`);
-      log.info(`Finished Job: ${name}`);
+      log.info(`Finished Job: ${name} - ${JSON.stringify(job)}`);
     } catch (err) {
       Sentry.captureException(err, { tags: { job: name } });
       throw err;
