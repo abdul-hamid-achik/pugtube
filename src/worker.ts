@@ -34,7 +34,16 @@ const worker = new Worker(
       throw err;
     }
   },
-  { connection }
+  {
+    connection,
+    removeOnComplete: {
+      age: 3600,
+      count: 1000,
+    },
+    removeOnFail: {
+      age: 24 * 3600,
+    },
+  }
 );
 worker.on("ready", () => {
   log.info(`Worker ID: ${worker.id}`);
