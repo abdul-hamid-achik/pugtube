@@ -21,17 +21,14 @@ Sentry.init({
 const worker = new Worker(
   process.env.WORKER_NAME || "hls",
   async (job) => {
-    const { getJob, isJobRegistered } = await import("@/server/jobs");
+    const { getJob } = await import("@/server/jobs");
     const { name, data } = job;
     log.info(`Processing job: ${name}`);
     log.debug(`Job data: ${JSON.stringify(data)}`);
     try {
-      if (isJobRegistered(name)) {
-        const job = getJob(name)!;
-        await job(data);
-      } else {
-        log.error(`Unknown job name: ${name}`);
-      }
+      const execute = await getJob(name);
+      const job = await execute(data);
+      log.debug(`Job ${name} enqueued: ${JSON.stringify(job)}`);
       log.info(`Finished Job: ${name}`);
     } catch (err) {
       Sentry.captureException(err, { tags: { job: name } });
