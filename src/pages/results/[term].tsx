@@ -10,6 +10,7 @@ import { ReactElement } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { NextPageWithLayout } from "../_app";
 import Head from "next/head";
+import log from "@/utils/logger";
 
 interface ItemType {
   video: Video;
@@ -66,7 +67,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
   const fetchMoreSearchResults = () => {
     if (hasNextPage) {
       fetchNextPage().catch(
-        (err) => console.error(err) // eslint-disable-line no-console
+        (err) => log.error(err) // eslint-disable-line no-console
       );
     }
   };

@@ -1,10 +1,11 @@
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { getObject, putObject } from "@/utils/s3";
 import { Readable } from "stream";
 import { prisma } from "@/server/db";
 import { v4 as uuid } from "uuid";
 import type { Prisma } from "@prisma/client";
+import { env } from "@/env/server.mjs";
 
 export default async function extractThumbnails({
   uploadId,
@@ -26,7 +27,7 @@ export default async function extractThumbnails({
   });
 
   const video = await getObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
+    Bucket: env.AWS_S3_BUCKET as string,
     Key: `originals/${uploadId}/${fileName}`,
   });
 
@@ -62,7 +63,7 @@ export default async function extractThumbnails({
     );
 
     const thumbnailKey = `thumbnails/${uploadId}-${thumbnailFileName}`;
-    const fullThumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${thumbnailKey}`;
+    const fullThumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${thumbnailKey}`;
     const thumbnailId = uuid();
     thumbnailsData.push({
       id: thumbnailId,
@@ -73,7 +74,7 @@ export default async function extractThumbnails({
     });
 
     await putObject({
-      Bucket: process.env.AWS_S3_BUCKET as string,
+      Bucket: env.AWS_S3_BUCKET as string,
       Key: thumbnailKey,
       Body: thumbnailBuffer,
       ContentType: "image/jpeg",

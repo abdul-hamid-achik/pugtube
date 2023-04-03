@@ -6,7 +6,7 @@ import VideoPlayer from "@/components/video-player";
 import { NextPageWithLayout } from "@/pages/_app";
 import { prisma } from "@/server/db";
 import { api } from "@/utils/api";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { useAuth } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
 import { getAuth } from "@clerk/nextjs/server";

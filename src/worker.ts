@@ -1,4 +1,4 @@
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { connection } from "@/utils/redis";
 import * as Sentry from "@sentry/node";
 import { Worker } from "bullmq";
@@ -13,13 +13,13 @@ dotenv.config();
 const { env } = require("./env/server.mjs");
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: env.SENTRY_DSN,
 
   tracesSampleRate: 1.0,
 });
 
 const worker = new Worker(
-  process.env.WORKER_NAME || "hls",
+  env.WORKER_NAME || "hls",
   async (job) => {
     const { getJob } = await import("@/server/jobs");
     const { name, data } = job;

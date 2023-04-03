@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import Hls from "hls.js";
 import { useEffect, useRef } from "react";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 
 interface VideoPlayerProps {
   src: string;

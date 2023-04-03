@@ -6,6 +6,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  output: "standalone",
   reactStrictMode: true,
   sentry: {
     hideSourceMaps: true,
@@ -49,6 +50,11 @@ const config = {
         protocol: "https",
         hostname: "pugtube-dev.s3.us-west-1.amazonaws.com",
       },
+      {
+        protocol: "http",
+        hostname: "storage:9000",
+
+      }
     ],
   },
 };

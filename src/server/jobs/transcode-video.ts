@@ -1,12 +1,13 @@
 import { prisma } from "@/server/db";
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
 import { getObject, putObject } from "@/utils/s3";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import os from "os";
 // @ts-ignore
 import { Parser } from "m3u8-parser";
 import { Readable } from "stream";
 import { Prisma } from "@prisma/client";
+import { env } from "@/env/server.mjs";
 
 type ParsedSegment = {
   byterange: {
@@ -135,7 +136,7 @@ export default async function transcodeVideo({
 
   const playlistData = {
     key: transcodedVideoKey,
-    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${transcodedVideoKey}`,
+    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${transcodedVideoKey}`,
     allowCache: parsedPlaylist.allowCache,
     discontinuitySequence: parsedPlaylist.discontinuitySequence,
     endList: parsedPlaylist.endList,
@@ -181,7 +182,7 @@ export default async function transcodeVideo({
               );
               await ffmpeg.FS("unlink", segmentPath);
               return {
-                url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${segmentKey}`,
+                url: `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${segmentKey}`,
                 segmentNumber: index,
                 resolution: parsedPlaylist.resolution,
                 key: segmentKey,

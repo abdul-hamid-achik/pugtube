@@ -1,3 +1,5 @@
-import { log as logger } from "next-axiom";
+import { log } from "next-axiom";
 
-export const log = process.env.NODE_ENV === "production" ? logger : console;
+const logger = process.env.NODE_ENV === "production" ? log : console;
+
+export default logger;

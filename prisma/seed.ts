@@ -1,6 +1,6 @@
 import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { putObject } from "@/utils/s3";
 import { Prisma } from "@prisma/client";
 import axios from "axios";
@@ -48,7 +48,7 @@ async function main() {
           `Video ID: ${id} has been assigned an upload ID: ${uploadId}...`
         );
 
-        if (env.NODE_ENV === "production") {
+        if (process.env.NODE_ENV === "production") {
           log.info(`https://pugtube.dev/upload/${uploadId}`);
         }
 
@@ -113,7 +113,7 @@ async function main() {
           duration: duration,
           uploadId: uploadId,
           userId:
-            env.NODE_ENV === "production"
+            process.env.NODE_ENV === "production"
               ? `user_2N5clkHn2NZ5L2VkTd17F9kWU0w`
               : (`user_2MUdNAWDRBjKG78KlxxnIwgWo6i` as string), // TODO: Replace with a random user
         });

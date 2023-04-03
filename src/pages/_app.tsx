@@ -7,7 +7,8 @@ import "@/styles/globals.css";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 
-export { reportWebVitals } from "next-axiom";
+// TODO: enable this when its supported
+// export { reportWebVitals } from "next-axiom";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

@@ -1,4 +1,4 @@
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import type { CreateFFmpegOptions, FFmpeg } from "@ffmpeg/ffmpeg";
 import {
   createFFmpeg as originalCreateFFmpeg,
@@ -49,7 +49,6 @@ export async function createFFmpeg(): Promise<FFmpeg> {
     if (!ffmpeg.isLoaded()) await ffmpeg.load();
     return ffmpeg;
   } catch (error: any) {
-    handleMaybeOutOfMemory(error.message, ffmpeg!);
     throw error;
   }
 }
@@ -71,7 +70,7 @@ export async function ffprobe(fileName: string) {
     "-v",
     "quiet",
     "-loglevel",
-    process.env.production ? "error" : "info",
+    process.env.NODE_ENV === "production" ? "error" : "info",
     "-print_format",
     "json",
     "-show_format",
@@ -93,7 +92,7 @@ export async function ffprobeAt(seconds: number, fileName: string) {
   const args = [
     "-hide_banner",
     "-loglevel",
-    process.env.production ? "error" : "info",
+    process.env.NODE_ENV === "production" ? "error" : "info",
     "-show_frames",
     "-show_entries",
     "frame=pkt_pos",

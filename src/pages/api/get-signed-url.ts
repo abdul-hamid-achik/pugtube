@@ -83,7 +83,7 @@ export default async function handler(
       const signedUrl = await getSignedUrl(
         s3,
         new UploadPartCommand({
-          Bucket: process.env.AWS_S3_BUCKET,
+          Bucket: env.AWS_S3_BUCKET,
           Key: key,
           UploadId: uploadId,
           PartNumber: partNumber,
@@ -99,7 +99,7 @@ export default async function handler(
     ) {
       result = await s3.send(
         new CompleteMultipartUploadCommand({
-          Bucket: process.env.AWS_S3_BUCKET,
+          Bucket: env.AWS_S3_BUCKET,
           Key: key,
           UploadId: uploadId,
           MultipartUpload: {

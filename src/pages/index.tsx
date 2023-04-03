@@ -6,6 +6,7 @@ import { User } from "@clerk/nextjs/api";
 import { Video } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import InfiniteScroll from "react-infinite-scroll-component";
+import log from "@/utils/logger";
 
 type InitialData = {
   items: Array<{
@@ -51,7 +52,7 @@ export const Page: NextPageWithLayout<{ initialData: InitialData }> = ({
   const fetchMoreData = () => {
     if (hasNextPage) {
       fetchNextPage().catch((err) => {
-        console.error(err);
+        log.error(err);
       });
     }
   };

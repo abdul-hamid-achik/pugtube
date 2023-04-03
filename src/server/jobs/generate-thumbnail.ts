@@ -1,8 +1,9 @@
 import { prisma } from "@/server/db";
 import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
 import { getObject, putObject } from "@/utils/s3";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { Readable } from "stream";
+import { env } from "@/env/server.mjs";
 
 export default async function generateThumbnail({
   uploadId,
@@ -19,7 +20,7 @@ export default async function generateThumbnail({
     log.info(`Transcoding video for upload ID: ${uploadId}...`);
 
     const upload = await getObject({
-      Bucket: process.env.AWS_S3_BUCKET,
+      Bucket: env.AWS_S3_BUCKET,
       Key: `originals/${uploadId}/${fileName}`,
     });
 
@@ -50,14 +51,14 @@ export default async function generateThumbnail({
 
     const thumbnail = await ffmpeg.FS("readFile", outputFileName);
     await putObject({
-      Bucket: process.env.AWS_S3_BUCKET,
+      Bucket: env.AWS_S3_BUCKET,
       Key: `thumbnails/${uploadId}.png`,
       Body: thumbnail,
       ContentType: "image/png",
       ContentLength: thumbnail.length,
     });
 
-    const thumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/thumbnails/${uploadId}.png`;
+    const thumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/thumbnails/${uploadId}.png`;
 
     await prisma.video.update({
       where: {

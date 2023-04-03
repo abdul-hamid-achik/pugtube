@@ -7,18 +7,23 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
-  S3ClientConfig,
 } from "@aws-sdk/client-s3";
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from "@aws-sdk/url-parser";
 import { formatUrl } from "@aws-sdk/util-format-url";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { Readable } from "stream";
+import { env } from "@/env/server.mjs";
 
 export const s3 = new S3Client({
-  region: process.env.AWS_REGION as string,
-} as S3ClientConfig);
+  region: env.AWS_S3_REGION as string,
+  endpoint: env.AWS_S3_ENDPOINT as string,
+  credentials: {
+    accessKeyId: env.AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
+  },
+});
 
 export async function moveObject(
   input: GetObjectCommandInput,
@@ -53,17 +58,17 @@ export async function getPresignedPutUrl(
 ) {
   const presigner = new S3RequestPresigner({
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+      accessKeyId: env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
     },
-    region: process.env.AWS_REGION as string,
+    region: env.AWS_S3_REGION as string,
     sha256: Sha256,
   });
 
   const request = new HttpRequest({
     method: "PUT",
     protocol: "https",
-    hostname: `${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com`,
+    hostname: `${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}`,
     path: `/${key}`,
     headers: {
       "Content-Type": contentType,
@@ -93,8 +98,8 @@ export async function getSignedUrl(s3ObjectUrl: string) {
 
   const presigner = new S3RequestPresigner({
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+      accessKeyId: env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
     },
     region: region as string,
     sha256: Sha256,
@@ -110,16 +115,19 @@ export async function getSignedUrl(s3ObjectUrl: string) {
 }
 
 export function parseS3ObjectUrl(s3ObjectUrl: string) {
-  const match = s3ObjectUrl.match(
-    /^https:\/\/(.+)\.s3\.(.+)\.amazonaws.com\/(.+)$/
-  );
-  if (!match || match.length !== 4) {
+  const match = s3ObjectUrl.match(/^https:\/\/(.+)\.s3\.(.+)\.(.+?)\/(.+)$/);
+
+  if (!match || match.length !== 5) {
     throw new Error(`Invalid S3 object URL: ${s3ObjectUrl}`);
   }
+
+  const [, bucket, region, endpoint, key] = match;
+
   return {
-    bucket: match[1],
-    region: match[2],
-    key: match[3],
+    bucket,
+    region,
+    endpoint,
+    key,
   };
 }
 

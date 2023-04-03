@@ -1,25 +1,78 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  pugtube:
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: pugtube
+      dockerfile: .docker/web.dockerfile
+      args:
+        DOTENV_KEY: ${DOTENV_KEY}
+        NODE_ENV: ${NODE_ENV}
+    image: abdulachik/pugtube
     working_dir: /app
+    depends_on:
+      - db
+      - cache
+    environment:
+      DATABASE_URL: mysql://root:password@db:3306
+      REDIS_URL: redis://cache:6379
+      AWS_ACCESS_KEY_ID: pugtube
+      AWS_SECRET_ACCESS_KEY: password
+      AWS_S3_REGION: us-east-1
+      AWS_S3_ENDPOINT: storage:9000
+      AWS_S3_BUCKET: pugtube
     ports:
       - "3000:3000"
 
-  s3:
+  worker:
+    build:
+      context: .
+      args:
+        DOTENV_KEY: ${DOTENV_KEY}
+        NODE_ENV: ${NODE_ENV}
+      dockerfile: .docker/worker.dockerfile
+    image: abdulachik/pugtube-worker
+    working_dir: /app
+    depends_on:
+      - db
+      - cache
+    environment:
+      DATABASE_URL: mysql://root:password@db:3306/pugtube
+      REDIS_URL: redis://cache:6379/0
+
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: pugtube
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    volumes:
+        - db:/var/lib/mysql
+
+  storage:
     image: minio/minio:latest
     command: server /data
     ports:
       - "9000:9000"
     environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio
+      MINIO_ROOT_USER: pugtube
+      MINIO_ROOT_PASSWORD: password
     volumes:
-      - s3_data:/data
+      - storage:/data
+
+  cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
 volumes:
-  db_data:
-  s3_data:
+  db:
+    driver: local
+  storage:
+    driver: local
+  cache:
+    driver: local

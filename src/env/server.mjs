@@ -6,6 +6,7 @@
  */
 import { serverEnv, serverSchema } from "./schema.mjs";
 
+
 const _serverEnv = serverSchema.safeParse(serverEnv);
 
 export const formatErrors = (
@@ -25,6 +26,9 @@ if (!_serverEnv.success) {
     "❌ Invalid environment variables:\n",
     ...formatErrors(_serverEnv.error.format())
   );
+
+
+
   throw new Error("Invalid environment variables");
 }
 

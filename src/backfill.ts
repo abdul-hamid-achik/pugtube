@@ -1,5 +1,5 @@
 import { prisma } from "@/server/db";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { createBackfillFlow } from "@/server/workflows";
 
 async function main() {
@@ -59,7 +59,7 @@ main()
     process.exit();
   })
   .catch(async (e) => {
-    console.error(e);
+    log.error(e);
     await prisma.$disconnect();
     process.exit(1);
   });
