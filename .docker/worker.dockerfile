@@ -9,7 +9,7 @@ COPY . .
 COPY --from=ffmpeg /usr/local/bin/ffmpeg /usr/local/bin/
 
 RUN npm install -g npm@latest
-RUN CYPRESS_INSTALL_BINARY=0 npm ci
+RUN CYPRESS_INSTALL_BINARY=0 HUSKY=0 npm ci
 
 
 ARG DOTENV_KEY
