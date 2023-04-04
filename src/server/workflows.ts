@@ -1,9 +1,10 @@
 import { FlowProducer } from "bullmq";
+import { env } from "@/env/server.mjs";
 
 const flowProducer = new FlowProducer();
 export const createPostUploadFlow = async (
   data: { uploadId: string; fileName: string },
-  queueName: string = "hls"
+  queueName: string = env.WORKER_NAME
 ) => {
   return await flowProducer.add({
     name: "postUpload",
@@ -50,7 +51,7 @@ export const createPostUploadFlow = async (
 
 export const createBackfillFlow = async (
   data: { uploadId: string; fileName: string },
-  queueName: string = "hls"
+  queueName: string = env.WORKER_NAME
 ) => {
   return await flowProducer.add({
     name: "backfill",

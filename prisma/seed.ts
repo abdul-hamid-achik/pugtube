@@ -138,9 +138,7 @@ async function main() {
     data: videoData,
   });
 
-  // FIXME: This is causing a memory leak and its not working as expected
-  await import("@/backfill");
-  log.info(`enqueued jobs and created uploads and videos complete!`);
+  log.info(`created uploads and videos complete!`);
 }
 
 main()

@@ -2,7 +2,7 @@ import { Queue } from "bullmq";
 import { connection } from "@/utils/redis";
 import { env } from "@/env/server.mjs";
 
-const queue = new Queue(env.WORKER_QUEUE, {
+const queue = new Queue(env.WORKER_NAME, {
   connection,
   defaultJobOptions: {
     removeOnComplete: true,

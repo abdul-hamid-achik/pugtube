@@ -19,7 +19,7 @@ Sentry.init({
 });
 
 const worker = new Worker(
-  env.WORKER_NAME || "hls",
+  env.WORKER_NAME,
   async (job) => {
     const { getJob } = await import("@/server/jobs");
     const { name, data } = job;
@@ -48,7 +48,6 @@ const worker = new Worker(
 worker.on("ready", () => {
   log.info(`Worker ID: ${worker.id}`);
   log.info(`Worker name: ${worker.name}`);
-  log.info(`Worker is ready`);
 });
 
 worker.on("completed", (job) => {
@@ -59,7 +58,6 @@ worker.on("completed", (job) => {
 worker.on("failed", async (job, error) => {
   const name = job?.name;
   log.error(`Job failed: ${name}`, error);
-  process.exit(1);
 });
 
 export default worker;
