@@ -50,7 +50,7 @@ export const serverEnv = {
   PEXELS_API_KEY: process.env.PEXELS_API_KEY,
   AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
   AWS_S3_REGION: process.env.AWS_S3_REGION,
-  AWS_S3_ENDPOINT: process.env.AWS_S3_ENDPOINT || "amazonaws.com",
+  AWS_S3_ENDPOINT: process.env.AWS_S3_ENDPOINT || undefined,
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   REPLICATE_API_TOKEN: process.env.REPLICATE_TOKEN,

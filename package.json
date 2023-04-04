@@ -138,6 +138,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/cookies": "^0.7.7",
     "@types/ejs": "^3.1.2",
+    "@types/fluent-ffmpeg": "^2.1.21",
     "@types/js-cookie": "^3.0.3",
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^3.2.0",

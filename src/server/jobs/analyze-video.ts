@@ -1,7 +1,6 @@
 import { prisma } from "@/server/db";
-import { streamToBuffer } from "@/utils/ffmpeg";
+import { getObject, getSignedUrl, streamToBuffer } from "@/utils/s3";
 import log from "@/utils/logger";
-import { getObject, getSignedUrl } from "@/utils/s3";
 import type { Prisma } from "@prisma/client";
 import { type Tensor3D } from "@tensorflow/tfjs-node";
 import Replicate from "replicate";

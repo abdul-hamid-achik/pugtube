@@ -166,7 +166,7 @@ model Upload {
 
 model Thumbnail {
   id          String       @id @default(cuid())
-  timestamp   Int          @map("timestamp")
+  timestamp   String       @map("timestamp")
   url         String       @map("url")
   key         String       @map("key")
   caption     String?      @map("caption")

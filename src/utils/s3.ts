@@ -114,6 +114,16 @@ export async function getSignedUrl(s3ObjectUrl: string) {
   return formatUrl(signedUrl);
 }
 
+export async function streamToBuffer(stream: Readable): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Uint8Array[] = [];
+
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+  });
+}
+
 export function parseS3ObjectUrl(s3ObjectUrl: string) {
   const match = s3ObjectUrl.match(/^https:\/\/(.+)\.s3\.(.+)\.(.+?)\/(.+)$/);
 

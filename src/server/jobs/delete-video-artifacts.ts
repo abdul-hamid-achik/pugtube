@@ -42,9 +42,15 @@ export default async function deleteVideoArtifacts({
     Bucket: env.AWS_S3_BUCKET as string,
     Key: `originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
   });
+
   await deleteObject({
     Bucket: env.AWS_S3_BUCKET as string,
-    Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+    Key: `thumbnails/${video?.upload?.id}.png`,
+  });
+
+  await deleteObject({
+    Bucket: env.AWS_S3_BUCKET as string,
+    Key: `previews/${video?.upload?.id}.gif`,
   });
 
   await Promise.all(
@@ -66,7 +72,7 @@ export default async function deleteVideoArtifacts({
   );
   await deleteObject({
     Bucket: env.AWS_S3_BUCKET as string,
-    Key: `transcoded/${video?.upload?.id}/output.m3u8`,
+    Key: `transcoded/${video?.upload?.id}/playlist.m3u8`,
   });
   await deleteObject({
     Bucket: env.AWS_S3_BUCKET as string,
