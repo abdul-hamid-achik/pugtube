@@ -6,6 +6,9 @@ WORKDIR /app
 
 COPY .. .
 
+ENV HUSKY=0
+ENV CYPRESS_INSTALL_BINARY=0
+
 RUN npm install -g npm@latest
 RUN npm ci
 

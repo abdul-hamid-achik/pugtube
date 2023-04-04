@@ -8,6 +8,9 @@ RUN apk add --no-cache libc6-compat
 COPY . .
 COPY --from=ffmpeg /usr/local/bin/ffmpeg /usr/local/bin/
 
+ENV HUSKY=0
+ENV CYPRESS_INSTALL_BINARY=0
+
 RUN npm ci
 
 ARG DOTENV_KEY
