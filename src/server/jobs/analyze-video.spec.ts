@@ -31,14 +31,14 @@ jest.mock("@/server/db", () => ({
         },
 
         thumbnails: Array.from({ length: 12 }, (_, index) => {
-          const key = `thumbnails/0000000-0000-0000-0000-000000000000-thumbnail-${
+          const key = `thumbnails/0000000-0000-0000-0000-000000000000/thumbnail-${
             index + 1
           }.jpg`;
           const id = index;
           return {
             key,
             id,
-            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
+            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}`,
           };
         }),
       }),

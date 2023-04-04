@@ -61,6 +61,6 @@ describe("deleteVideoArtifacts", () => {
     expect(prisma.hlsSegment.deleteMany).toHaveBeenCalled();
     expect(prisma.upload.delete).toHaveBeenCalled();
 
-    expect(deleteObject).toHaveBeenCalledTimes(4);
+    expect(deleteObject).toHaveBeenCalledTimes(5);
   });
 });

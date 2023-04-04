@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { deleteObject } from "@/utils/s3";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
+import { env } from "@/env/server.mjs";
 
 export default async function deleteVideoArtifacts({
   videoId,
@@ -38,18 +39,24 @@ export default async function deleteVideoArtifacts({
   log.debug(`Deleting original, thumbnail, and transcoded segments...`);
 
   await deleteObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
+    Bucket: env.AWS_S3_BUCKET as string,
     Key: `originals/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
   });
+
   await deleteObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
-    Key: `thumbnails/${video?.upload?.id}/${video?.upload?.metadata?.fileName}`,
+    Bucket: env.AWS_S3_BUCKET as string,
+    Key: `thumbnails/${video?.upload?.id}.png`,
+  });
+
+  await deleteObject({
+    Bucket: env.AWS_S3_BUCKET as string,
+    Key: `previews/${video?.upload?.id}.gif`,
   });
 
   await Promise.all(
     thumbnails.map((thumbnail) =>
       deleteObject({
-        Bucket: process.env.AWS_S3_BUCKET as string,
+        Bucket: env.AWS_S3_BUCKET as string,
         Key: thumbnail.key,
       })
     )
@@ -58,17 +65,17 @@ export default async function deleteVideoArtifacts({
   await Promise.all(
     segments.map((_, index) =>
       deleteObject({
-        Bucket: process.env.AWS_S3_BUCKET as string,
+        Bucket: env.AWS_S3_BUCKET as string,
         Key: `transcoded/${video?.upload?.id}/segment-${index}.ts`,
       })
     )
   );
   await deleteObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
-    Key: `transcoded/${video?.upload?.id}/output.m3u8`,
+    Bucket: env.AWS_S3_BUCKET as string,
+    Key: `transcoded/${video?.upload?.id}/playlist.m3u8`,
   });
   await deleteObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
+    Bucket: env.AWS_S3_BUCKET as string,
     Key: video?.upload?.id as string,
   });
   log.debug(`Deleting video, upload, metadata, segments, and playlist...`);

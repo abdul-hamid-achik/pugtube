@@ -1,25 +1,52 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  pugtube:
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: pugtube
+      dockerfile: .docker/web.dockerfile
+      args:
+        DOTENV_KEY: ${DOTENV_KEY}
+        NODE_ENV: ${NODE_ENV}
+    image: abdulachik/pugtube
     working_dir: /app
+    environment:
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      cache:
+        condition: service_healthy
     ports:
       - "3000:3000"
 
-  s3:
-    image: minio/minio:latest
-    command: server /data
-    ports:
-      - "9000:9000"
+  worker:
+    build:
+      context: .
+      dockerfile: .docker/worker.dockerfile
+      args:
+        DOTENV_KEY: ${DOTENV_KEY}
+        NODE_ENV: ${NODE_ENV}
+    image: abdulachik/pugtube-worker
+    working_dir: /app
     environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      cache:
+        condition: service_healthy
+
     volumes:
-      - s3_data:/data
+      - ./src:/app/src
+
+  cache:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
-  db_data:
-  s3_data:
+  cache:

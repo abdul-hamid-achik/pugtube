@@ -6,6 +6,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import("next").NextConfig} */
 const config = {
+  output: "standalone",
   reactStrictMode: true,
   sentry: {
     hideSourceMaps: true,

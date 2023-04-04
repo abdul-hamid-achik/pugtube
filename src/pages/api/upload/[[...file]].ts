@@ -4,7 +4,7 @@ import type { Upload, VideoMetadata } from "@prisma/client";
 import { S3Store } from "@tus/s3-store";
 import { EVENTS, Server } from "@tus/server";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 import { v4 as uuidv4 } from "uuid";
 import { createPostUploadFlow } from "@/server/workflows";
 
@@ -121,7 +121,7 @@ const tusServer = new Server({
     // partSize: 5_242_880, // 5 MB
     partSize: 10_485_760, // 10 MB
     s3ClientConfig: {
-      region: env.AWS_REGION as string,
+      region: env.AWS_S3_REGION as string,
       accessKeyId: env.AWS_ACCESS_KEY_ID as string,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
       bucket: env.AWS_S3_BUCKET as string,

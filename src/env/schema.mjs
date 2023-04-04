@@ -22,9 +22,12 @@ export const serverSchema = z.object({
   AXIOM_DATASET: z.string(),
   PEXELS_API_KEY: z.string(),
   AWS_S3_BUCKET: z.string(),
-  AWS_REGION: z.string(),
+  AWS_S3_REGION: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
+  WORKER_NAME: z.string(),
+  WORKER_QUEUE: z.string(),
+  REPLICATE_API_TOKEN: z.string().optional()
 });
 
 /**
@@ -45,9 +48,12 @@ export const serverEnv = {
   AXIOM_DATASET: process.env.AXIOM_DATASET,
   PEXELS_API_KEY: process.env.PEXELS_API_KEY,
   AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
-  AWS_REGION: process.env.AWS_REGION,
+  AWS_S3_REGION: process.env.AWS_S3_REGION,
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+  REPLICATE_API_TOKEN: process.env.REPLICATE_TOKEN,
+  WORKER_NAME: process.env.WORKER_NAME || "pugtube-worker",
+  WORKER_QUEUE: process.env.WORKER_QUEUE || "pugtube-transcoding-queue",
 };
 
 /**

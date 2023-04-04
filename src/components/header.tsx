@@ -14,7 +14,7 @@ import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { classNames } from "@/utils/styles";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
 
 interface FormData {
   term: string;

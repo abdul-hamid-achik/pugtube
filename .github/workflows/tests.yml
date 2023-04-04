@@ -67,7 +67,7 @@ jobs:
           AXIOM_TOKEN: ${{ env.AXIOM_TOKEN }}
           PEXELS_API_KEY: ${{ env.PEXELS_API_KEY }}
           AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}
-          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_S3_REGION: ${{ env.AWS_S3_REGION }}
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
 
@@ -85,6 +85,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ steps.versions.outputs.nodejs }}
+
+      - name: Install ffmpeg
+        run: sudo apt-get update -y && sudo apt-get install ffmpeg -y
 
       - name: Install Dependencies
         run: npm ci

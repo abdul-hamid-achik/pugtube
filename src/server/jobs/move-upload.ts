@@ -3,7 +3,9 @@ import {
   GetObjectCommandInput,
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
+
+import { env } from "@/env/server.mjs";
 
 export default async function moveUpload({
   uploadId,
@@ -17,12 +19,12 @@ export default async function moveUpload({
   );
 
   const getObjectInput: GetObjectCommandInput = {
-    Bucket: process.env.AWS_S3_BUCKET,
+    Bucket: env.AWS_S3_BUCKET,
     Key: uploadId,
   };
 
   const putObjectInput: PutObjectCommandInput = {
-    Bucket: process.env.AWS_S3_BUCKET,
+    Bucket: env.AWS_S3_BUCKET,
     Key: `originals/${uploadId}/${fileName}`,
   };
 

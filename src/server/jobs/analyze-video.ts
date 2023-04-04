@@ -1,11 +1,12 @@
 import { prisma } from "@/server/db";
-import { streamToBuffer } from "@/utils/ffmpeg";
-import { log } from "@/utils/logger";
-import { getObject, getSignedUrl } from "@/utils/s3";
+import { getObject, getSignedUrl, streamToBuffer } from "@/utils/s3";
+import log from "@/utils/logger";
 import type { Prisma } from "@prisma/client";
 import { type Tensor3D } from "@tensorflow/tfjs-node";
 import Replicate from "replicate";
 import { Readable } from "stream";
+
+import { env } from "@/env/server.mjs";
 
 export default async function analyzeVideo({
   uploadId,
@@ -22,7 +23,7 @@ export default async function analyzeVideo({
   });
 
   const replicate = new Replicate({
-    auth: process.env.REPLICATE_API_TOKEN as string,
+    auth: env.REPLICATE_API_TOKEN as string,
   });
 
   const {
@@ -58,7 +59,7 @@ export default async function analyzeVideo({
   for (let i = 0; i < thumbnails.length; i++) {
     const thumbnailId = thumbnails[i]!.id;
     const thumbnail = await getObject({
-      Bucket: process.env.AWS_S3_BUCKET as string,
+      Bucket: env.AWS_S3_BUCKET as string,
       Key: thumbnails[i]!.key,
     });
     const thumbnailBuffer = await streamToBuffer(thumbnail!.Body as Readable);

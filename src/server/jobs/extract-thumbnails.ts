@@ -1,10 +1,14 @@
-import { createFFmpeg, streamToBuffer } from "@/utils/ffmpeg";
-import { log } from "@/utils/logger";
+import log from "@/utils/logger";
+import ffmpeg from "fluent-ffmpeg";
 import { getObject, putObject } from "@/utils/s3";
-import { Readable } from "stream";
 import { prisma } from "@/server/db";
 import { v4 as uuid } from "uuid";
 import type { Prisma } from "@prisma/client";
+import { env } from "@/env/server.mjs";
+import os from "os";
+import fs from "fs";
+import { Readable } from "stream";
+import { DateTime } from "luxon";
 
 export default async function extractThumbnails({
   uploadId,
@@ -13,7 +17,11 @@ export default async function extractThumbnails({
   uploadId: string;
   fileName: string;
 }) {
-  const ffmpeg = await createFFmpeg();
+  const outputFilesPath = `${os.tmpdir()}/${uploadId}/thumbnails`;
+
+  if (!fs.existsSync(outputFilesPath)) {
+    fs.mkdirSync(outputFilesPath, { recursive: true });
+  }
 
   const { id: videoId, duration } = await prisma.video.findUniqueOrThrow({
     where: {
@@ -26,64 +34,79 @@ export default async function extractThumbnails({
   });
 
   const video = await getObject({
-    Bucket: process.env.AWS_S3_BUCKET as string,
+    Bucket: env.AWS_S3_BUCKET as string,
     Key: `originals/${uploadId}/${fileName}`,
   });
 
-  const buffer = await streamToBuffer(video!.Body as Readable);
-  ffmpeg.FS("writeFile", fileName, new Uint8Array(buffer));
-  ffmpeg.FS("mkdir", "output");
-  const thumbnailOutputFileName = `output/thumbnail-%01d.jpg`;
+  const outputFileName = `${outputFilesPath}/thumbnail-%01d.jpg`;
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(video!.Body as Readable)
+      .outputOptions("-filter:v", "thumbnail,fps=1")
+      .outputOptions("-pix_fmt", "yuvj444p")
+      .output(outputFileName)
+      .on("start", (commandLine: string) => {
+        log.info("Spawned FFmpeg with command: " + commandLine);
+      })
+      .on(
+        "progress",
+        (progress: {
+          frames: number;
+          currentFps: number;
+          currentKbps: number;
+          targetSize: number;
+          timemark: string;
+        }) => {
+          log.debug(progress.timemark);
+        }
+      )
+      .on("error", (err: any) => {
+        log.error(err);
+        reject(err);
+      })
+      .on("end", () => {
+        log.info("Finished processing");
+        resolve();
+      })
+      .run();
+  });
 
-  await ffmpeg.run(
-    "-i",
-    fileName,
-    "-filter:v",
-    "thumbnail,fps=1",
-    "-pix_fmt",
-    "yuvj444p",
-    thumbnailOutputFileName
-  );
-
-  const thumbnails = ffmpeg
-    .FS("readdir", "output")
+  const thumbnails = fs
+    .readdirSync(outputFilesPath)
     .filter((file) => file.endsWith(".jpg"));
   const thumbnailsData: Prisma.ThumbnailCreateManyInput[] = [];
 
   log.info("found thumbnails", thumbnails);
   for (let i = 0; i < thumbnails.length; i++) {
-    log.debug(`analyzing thumbnail ${i}/${thumbnails.length}`);
+    log.debug(`extracting thumbnail ${i}/${thumbnails.length}`);
     const thumbnailFileName = thumbnails[i];
     const timestamp = thumbnailFileName!.split("-")[1]!.split(".")[0];
 
-    const thumbnailBuffer = await ffmpeg.FS(
-      "readFile",
-      `output/${thumbnailFileName}`
+    const thumbnailBuffer = fs.readFileSync(
+      `${outputFilesPath}/${thumbnailFileName}`
     );
 
-    const thumbnailKey = `thumbnails/${uploadId}-${thumbnailFileName}`;
-    const fullThumbnailUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${thumbnailKey}`;
+    const thumbnailKey = `thumbnails/${uploadId}/${thumbnailFileName}`;
+    const fullThumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${thumbnailKey}`;
     const thumbnailId = uuid();
     thumbnailsData.push({
       id: thumbnailId,
-      timestamp: Number(timestamp), // TODO: calculate timestamp here
+      timestamp: DateTime.fromSeconds(Number(timestamp)).toFormat("HHmmss"),
       url: fullThumbnailUrl,
       key: thumbnailKey,
       videoId: videoId,
     });
 
     await putObject({
-      Bucket: process.env.AWS_S3_BUCKET as string,
+      Bucket: env.AWS_S3_BUCKET as string,
       Key: thumbnailKey,
       Body: thumbnailBuffer,
       ContentType: "image/jpeg",
       ContentLength: thumbnailBuffer.length,
     });
 
-    ffmpeg.FS("unlink", `output/${thumbnailFileName}`);
+    fs.unlinkSync(`${outputFilesPath}/${thumbnailFileName}`);
   }
-
-  ffmpeg.FS("unlink", fileName);
+  fs.rmdirSync(outputFilesPath);
 
   log.debug("Saving thumbnails to db", [thumbnailsData]);
 
@@ -91,6 +114,4 @@ export default async function extractThumbnails({
     data: thumbnailsData,
     skipDuplicates: true,
   });
-
-  ffmpeg?.exit();
 }
