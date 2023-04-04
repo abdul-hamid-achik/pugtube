@@ -104,13 +104,13 @@ export const videoRouter = createTRPCRouter({
             input.thumbnailUrl?.startsWith("https://") ||
             input.thumbnailUrl?.startsWith("http://")
               ? input.thumbnailUrl
-              : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${input.thumbnailUrl}`,
+              : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${input.thumbnailUrl}`,
 
           previewUrl:
             input.previewUrl?.startsWith("https://") ||
             input.previewUrl?.startsWith("http://")
               ? input.previewUrl
-              : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${input.previewUrl}`,
+              : `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${input.previewUrl}`,
         },
       });
     }),

@@ -38,7 +38,7 @@ jest.mock("@/server/db", () => ({
           return {
             key,
             id,
-            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.${process.env.AWS_S3_ENDPOINT}/${key}`,
+            url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${key}`,
           };
         }),
       }),

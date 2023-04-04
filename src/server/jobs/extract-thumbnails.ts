@@ -86,7 +86,7 @@ export default async function extractThumbnails({
     );
 
     const thumbnailKey = `thumbnails/${uploadId}/${thumbnailFileName}`;
-    const fullThumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${thumbnailKey}`;
+    const fullThumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${thumbnailKey}`;
     const thumbnailId = uuid();
     thumbnailsData.push({
       id: thumbnailId,
@@ -107,7 +107,6 @@ export default async function extractThumbnails({
     fs.unlinkSync(`${outputFilesPath}/${thumbnailFileName}`);
   }
   fs.rmdirSync(outputFilesPath);
-  
 
   log.debug("Saving thumbnails to db", [thumbnailsData]);
 

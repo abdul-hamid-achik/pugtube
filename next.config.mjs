@@ -50,11 +50,6 @@ const config = {
         protocol: "https",
         hostname: "pugtube-dev.s3.us-west-1.amazonaws.com",
       },
-      {
-        protocol: "http",
-        hostname: "storage:9000",
-
-      }
     ],
   },
 };

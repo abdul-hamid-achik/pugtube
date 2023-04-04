@@ -18,7 +18,6 @@ import { env } from "@/env/server.mjs";
 
 export const s3 = new S3Client({
   region: env.AWS_S3_REGION as string,
-  endpoint: env.AWS_S3_ENDPOINT as string,
   credentials: {
     accessKeyId: env.AWS_ACCESS_KEY_ID as string,
     secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
@@ -68,7 +67,7 @@ export async function getPresignedPutUrl(
   const request = new HttpRequest({
     method: "PUT",
     protocol: "https",
-    hostname: `${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}`,
+    hostname: `${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com`,
     path: `/${key}`,
     headers: {
       "Content-Type": contentType,

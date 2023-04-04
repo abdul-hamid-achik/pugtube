@@ -106,7 +106,7 @@ export default async function transcodeVideo({
 
   const playlistData = {
     key: transcodedVideoKey,
-    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${transcodedVideoKey}`,
+    url: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${transcodedVideoKey}`,
     allowCache: parsedPlaylist.allowCache,
     discontinuitySequence: parsedPlaylist.discontinuitySequence,
     endList: parsedPlaylist.endList,
@@ -152,7 +152,7 @@ export default async function transcodeVideo({
             fs.unlinkSync(segmentPath);
 
             return {
-              url: `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${segmentKey}`,
+              url: `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${segmentKey}`,
               segmentNumber: index,
               resolution: parsedPlaylist.resolution,
               key: segmentKey,
@@ -199,8 +199,6 @@ export default async function transcodeVideo({
         transcoded: true,
       },
     });
-
-    
   } catch (error) {
     log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
   }

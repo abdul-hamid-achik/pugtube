@@ -61,7 +61,7 @@ export default async function generateThumbnail({
       ContentLength: gif.length,
     });
 
-    const previewUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.${env.AWS_S3_ENDPOINT}/${gifKey}`;
+    const previewUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${gifKey}`;
 
     await prisma.video.update({
       where: {
@@ -74,7 +74,6 @@ export default async function generateThumbnail({
 
     fs.unlinkSync(outputFileName);
 
-    
     log.info(`Updated video with preview URL: ${previewUrl}`);
   } catch (err: any) {
     log.error(err);
