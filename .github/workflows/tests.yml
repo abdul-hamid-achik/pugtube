@@ -87,7 +87,7 @@ jobs:
           node-version: ${{ steps.versions.outputs.nodejs }}
 
       - name: Install ffmpeg
-        run: sudo apt-get install ffmpeg -y
+        run: sudo apt-get update -y && sudo apt-get install ffmpeg -y
 
       - name: Install Dependencies
         run: npm ci
