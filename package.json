@@ -1,9 +1,9 @@
 {
   "name": "pugtube",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "engines": {
-    "node": "~=16.19.1"
+    "node": ">=16.19.1"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
