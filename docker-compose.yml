@@ -33,8 +33,6 @@ services:
       cache:
         condition: service_healthy
 
-    volumes:
-      - ./src:/app/src
 
   cache:
     image: redis:latest

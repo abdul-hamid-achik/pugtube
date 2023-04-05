@@ -18,6 +18,4 @@ ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
 ENV DOTENV_KEY=${DOTENV_KEY}
 
-RUN npx dotenv-vault build
-
 CMD ["npm", "run", "worker"]
