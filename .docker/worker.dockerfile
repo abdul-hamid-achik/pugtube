@@ -9,11 +9,11 @@ COPY . .
 COPY --from=ffmpeg /usr/local/bin/ffmpeg /usr/local/bin/
 
 RUN npm install -g npm@latest
-RUN CYPRESS_INSTALL_BINARY=0 HUSKY=0 npm ci
-
+RUN CYPRESS_INSTALL_BINARY=0 HUSKY=0 npm ci --omit=dev
 
 ARG DOTENV_KEY
 ARG NODE_ENV
+
 ENV REDIS_URL=${REDIS_URL}
 ENV NODE_ENV=${NODE_ENV}
 ENV DOTENV_KEY=${DOTENV_KEY}
