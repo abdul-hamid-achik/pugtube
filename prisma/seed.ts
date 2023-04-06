@@ -3,7 +3,6 @@ import { prisma } from "@/server/db";
 import log from "@/utils/logger";
 import { putObject } from "@/utils/s3";
 import { Prisma } from "@prisma/client";
-import axios from "axios";
 import { createClient, Video, Videos } from "pexels";
 import { v4 as uuidv4 } from "uuid";
 
@@ -66,8 +65,9 @@ async function main() {
         log.debug(`Video ID: ${id} has been downloaded...`);
 
         // Fetch the video and store it in a buffer
-        const response = await axios.get(link, { responseType: "arraybuffer" });
-        const videoBuffer = Buffer.from(response.data);
+        const response = await fetch(link);
+        const videoArrayBuffer = await response.arrayBuffer();
+        const videoBuffer = Buffer.from(videoArrayBuffer);
 
         log.debug(`Video ID: ${id} has been buffered...`);
 
