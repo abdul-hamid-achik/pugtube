@@ -1,6 +1,0 @@
-[phases.setup]
-nixPkgs = ["...", "ffmpeg-full"]
-
-[phases.lint]
-cmds = ["npm run lint"]
-dependsOn = ["install"]

@@ -6,7 +6,7 @@ import { EVENTS, Server } from "@tus/server";
 import type { NextApiRequest, NextApiResponse } from "next";
 import log from "@/utils/logger";
 import { v4 as uuidv4 } from "uuid";
-import { createPostUploadFlow } from "@/server/workflows";
+import queue from "@/server/queue";
 
 interface PatchedUpload extends Upload {
   metadata: VideoMetadata;
@@ -132,7 +132,7 @@ const tusServer = new Server({
 tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
   log.info(`Event received: post-finish`, upload);
 
-  await createPostUploadFlow({
+  await queue.add("post-upload", {
     uploadId: upload.id,
     fileName: upload?.metadata?.filename as string,
   });

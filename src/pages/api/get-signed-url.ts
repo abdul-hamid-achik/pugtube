@@ -1,6 +1,6 @@
 import { env } from "@/env/server.mjs";
 import { prisma } from "@/server/db";
-import { createPostUploadFlow } from "@/server/workflows";
+import queue from "@/server/queue";
 import { s3 } from "@/utils/s3";
 import {
   CompleteMultipartUploadCommand,
@@ -133,7 +133,7 @@ export default async function handler(
         },
       });
 
-      await createPostUploadFlow({
+      await queue.add("post-upload", {
         uploadId: key,
         fileName: filename as string,
       });
