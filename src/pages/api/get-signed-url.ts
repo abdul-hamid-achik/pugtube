@@ -133,7 +133,7 @@ export default async function handler(
         },
       });
 
-      await queue.add("post-upload", {
+      await queue.add("postUpload", {
         uploadId: key,
         fileName: filename as string,
       });

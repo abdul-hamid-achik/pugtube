@@ -132,7 +132,7 @@ const tusServer = new Server({
 tusServer.on(EVENTS.POST_FINISH, async (_request, _response, upload) => {
   log.info(`Event received: post-finish`, upload);
 
-  await queue.add("post-upload", {
+  await queue.add("postUpload", {
     uploadId: upload.id,
     fileName: upload?.metadata?.filename as string,
   });
