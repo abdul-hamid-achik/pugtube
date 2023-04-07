@@ -57,3 +57,4 @@ public/sitemap-*.xml
 .flaskenv*
 !.env.project
 !.env.vault
+.swc
