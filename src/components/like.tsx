@@ -32,8 +32,9 @@ export default function LikeButton({
   const { mutate: like, isLoading: isLiking } = api.social.like.useMutation({
     onSuccess: (data) => {
       setLikeId(data.id);
-      refetch();
-      refresh?.();
+      refetch().then(() => {
+        refresh?.();
+      });
     },
   });
 
@@ -45,46 +46,39 @@ export default function LikeButton({
       },
     });
 
-  if (!videoId && !commentId) {
-    return null;
-  }
-
-  if (isLiking || isUnliking || (isLoading && isFetching)) {
-    return <Spinner className="h-4 w-4" />;
-  }
-
-  if ((likeId || likeData) && !isError) {
-    return (
-      <button
-        className="mr-2 flex h-6 w-6 items-center justify-center rounded-full text-pink-300 hover:text-pink-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-        onClick={() => {
-          unlike((likeId || likeData?.id) as string);
-        }}
-        disabled={isUnliking}
-        data-testid="unlike-button"
-      >
-        <SolidHeartIcon className="h-5 w-5" aria-hidden="true" />
-        <span className="sr-only">Unlike</span>
-      </button>
-    );
-  }
-
   return (
-    <button
-      className="mr-2 flex h-6 w-6 items-center justify-center rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+    <span
+      className={`mr-2 flex h-6 w-6 items-center justify-center rounded-full 
+      text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 ${
+        isLiking ? "cursor-none" : "cursor-pointer"
+      }`}
       onClick={() => {
-        if (videoId) {
-          like({ videoId });
-        }
-        if (commentId) {
-          like({ commentId });
+        if (likeId) {
+          unlike((likeId || likeData?.id) as string);
+        } else {
+          if (videoId) {
+            like({ videoId });
+          }
+          if (commentId) {
+            like({ commentId });
+          }
         }
       }}
-      disabled={isLiking}
       data-testid="like-button"
     >
-      <HeartIcon className="h-5 w-5" aria-hidden="true" />
-      <span className="sr-only">Like</span>
-    </button>
+      {isLiking || isUnliking || (isLoading && isFetching) ? (
+        <Spinner className="h-4 w-4" />
+      ) : (likeId || likeData) && !isError ? (
+        <>
+          <SolidHeartIcon className="h-5 w-5" aria-hidden="true" />
+          <span className="sr-only">Unlike</span>
+        </>
+      ) : (
+        <>
+          <HeartIcon className="h-5 w-5" aria-hidden="true" />
+          <span className="sr-only">Like</span>
+        </>
+      )}
+    </span>
   );
 }

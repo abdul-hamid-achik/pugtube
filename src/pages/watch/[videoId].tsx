@@ -12,7 +12,7 @@ import { User } from "@clerk/nextjs/api";
 import { getAuth } from "@clerk/nextjs/server";
 import { Disclosure } from "@headlessui/react";
 import { Comment, Prisma } from "@prisma/client";
-import { DateTime, Duration } from "luxon";
+import { Duration } from "luxon";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Timestamp from "@/components/timestamp";
 
 interface PageProps {
   keywords: string[];
@@ -49,10 +50,6 @@ type CommentItem = {
 };
 
 type Inputs = { text: string };
-
-const MemoizedCommentCard = React.memo(CommentCard);
-
-const MemoizedLikeButton = React.memo(LikeButton);
 
 function getRandomIndex(arrayLength: number) {
   return Math.floor(Math.random() * arrayLength);
@@ -276,11 +273,11 @@ const Page: NextPageWithLayout<PageProps> = ({
                           className="ml-4 pt-1 align-middle text-sm text-gray-300"
                           data-testid="video-created-at"
                         >
-                          {DateTime.fromISO(props?.createdAt).toRelative()}
+                          <Timestamp timestamp={props?.createdAt} />
                         </p>
                       </div>
                       <div className="flex items-center self-end">
-                        <MemoizedLikeButton
+                        <LikeButton
                           videoId={props.videoId}
                           likeId={props.likeId}
                           refresh={refresh}
@@ -456,7 +453,7 @@ const Page: NextPageWithLayout<PageProps> = ({
                   commentItems
                     ?.filter((props) => props)
                     .map((props) => (
-                      <MemoizedCommentCard
+                      <CommentCard
                         key={(props.comment as Comment).id}
                         comment={props.comment as Comment}
                         author={props.author}
