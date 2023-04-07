@@ -1,14 +1,14 @@
 import log from "@/utils/logger";
 import ffmpeg from "fluent-ffmpeg";
-import { getObject, putObject } from "@/utils/s3";
+import { getObject, putObject, streamToBuffer } from "@/utils/s3";
 import { prisma } from "@/server/db";
 import { v4 as uuid } from "uuid";
 import type { Prisma } from "@prisma/client";
 import { env } from "@/env/server.mjs";
 import os from "os";
 import fs from "fs";
-import { Readable } from "stream";
 import { DateTime } from "luxon";
+import { Readable } from "stream";
 
 export default async function extractThumbnails({
   uploadId,
@@ -17,7 +17,13 @@ export default async function extractThumbnails({
   uploadId: string;
   fileName: string;
 }) {
-  const outputFilesPath = `${os.tmpdir()}/${uploadId}/thumbnails`;
+  const baseDir = `${os.tmpdir()}/${uploadId}`;
+  const inputFileName = `${os.tmpdir()}/${uploadId}/${fileName}`;
+  const outputFilesPath = `${baseDir}/thumbnails`;
+
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir, { recursive: true });
+  }
 
   if (!fs.existsSync(outputFilesPath)) {
     fs.mkdirSync(outputFilesPath, { recursive: true });
@@ -38,11 +44,16 @@ export default async function extractThumbnails({
     Key: `originals/${uploadId}/${fileName}`,
   });
 
+  fs.writeFileSync(
+    inputFileName,
+    await streamToBuffer(video!.Body as Readable)
+  );
+
   const outputFileName = `${outputFilesPath}/thumbnail-%01d.jpg`;
   await new Promise<void>((resolve, reject) => {
-    ffmpeg(video!.Body as Readable)
+    ffmpeg(inputFileName)
+      .outputOptions("-movflags frag_keyframe+empty_moov")
       .outputOptions("-filter:v", "thumbnail,fps=1")
-      .outputOptions("-pix_fmt", "yuvj444p")
       .output(outputFileName)
       .on("start", (commandLine: string) => {
         log.info("Spawned FFmpeg with command: " + commandLine);
@@ -107,6 +118,7 @@ export default async function extractThumbnails({
     fs.unlinkSync(`${outputFilesPath}/${thumbnailFileName}`);
   }
   fs.rmdirSync(outputFilesPath);
+  fs.unlinkSync(inputFileName);
 
   log.debug("Saving thumbnails to db", [thumbnailsData]);
 

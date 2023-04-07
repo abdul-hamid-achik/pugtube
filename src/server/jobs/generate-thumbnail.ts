@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db";
 import ffmpeg from "fluent-ffmpeg";
-import { getObject, putObject } from "@/utils/s3";
+import { getObject, putObject, streamToBuffer } from "@/utils/s3";
 import log from "@/utils/logger";
 import { Readable } from "stream";
 import { env } from "@/env/server.mjs";
@@ -16,23 +16,32 @@ export default async function generateThumbnail({
 }) {
   try {
     log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
+    const baseDir = `${os.tmpdir()}/${uploadId}`;
+    const inputFilePath = `${baseDir}/${fileName}`;
+    const outputFilePath = `${baseDir}/thumbnail.png`;
 
-    log.info(`Transcoding video for upload ID: ${uploadId}...`);
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir, { recursive: true });
+    }
 
     const upload = await getObject({
       Bucket: env.AWS_S3_BUCKET,
       Key: `originals/${uploadId}/${fileName}`,
     });
 
-    const outputFilePath = `${os.tmpdir()}/${uploadId}/thumbnail.png`;
+    fs.writeFileSync(
+      inputFilePath,
+      await streamToBuffer(upload!.Body as Readable)
+    );
+
     await new Promise<void>((resolve, reject) => {
-      ffmpeg(upload!.Body as Readable)
+      ffmpeg(inputFilePath)
+        .outputOptions("-movflags frag_keyframe+empty_moov")
         .outputOptions("-ss", "00:00:01.000")
         .outputOptions("-vf", "scale=720:-2")
         .outputOptions("-vframes", "1")
         .outputOptions("-q:v", "2")
         .outputOptions("-c:v", "png")
-        .outputOptions("-movflags", "+faststart")
         .save(outputFilePath)
         .on("start", (commandLine: string) => {
           log.info("Spawned FFmpeg with command: " + commandLine);
@@ -71,6 +80,7 @@ export default async function generateThumbnail({
     });
 
     fs.unlinkSync(outputFilePath);
+    fs.unlinkSync(inputFilePath);
 
     log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
   } catch (err: any) {

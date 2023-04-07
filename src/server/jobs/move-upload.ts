@@ -4,7 +4,7 @@ import {
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import log from "@/utils/logger";
-
+import { createBackfillFlow } from "@/server/workflows";
 import { env } from "@/env/server.mjs";
 
 export default async function moveUpload({
@@ -14,9 +14,7 @@ export default async function moveUpload({
   uploadId: string;
   fileName: string;
 }) {
-  log.debug(
-    `Moving upload ${uploadId} to originals/${uploadId}/${fileName}...`
-  );
+  log.info(`Moving upload ${uploadId} to originals/${uploadId}/${fileName}...`);
 
   const getObjectInput: GetObjectCommandInput = {
     Bucket: env.AWS_S3_BUCKET,
@@ -30,5 +28,15 @@ export default async function moveUpload({
 
   await moveObject(getObjectInput, putObjectInput);
 
-  log.debug(`Moved upload ${uploadId} to originals/${uploadId}/${fileName}...`);
+  log.info(`Moved upload ${uploadId} to originals/${uploadId}/${fileName}...`);
+
+  const jobNode = await createBackfillFlow({
+    uploadId,
+    fileName,
+  });
+
+  log.info(`Created backfill flow for upload ${uploadId}...`);
+  log.debug(`Backfill flow ID: ${jobNode.job.id || "unknown"}`);
+
+  return jobNode;
 }

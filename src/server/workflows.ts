@@ -10,6 +10,7 @@ export const createPostUploadFlow = async (
     name: "postUpload",
     queueName,
     data,
+
     children: [
       {
         name: "moveUpload",
@@ -28,22 +29,22 @@ export const createPostUploadFlow = async (
               },
             ],
           },
+          {
+            name: "transcodeVideo",
+            queueName,
+            data,
+          },
+          {
+            name: "generatePreview",
+            queueName,
+            data,
+          },
+          {
+            name: "generateThumbnail",
+            queueName,
+            data,
+          },
         ],
-      },
-      {
-        name: "transcodeVideo",
-        queueName,
-        data,
-      },
-      {
-        name: "generatePreview",
-        queueName,
-        data,
-      },
-      {
-        name: "generateThumbnail",
-        queueName,
-        data,
       },
     ],
   });
@@ -59,12 +60,12 @@ export const createBackfillFlow = async (
     data,
     children: [
       {
-        name: "extractThumbnails",
+        name: "analyzeVideo",
         queueName,
         data,
         children: [
           {
-            name: "analyzeVideo",
+            name: "extractThumbnails",
             queueName,
             data,
           },

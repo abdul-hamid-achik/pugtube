@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db";
 import ffmpeg from "fluent-ffmpeg";
-import { getObject, putObject } from "@/utils/s3";
+import { getObject, putObject, streamToBuffer } from "@/utils/s3";
 import log from "@/utils/logger";
 import { Readable } from "stream";
 import { env } from "@/env/server.mjs";
@@ -15,21 +15,29 @@ export default async function generateThumbnail({
   fileName: string;
 }) {
   try {
-    const dir = `${os.tmpdir()}/${uploadId}`;
+    const baseDir = `${os.tmpdir()}/${uploadId}`;
+    const inputFileName = `${baseDir}/${fileName}`;
+    const outputFileName = `${baseDir}/preview.gif`;
 
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir);
     }
+
     log.info(`Generating Gif for upload ID: ${uploadId}...`);
+
     const upload = await getObject({
       Bucket: env.AWS_S3_BUCKET,
       Key: `originals/${uploadId}/${fileName}`,
     });
 
-    const outputFileName = `${dir}/preview.gif`;
+    fs.writeFileSync(
+      inputFileName,
+      await streamToBuffer(upload!.Body as Readable)
+    );
 
     await new Promise<void>((resolve, reject) => {
-      ffmpeg(upload!.Body as Readable)
+      ffmpeg(inputFileName)
+        .outputOptions("-movflags frag_keyframe+empty_moov")
         .outputOptions("-ss", "00:00:00")
         .outputOptions("-t", "3")
         .outputOptions("-vf", "fps=10,scale=720:-2:flags=lanczos")
@@ -73,6 +81,7 @@ export default async function generateThumbnail({
     });
 
     fs.unlinkSync(outputFileName);
+    fs.unlinkSync(inputFileName);
 
     log.info(`Updated video with preview URL: ${previewUrl}`);
   } catch (err: any) {

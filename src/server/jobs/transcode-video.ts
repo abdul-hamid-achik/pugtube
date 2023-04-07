@@ -1,6 +1,6 @@
 import { prisma } from "@/server/db";
 import ffmpeg from "fluent-ffmpeg";
-import { getObject, putObject } from "@/utils/s3";
+import { getObject, putObject, streamToBuffer } from "@/utils/s3";
 import log from "@/utils/logger";
 import os from "os";
 import { ParsedSegment, Parser } from "m3u8-parser";
@@ -16,24 +16,31 @@ export default async function transcodeVideo({
   uploadId: string;
   fileName: string;
 }) {
-  const dir = `${os.tmpdir()}/${uploadId}`;
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
   log.info(`Transcoding video for upload ID: ${uploadId}...`);
+
+  const baseDir = `${os.tmpdir()}/${uploadId}`;
+  const outputFileName = "playlist.m3u8";
+  const outputFilePath = `${baseDir}/${outputFileName}`;
+  const inputFileName = `${baseDir}/${fileName}`;
+
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir);
+  }
 
   const upload = await getObject({
     Bucket: process.env.AWS_S3_BUCKET,
     Key: `originals/${uploadId}/${fileName}`,
   });
 
-  const outputFileName = "playlist.m3u8";
-  const outputFilePath = `${dir}/${outputFileName}`;
+  fs.writeFileSync(
+    inputFileName,
+    await streamToBuffer(upload!.Body as Readable)
+  );
 
   await new Promise<void>((resolve, reject) => {
-    ffmpeg(upload!.Body as Readable)
+    ffmpeg(inputFileName)
       .videoCodec("libx264")
+      .outputOptions("-movflags frag_keyframe+empty_moov")
       .outputOptions("-preset", "fast")
       .outputOptions("-profile:v", "main")
       .outputOptions("-start_number", "0")
@@ -42,10 +49,9 @@ export default async function transcodeVideo({
       .outputOptions("-hls_time", "3")
       .outputOptions("-hls_flags", "independent_segments")
       .outputOptions("-hls_segment_type", "mpegts")
-      .outputOptions("-hls_segment_filename", `${dir}/segment-%01d.ts`)
+      .outputOptions("-hls_segment_filename", `${baseDir}/segment-%01d.ts`)
       .outputOptions("-hls_playlist_type", "vod")
       .outputOptions("-hls_list_size", "0")
-      .outputOptions("-movflags", "+faststart")
       .outputOptions("-b:v", "800k")
       .outputOptions("-maxrate", "1000k")
       .outputOptions("-bufsize", "1200k")
@@ -96,8 +102,6 @@ export default async function transcodeVideo({
     Body: transcodedVideo,
   });
 
-  fs.unlinkSync(outputFilePath);
-
   const video = await prisma.video.findUniqueOrThrow({
     where: {
       uploadId: uploadId,
@@ -136,7 +140,7 @@ export default async function transcodeVideo({
         .map(async (parsedSegment: ParsedSegment, index: number) => {
           try {
             log.info(`Saving segment ${index}...`);
-            const segmentPath = `${dir}/segment-${index}.ts`;
+            const segmentPath = `${baseDir}/segment-${index}.ts`;
             const segment = fs.readFileSync(segmentPath);
             const segmentKey = `transcoded/${uploadId}/segment-${index}.ts`;
             await putObject({
@@ -199,6 +203,9 @@ export default async function transcodeVideo({
         transcoded: true,
       },
     });
+
+    fs.unlinkSync(inputFileName);
+    fs.unlinkSync(outputFilePath);
   } catch (error) {
     log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
   }

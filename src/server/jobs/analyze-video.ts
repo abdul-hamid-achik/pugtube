@@ -22,10 +22,6 @@ export default async function analyzeVideo({
     alpha: 1,
   });
 
-  const replicate = new Replicate({
-    auth: env.REPLICATE_API_TOKEN as string,
-  });
-
   const {
     id: videoId,
     thumbnails,
@@ -55,6 +51,11 @@ export default async function analyzeVideo({
   });
 
   const contentTagsData: Prisma.ContentTagCreateManyInput[] = [];
+
+  if (thumbnails.length === 0) {
+    throw Error("No thumbnails found");
+  }
+
   log.info("found thumbnails", thumbnails);
   for (let i = 0; i < thumbnails.length; i++) {
     const thumbnailId = thumbnails[i]!.id;
@@ -78,7 +79,9 @@ export default async function analyzeVideo({
 
     // only executing replicate if premium
     if (premium) {
-      await replicate.predictions.create({
+      await new Replicate({
+        auth: env.REPLICATE_API_TOKEN as string,
+      }).predictions.create({
         version: replicateModelVersion,
         input: {
           image: await getSignedUrl(thumbnails[i]!.url),
@@ -88,6 +91,7 @@ export default async function analyzeVideo({
     }
 
     log.debug("found mobilenet predictions", predictions);
+
     predictions
       .map((preduction) =>
         preduction.className.split(",").map((name) => ({
