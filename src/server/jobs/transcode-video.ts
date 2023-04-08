@@ -200,7 +200,7 @@ export default async function transcodeVideo({
         id: uploadId,
       },
       data: {
-        transcoded: true,
+        transcodedAt: new Date(),
       },
     });
 

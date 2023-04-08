@@ -157,7 +157,8 @@ model Upload {
   offset       Int
   creationDate DateTime?      @map("creation_date")
   metadata     VideoMetadata? @relation(fields: [metadataId], references: [id])
-  transcoded   Boolean        @default(false)
+  transcodedAt DateTime?      @map("transcoded_at")
+  movedAt      DateTime?      @map("moved_at")
   metadataId   String?        @unique @map("metadata_id")
   video        Video?
 

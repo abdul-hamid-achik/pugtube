@@ -8,6 +8,34 @@ import { useState } from "react";
 import { type Job } from "bullmq";
 import { DateTime } from "luxon";
 import { useAuth } from "@clerk/nextjs";
+// @ts-ignore
+import { Treebeard } from "react-treebeard";
+
+function flattenTree(node: any) {
+  const children = node.children || [];
+  return [node, ...children.flatMap((child: any) => flattenTree(child))];
+}
+
+const StatusIconHeader = ({ node }: { node: any }) => {
+  const Icon = node.value ? CheckIcon : XMarkIcon;
+  const iconClass = node.value ? "text-green-500" : "text-red-500";
+
+  return (
+    <div className="flex items-center">
+      <Icon className={`h-6 w-6 ${iconClass}`} />
+      <span className="ml-2 font-medium text-white">{node.name}</span>
+    </div>
+  );
+};
+
+const StatusIconContainer = (props: any) => {
+  const { node, onClick } = props;
+  return (
+    <div className="cursor-pointer bg-gray-900 p-4 shadow" onClick={onClick}>
+      <StatusIconHeader node={node} />
+    </div>
+  );
+};
 
 export default function Page() {
   const {
@@ -57,85 +85,106 @@ export default function Page() {
     }
   );
 
-  const statusIcons = [
-    {
-      label: "Segments",
-      value: segments.length > 0 || upload?.transcoded,
-      onClick() {
-        enqueue({
-          name: "transcode-video",
-          payload: {
-            uploadId: uploadId as string,
-            fileName: upload?.metadata?.fileName,
-          },
-        });
-      },
+  const treeData = {
+    name: "Moved upload to originals folder",
+    toggled: true,
+    onClick() {
+      enqueue({
+        name: "move-upload",
+        payload: {
+          uploadId: uploadId as string,
+          fileName: upload?.metadata?.fileName,
+        },
+      });
     },
-    {
-      label: "Thumbnail",
-      value: !!video?.thumbnailUrl,
-      onClick() {
-        enqueue({
-          name: "generate-thumbnail",
-          payload: {
-            uploadId: uploadId as string,
-            fileName: upload?.metadata?.fileName,
+    value: !!upload?.movedAt,
+    children: [
+      {
+        name: "Extracting video thumbnails",
+        toggled: true,
+        value: video?.thumbnails?.length! > 0,
+        onClick() {
+          enqueue({
+            name: "extract-thumbnails",
+            payload: {
+              uploadId: uploadId as string,
+              fileName: upload?.metadata?.fileName,
+            },
+          });
+        },
+        children: [
+          {
+            name: "Analyzing video content",
+            toggled: true,
+            value: !!video?.analyzedAt,
+            onClick() {
+              enqueue({
+                name: "analyze-video",
+                payload: {
+                  uploadId: uploadId as string,
+                  fileName: upload?.metadata?.fileName,
+                },
+              });
+            },
           },
-        });
+        ],
       },
-    },
+      {
+        name: "Transcoding video to hls",
+        toggled: true,
+        value: upload?.transcodedAt,
+        onClick() {
+          enqueue({
+            name: "transcode-video",
+            payload: {
+              uploadId: uploadId as string,
+              fileName: upload?.metadata?.fileName,
+            },
+          });
+        },
+      },
+      {
+        name: "Creating a video thumbnail",
+        toggled: true,
+        value: !!video?.thumbnailUrl,
+        onClick() {
+          enqueue({
+            name: "generate-thumbnail",
+            payload: {
+              uploadId: uploadId as string,
+              fileName: upload?.metadata?.fileName,
+            },
+          });
+        },
+      },
 
-    {
-      label: "Preview",
-      value: !!video?.previewUrl,
-      onClick() {
-        enqueue({
-          name: "generate-preview",
-          payload: {
-            uploadId: uploadId as string,
-            fileName: upload?.metadata?.fileName,
-          },
-        });
+      {
+        name: "Creating a video preview",
+        toggled: true,
+        value: !!video?.previewUrl,
+        onClick() {
+          enqueue({
+            name: "generate-preview",
+            payload: {
+              uploadId: uploadId as string,
+              fileName: upload?.metadata?.fileName,
+            },
+          });
+        },
       },
-    },
-    {
-      label: "Thumbnails",
-      value: video?.thumbnails?.length! > 0,
-      onClick() {
-        enqueue({
-          name: "extract-thumbnails",
-          payload: {
-            uploadId: uploadId as string,
-            fileName: upload?.metadata?.fileName,
-          },
-        });
-      },
-    },
-    {
-      label: "Analyzed",
-      value: !!video?.analyzedAt,
-      onClick() {
-        enqueue({
-          name: "analyze-video",
-          payload: {
-            uploadId: uploadId as string,
-            fileName: upload?.metadata?.fileName,
-          },
-        });
-      },
-    },
-  ];
+    ],
+  };
 
   const isDone =
-    upload?.transcoded ||
-    statusIcons.every(({ value }) => value) ||
+    upload?.transcodedAt ||
+    flattenTree(treeData).every(({ value }) => value) ||
     jobs?.every((job) => ({
       completed: !!job.finishedOn,
     }));
 
   return (
     <div className="container mx-auto max-w-2xl bg-gray-600 p-8">
-      {!upload?.transcoded && !video?.analyzedAt && (
+      {!upload?.transcodedAt && !video?.analyzedAt && (
         <p className="mb-4 text-sm font-bold text-white">
           Please hold, your upload is being processed...
         </p>
@@ -176,22 +225,22 @@ export default function Page() {
           </Link>
         )}
       </div>
-      <ul>
-        {statusIcons.map(({ label, value, onClick }) => (
-          <li
-            key={label}
-            className="flex cursor-pointer items-center justify-center border-b-0 border-dashed border-gray-400 bg-gray-900 p-4 shadow"
-            onClick={onClick}
-          >
-            <span
-              className={`h-6 w-6 ${value ? "text-green-500" : "text-red-500"}`}
-            >
-              {value ? <CheckIcon /> : <XMarkIcon />}
-            </span>
-            <span className="ml-2 font-medium text-white">{label}</span>
-          </li>
-        ))}
-      </ul>
+      <Treebeard
+        data={treeData}
+        decorators={{ ...Treebeard.decorators, Container: StatusIconContainer }}
+        onToggle={(
+          node: { onClick: () => void; children: any; toggled: any },
+          toggled: any
+        ) => {
+          if (node.onClick) {
+            node.onClick();
+          }
+          if (node.children) {
+            node.toggled = toggled;
+          }
+        }}
+      />
+
       {results?.length > 0 && (
         <div className="mt-4 bg-black p-2">
           <h3 className="p-2 pt-0 text-gray-50">Jobs</h3>
