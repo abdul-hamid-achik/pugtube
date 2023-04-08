@@ -19,9 +19,7 @@ export default async function generateThumbnail({
     const inputFileName = `${baseDir}/${fileName}`;
     const outputFileName = `${baseDir}/preview.gif`;
 
-    if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir);
-    }
+    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
 
     log.info(`Generating Gif for upload ID: ${uploadId}...`);
 

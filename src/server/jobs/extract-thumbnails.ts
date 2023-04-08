@@ -21,13 +21,10 @@ export default async function extractThumbnails({
   const inputFileName = `${os.tmpdir()}/${uploadId}/${fileName}`;
   const outputFilesPath = `${baseDir}/thumbnails`;
 
-  if (!fs.existsSync(baseDir)) {
-    fs.mkdirSync(baseDir, { recursive: true });
-  }
+  if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
 
-  if (!fs.existsSync(outputFilesPath)) {
+  if (!fs.existsSync(outputFilesPath))
     fs.mkdirSync(outputFilesPath, { recursive: true });
-  }
 
   const { id: videoId, duration } = await prisma.video.findUniqueOrThrow({
     where: {
@@ -118,7 +115,7 @@ export default async function extractThumbnails({
     fs.unlinkSync(`${outputFilesPath}/${thumbnailFileName}`);
   }
   fs.rmdirSync(outputFilesPath);
-  fs.unlinkSync(inputFileName);
+  if (fs.existsSync(inputFileName)) fs.unlinkSync(inputFileName);
 
   log.debug("Saving thumbnails to db", [thumbnailsData]);
 

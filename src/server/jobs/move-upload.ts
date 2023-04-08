@@ -22,7 +22,7 @@ export default async function moveUpload({
     },
   });
 
-  if (upload.movedAt) {
+  if (upload?.movedAt) {
     log.info(
       `Upload ${uploadId} already moved to originals/${uploadId}/${fileName}...`
     );

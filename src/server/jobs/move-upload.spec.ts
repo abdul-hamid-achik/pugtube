@@ -3,6 +3,17 @@ import { moveObject } from "@/utils/s3";
 import { createBackfillFlow } from "@/server/workflows";
 import moveUpload from "./move-upload";
 
+jest.mock("@/server/db", () => ({
+  prisma: {
+    upload: {
+      findUniqueOrThrow: jest.fn().mockResolvedValue({
+        id: "0000000-0000-0000-0000-000000000000",
+        movedAt: null,
+      }),
+      update: jest.fn(),
+    },
+  },
+}));
 jest.mock("@/utils/s3", () => ({ moveObject: jest.fn() }));
 jest.mock("@/server/workflows", () => ({
   createBackfillFlow: jest.fn().mockResolvedValue({

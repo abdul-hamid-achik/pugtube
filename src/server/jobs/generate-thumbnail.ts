@@ -20,9 +20,7 @@ export default async function generateThumbnail({
     const inputFilePath = `${baseDir}/${fileName}`;
     const outputFilePath = `${baseDir}/thumbnail.png`;
 
-    if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir, { recursive: true });
-    }
+    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
 
     const upload = await getObject({
       Bucket: env.AWS_S3_BUCKET,

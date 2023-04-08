@@ -23,9 +23,7 @@ export default async function transcodeVideo({
   const outputFilePath = `${baseDir}/${outputFileName}`;
   const inputFileName = `${baseDir}/${fileName}`;
 
-  if (!fs.existsSync(baseDir)) {
-    fs.mkdirSync(baseDir);
-  }
+  if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
 
   const upload = await getObject({
     Bucket: process.env.AWS_S3_BUCKET,
@@ -204,8 +202,8 @@ export default async function transcodeVideo({
       },
     });
 
-    fs.unlinkSync(inputFileName);
-    fs.unlinkSync(outputFilePath);
+    if (fs.existsSync(inputFileName)) fs.unlinkSync(inputFileName);
+    if (fs.existsSync(outputFilePath)) fs.unlinkSync(outputFilePath);
   } catch (error) {
     log.error(`Error transcoding video for upload ID: ${uploadId}`, { error });
   }
