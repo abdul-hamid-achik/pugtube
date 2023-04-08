@@ -7,6 +7,7 @@ const queue = new Queue(env.WORKER_NAME || "default", {
   defaultJobOptions: {
     removeOnComplete: true,
     removeOnFail: true,
+    attempts: 1,
     backoff: {
       type: "exponential",
       delay: 1000,

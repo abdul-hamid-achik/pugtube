@@ -14,74 +14,70 @@ export default async function generateThumbnail({
   uploadId: string;
   fileName: string;
 }) {
-  try {
-    log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
-    const baseDir = `${os.tmpdir()}/${uploadId}`;
-    const inputFilePath = `${baseDir}/${fileName}`;
-    const outputFilePath = `${baseDir}/thumbnail.png`;
+  log.info(`Generating thumbnail for upload ID: ${uploadId}...`);
+  const baseDir = `${os.tmpdir()}/${uploadId}`;
+  const inputFilePath = `${baseDir}/${fileName}`;
+  const outputFilePath = `${baseDir}/thumbnail.png`;
 
-    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
+  if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir);
 
-    const upload = await getObject({
-      Bucket: env.AWS_S3_BUCKET,
-      Key: `originals/${uploadId}/${fileName}`,
-    });
+  const upload = await getObject({
+    Bucket: env.AWS_S3_BUCKET,
+    Key: `originals/${uploadId}/${fileName}`,
+  });
 
-    fs.writeFileSync(
-      inputFilePath,
-      await streamToBuffer(upload!.Body as Readable)
-    );
+  fs.writeFileSync(
+    inputFilePath,
+    await streamToBuffer(upload!.Body as Readable)
+  );
 
-    await new Promise<void>((resolve, reject) => {
-      ffmpeg(inputFilePath)
-        .outputOptions("-movflags frag_keyframe+empty_moov")
-        .outputOptions("-ss", "00:00:01.000")
-        .outputOptions("-vf", "scale=720:-2")
-        .outputOptions("-vframes", "1")
-        .outputOptions("-q:v", "2")
-        .outputOptions("-c:v", "png")
-        .save(outputFilePath)
-        .on("start", (commandLine: string) => {
-          log.info("Spawned FFmpeg with command: " + commandLine);
-        })
-        .on("error", (err: any) => {
-          log.error(err);
-          reject(err);
-        })
-        .on("end", () => {
-          log.info("Finished processing");
-          resolve();
-        });
-    });
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(inputFilePath)
+      .outputOptions("-movflags frag_keyframe+empty_moov")
+      .outputOptions("-ss", "00:00:01.000")
+      .outputOptions("-vf", "scale=720:-2")
+      .outputOptions("-vframes", "1")
+      .outputOptions("-q:v", "2")
+      .outputOptions("-c:v", "png")
+      .save(outputFilePath)
+      .on("start", (commandLine: string) => {
+        log.info("Spawned FFmpeg with command: " + commandLine);
+      })
+      .on("error", (err: any) => {
+        log.error(err);
+        reject(err);
+      })
+      .on("end", () => {
+        log.info("Finished processing");
+        resolve();
+      });
+  });
 
-    log.info(`Thumbnail generated for upload ID: ${uploadId}`);
-    const thumbnail = fs.readFileSync(outputFilePath);
-    const thumbnailKey = `thumbnails/${uploadId}.png`;
+  log.info(`Thumbnail generated for upload ID: ${uploadId}`);
+  const thumbnail = fs.readFileSync(outputFilePath);
+  const thumbnailKey = `thumbnails/${uploadId}.png`;
 
-    await putObject({
-      Bucket: env.AWS_S3_BUCKET,
-      Key: thumbnailKey,
-      Body: thumbnail,
-      ContentType: "image/png",
-      ContentLength: thumbnail.length,
-    });
+  await putObject({
+    Bucket: env.AWS_S3_BUCKET,
+    Key: thumbnailKey,
+    Body: thumbnail,
+    ContentType: "image/png",
+    ContentLength: thumbnail.length,
+  });
 
-    const thumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${thumbnailKey}`;
+  const thumbnailUrl = `https://${env.AWS_S3_BUCKET}.s3.${env.AWS_S3_REGION}.amazonaws.com/${thumbnailKey}`;
 
-    await prisma.video.update({
-      where: {
-        uploadId,
-      },
-      data: {
-        thumbnailUrl,
-      },
-    });
+  await prisma.video.update({
+    where: {
+      uploadId,
+    },
+    data: {
+      thumbnailUrl,
+    },
+  });
 
-    fs.unlinkSync(outputFilePath);
-    fs.unlinkSync(inputFilePath);
+  fs.unlinkSync(outputFilePath);
+  fs.unlinkSync(inputFilePath);
 
-    log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
-  } catch (err: any) {
-    log.error(err);
-  }
+  log.info(`Updated video with thumbnail URL: ${thumbnailUrl}`);
 }
