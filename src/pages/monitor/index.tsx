@@ -71,7 +71,7 @@ function Monitor() {
             <p>Progress: {JSON.stringify(job.progress, null, 2)}</p>
             <p>Failure Reason: {job.failedReason}</p>
             <p>Return Value: {job.returnvalue}</p>
-            <p>Strack Trace: {job.stacktrace}</p>
+            <p>Stack Trace: {JSON.stringify(job.stacktrace, null, 2)}</p>
             <Timestamp timestamp={job.timestamp / 1000} />
           </li>
         ))}
