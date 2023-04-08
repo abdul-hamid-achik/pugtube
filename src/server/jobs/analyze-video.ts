@@ -104,6 +104,8 @@ export default async function analyzeVideo({
       .forEach((prediction) => {
         contentTagsData.push(prediction);
       });
+
+    dispose(tfimage);
   }
 
   log.debug("Saving contentTags to db", [contentTagsData]);
@@ -121,5 +123,4 @@ export default async function analyzeVideo({
       analyzedAt: new Date(),
     },
   });
-  dispose();
 }
