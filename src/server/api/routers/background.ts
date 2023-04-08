@@ -29,4 +29,30 @@ export const backgroundRouter = createTRPCRouter({
         input.map(async (id) => await ctx.queue.getJob(id))
       );
     }),
+
+  jobsByState: protectedProcedure
+    .input(
+      z.array(
+        z.enum([
+          "completed",
+          "failed",
+          "active",
+          "delayed",
+          "waiting",
+          "waiting-children",
+          "paused",
+          "repeat",
+          "wait",
+        ])
+      )
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.queue.getJobs(input);
+    }),
+
+  removeJobFromQueue: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.queue.remove(input);
+    }),
 });
