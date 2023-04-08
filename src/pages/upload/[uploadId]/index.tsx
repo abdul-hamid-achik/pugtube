@@ -90,7 +90,7 @@ export default function Page() {
     toggled: true,
     onClick() {
       enqueue({
-        name: "move-upload",
+        name: "moveUpload",
         payload: {
           uploadId: uploadId as string,
           fileName: upload?.metadata?.fileName,
@@ -105,7 +105,7 @@ export default function Page() {
         value: video?.thumbnails?.length! > 0,
         onClick() {
           enqueue({
-            name: "extract-thumbnails",
+            name: "extractThumbnails",
             payload: {
               uploadId: uploadId as string,
               fileName: upload?.metadata?.fileName,
@@ -119,7 +119,7 @@ export default function Page() {
             value: !!video?.analyzedAt,
             onClick() {
               enqueue({
-                name: "analyze-video",
+                name: "analyzeVideo",
                 payload: {
                   uploadId: uploadId as string,
                   fileName: upload?.metadata?.fileName,
@@ -135,7 +135,7 @@ export default function Page() {
         value: upload?.transcodedAt,
         onClick() {
           enqueue({
-            name: "transcode-video",
+            name: "transcodeVideo",
             payload: {
               uploadId: uploadId as string,
               fileName: upload?.metadata?.fileName,
@@ -149,7 +149,7 @@ export default function Page() {
         value: !!video?.thumbnailUrl,
         onClick() {
           enqueue({
-            name: "generate-thumbnail",
+            name: "generateThumbnail",
             payload: {
               uploadId: uploadId as string,
               fileName: upload?.metadata?.fileName,
@@ -164,7 +164,7 @@ export default function Page() {
         value: !!video?.previewUrl,
         onClick() {
           enqueue({
-            name: "generate-preview",
+            name: "generatePreview",
             payload: {
               uploadId: uploadId as string,
               fileName: upload?.metadata?.fileName,
