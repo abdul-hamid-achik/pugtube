@@ -123,4 +123,6 @@ export default async function analyzeVideo({
       analyzedAt: new Date(),
     },
   });
+
+  log.info("Finished analyzing video", { uploadId, fileName });
 }
