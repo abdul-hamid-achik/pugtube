@@ -3,12 +3,10 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { type AppProps } from "next/app";
 import Layout from "@/components/layout";
 import "@/styles/globals.css";
-
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 
-// TODO: enable this when its supported
-// export { reportWebVitals } from "next-axiom";
+export { reportWebVitals } from "next-axiom";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
