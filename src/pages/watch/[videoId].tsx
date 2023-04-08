@@ -126,7 +126,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       .exec();
   }
 
-  const isVideoReady = video?.upload?.transcoded;
+  const isVideoReady = video?.upload?.transcodedAt !== null;
   return {
     props: {
       videoId,

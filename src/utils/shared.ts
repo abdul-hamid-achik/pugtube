@@ -85,7 +85,9 @@ export async function getFeed({
     },
     where: {
       upload: {
-        transcoded: true,
+        transcodedAt: {
+          not: null,
+        },
       },
     },
   });
@@ -203,7 +205,9 @@ export async function getSearchResults({
         },
       ],
       upload: {
-        transcoded: true,
+        transcodedAt: {
+          not: null,
+        },
       },
     },
   });

@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         ...video,
         upload: {
           ...video.upload,
-          creationDate: video.upload.creationDate!.toISOString(),
+          createdAt: video.upload.createdAt!.toISOString(),
         },
         analyzedAt: video.analyzedAt?.toISOString(),
         createdAt: video.createdAt.toISOString(),

@@ -155,7 +155,7 @@ model Upload {
   id           String         @id @default(cuid())
   size         Int?
   offset       Int
-  creationDate DateTime?      @map("creation_date")
+  createdAt    DateTime?      @map("created_at")
   metadata     VideoMetadata? @relation(fields: [metadataId], references: [id])
   transcodedAt DateTime?      @map("transcoded_at")
   movedAt      DateTime?      @map("moved_at")

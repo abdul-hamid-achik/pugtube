@@ -19,7 +19,7 @@ async function main() {
 
   const uploads = await prisma.upload.findMany({
     where: {
-      transcoded: false,
+      transcodedAt: null,
       id: {
         in: videos.map((v) => v.uploadId),
       },
@@ -32,7 +32,7 @@ async function main() {
         in: videos.map((v) => v.uploadId),
       },
       upload: {
-        transcoded: false,
+        transcodedAt: null,
       },
     },
   });

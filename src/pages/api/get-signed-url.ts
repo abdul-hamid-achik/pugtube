@@ -116,8 +116,8 @@ export default async function handler(
         data: {
           size: size as number,
           offset: 0,
-          creationDate: new Date(),
-          transcoded: false,
+          createdAt: new Date(),
+          transcodedAt: null,
           id: key,
         },
       });
