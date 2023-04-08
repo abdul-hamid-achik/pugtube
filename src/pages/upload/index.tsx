@@ -166,7 +166,7 @@ export default function Upload() {
       className="flex w-full justify-center align-middle"
     >
       <div className="mb-8 flex w-full flex-col justify-between lg:max-w-3xl">
-        <div className="flex w-full flex-col sm:px-2 md:px-4 lg:px-8">
+        <div className="flex w-full flex-col md:px-4 lg:px-8">
           <div className="mb-6">
             <label
               htmlFor="title"
@@ -261,20 +261,20 @@ export default function Upload() {
             />
           </div>
         </div>
-        <div className="xs:w-full mx-auto">
+        <div className="xs:w-full md:mx-auto">
           <button
             type="submit"
             className={`rounded ${
               errors.title || errors.category || errors.description
                 ? "bg-red-500"
                 : "bg-gray-50"
-            } w-full py-2 px-4 text-black focus:outline-none lg:w-60`}
+            } w-full py-2 px-4 text-black focus:outline-none md:w-60`}
           >
             Upload
           </button>
         </div>
         <div className="mx-auto mt-6 flex flex-col justify-between align-bottom">
-          <p className="self-end text-sm text-gray-200">
+          <p className="self-end text-xs text-gray-200">
             By uploading, you agree to our&nbsp;
             <Link href="/terms-of-service" className="text-blue-400">
               Terms of Service
