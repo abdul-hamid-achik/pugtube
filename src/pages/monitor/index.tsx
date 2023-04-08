@@ -72,7 +72,7 @@ function Monitor() {
             <p>Failure Reason: {job.failedReason}</p>
             <p>Return Value: {job.returnvalue}</p>
             <p>Strack Trace: {job.stacktrace}</p>
-            <Timestamp timestamp={job.timestamp} />
+            <Timestamp timestamp={job.timestamp / 1000} />
           </li>
         ))}
       </ul>
