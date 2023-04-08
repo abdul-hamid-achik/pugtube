@@ -1,7 +1,10 @@
 import { FlowProducer } from "bullmq";
 import { env } from "@/env/server.mjs";
+import { connection } from "@/utils/redis";
 
-const flowProducer = new FlowProducer();
+const flowProducer = new FlowProducer({
+  connection,
+});
 export const createPostUploadFlow = async (
   data: { uploadId: string; fileName: string },
   queueName: string = env.WORKER_NAME || "default"
