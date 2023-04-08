@@ -80,17 +80,19 @@ export default async function deleteVideoArtifacts({
   });
   log.debug(`Deleting video, upload, metadata, segments, and playlist...`);
 
-  await prisma.hlsSegment.deleteMany({
-    where: {
-      playlistId: video?.hlsPlaylist?.id as string,
-    },
-  });
+  if (video?.hlsPlaylist) {
+    await prisma.hlsSegment.deleteMany({
+      where: {
+        playlistId: video?.hlsPlaylist?.id as string,
+      },
+    });
 
-  await prisma.hlsPlaylist.delete({
-    where: {
-      id: video?.hlsPlaylist?.id as string,
-    },
-  });
+    await prisma.hlsPlaylist.delete({
+      where: {
+        id: video?.hlsPlaylist?.id as string,
+      },
+    });
+  }
 
   await prisma.contentTag.deleteMany({
     where: {
@@ -112,16 +114,18 @@ export default async function deleteVideoArtifacts({
     },
   });
 
-  await prisma.upload.delete({
-    where: {
-      id: video?.upload.id,
-    },
-  });
+  if (video?.upload) {
+    await prisma.upload.delete({
+      where: {
+        id: video?.upload.id,
+      },
+    });
 
-  await prisma.videoMetadata.delete({
-    where: {
-      id: video?.upload?.metadataId as string,
-    },
-  });
+    await prisma.videoMetadata.delete({
+      where: {
+        id: video?.upload?.metadataId as string,
+      },
+    });
+  }
   log.debug(`Deleted video artifacts for video ID: ${videoId}...`);
 }
