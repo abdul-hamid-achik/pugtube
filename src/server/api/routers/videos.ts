@@ -118,7 +118,7 @@ export const videoRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      return await ctx.queue.add("delete-video-artifacts", {
+      return await ctx.queue.add("deleteVideoArtifacts", {
         videoId: input,
       });
     }),
