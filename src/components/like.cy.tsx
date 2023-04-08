@@ -1,5 +1,6 @@
 import { api } from "@/utils/api";
 import LikeButton, { type LikeButtonProps } from "./like";
+import React from "react";
 
 const WrappedComponent = api.withTRPC(LikeButton) as React.FC<LikeButtonProps>;
 

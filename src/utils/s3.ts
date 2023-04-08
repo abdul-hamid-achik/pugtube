@@ -93,14 +93,12 @@ export async function putObject(input: PutObjectCommandInput) {
 }
 
 export async function getSignedUrl(s3ObjectUrl: string) {
-  const { bucket, region, key } = parseS3ObjectUrl(s3ObjectUrl);
-
   const presigner = new S3RequestPresigner({
     credentials: {
       accessKeyId: env.AWS_ACCESS_KEY_ID as string,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY as string,
     },
-    region: region as string,
+    region: env.AWS_S3_REGION as string,
     sha256: Sha256,
   });
 

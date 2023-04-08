@@ -36,7 +36,7 @@ export default async function moveUpload({
   });
 
   log.info(`Created backfill flow for upload ${uploadId}...`);
-  log.debug(`Backfill flow ID: ${jobNode.job.id || "unknown"}`);
+  log.debug(`Backfill flow ID: ${jobNode?.job?.id || "unknown"}`);
 
   return jobNode;
 }

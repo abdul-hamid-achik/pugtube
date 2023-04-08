@@ -1,9 +1,16 @@
 import { expect } from "@jest/globals";
 import { moveObject } from "@/utils/s3";
+import { createBackfillFlow } from "@/server/workflows";
 import moveUpload from "./move-upload";
 
 jest.mock("@/utils/s3", () => ({ moveObject: jest.fn() }));
-
+jest.mock("@/server/workflows", () => ({
+  createBackfillFlow: jest.fn().mockResolvedValue({
+    job: {
+      id: "0000000-0000-0000-0000-000000000000",
+    },
+  }),
+}));
 describe("moveUpload", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,5 +33,6 @@ describe("moveUpload", () => {
     expect(upload).toBeDefined();
     expect(upload!.Body!.toString()).not.toBeNull();
     expect(moveObject).toHaveBeenCalled();
+    expect(createBackfillFlow).toHaveBeenCalled();
   });
 });

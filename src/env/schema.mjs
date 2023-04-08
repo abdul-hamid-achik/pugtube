@@ -11,13 +11,13 @@ import { z } from "zod";
  */
 export const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   GITHUB_ID: z.string(),
   GITHUB_SECRET: z.string(),
   DISCORD_ID: z.string(),
   DISCORD_SECRET: z.string(),
   CLERK_SECRET_KEY: z.string(),
-  REDIS_URL: z.string().url(),
   AXIOM_TOKEN: z.string(),
   AXIOM_DATASET: z.string(),
   PEXELS_API_KEY: z.string(),
@@ -25,8 +25,8 @@ export const serverSchema = z.object({
   AWS_S3_REGION: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
-  WORKER_NAME: z.string(),
-  WORKER_QUEUE: z.string(),
+  WORKER_NAME: z.string().optional(),
+  WORKER_QUEUE: z.string().optional(),
   REPLICATE_API_TOKEN: z.string().optional()
 });
 
@@ -37,7 +37,7 @@ export const serverSchema = z.object({
  */
 export const serverEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
-  REDIS_URL: process.env.REDIS_URL,
+  REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
   NODE_ENV: process.env.NODE_ENV,
   GITHUB_ID: process.env.GITHUB_ID,
   GITHUB_SECRET: process.env.GITHUB_SECRET,
