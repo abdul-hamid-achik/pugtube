@@ -4,6 +4,7 @@ describe("authenticated", () => {
   beforeEach(() => {
     cy.visit("/")
       .window()
+      .wait(1000)
       .should("have.property", "Clerk")
       .session("signed-in", () => {
         cy.signIn("demo@pugtube.dev", "clerkpassword1234");
