@@ -33,7 +33,7 @@ import {
 import { NextPageWithLayout } from "@/pages/_app";
 import { Disclosure } from "@headlessui/react";
 import Link from "next/link";
-import { type BullMqJob } from "@/types/globals";
+import { type BullMqJob } from "@/server/queue";
 
 type State = JobType | "all";
 const states: State[] = [

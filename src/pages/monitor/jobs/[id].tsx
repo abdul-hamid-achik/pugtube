@@ -1,11 +1,10 @@
 import { NextPageWithLayout } from "@/pages/_app";
 import { GetServerSidePropsContext } from "next";
 import { api } from "@/utils/api";
-import queue from "@/server/queue";
+import queue, { type BullMqJob } from "@/server/queue";
 import Spinner from "@/components/spinner";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { type BullMqJob } from "@/types/globals";
 
 interface PageProps {
   job: BullMqJob;

@@ -1,5 +1,3 @@
-import { Job } from "bullmq";
-
 declare module "dotenv-vault-core" {
   export function config(): void;
 }
@@ -63,41 +61,3 @@ declare module "m3u8-parser" {
     end(): void;
   }
 }
-
-declare type BullMqJob = Omit<
-  Job,
-  | "toJSON"
-  | "scripts"
-  | "addJob"
-  | "changeDelay"
-  | "extendLock"
-  | "getState"
-  | "moveToDelayed"
-  | "moveToWaitingChildren"
-  | "promote"
-  | "updateProgress"
-  | "discard"
-  | "queue"
-  | "asJSON"
-  | "asJSONSandbox"
-  | "update"
-  | "log"
-  | "clearLogs"
-  | "remove"
-  | "moveToCompleted"
-  | "moveToFailed"
-  | "isCompleted"
-  | "isFailed"
-  | "isDelayed"
-  | "isWaitingChildren"
-  | "isActive"
-  | "isWaiting"
-  | "queueName"
-  | "prefix"
-  | "queueQualifiedName"
-  | "getChildrenValues"
-  | "getDependencies"
-  | "getDependenciesCount"
-  | "waitUntilFinished"
-  | "retry"
->;
