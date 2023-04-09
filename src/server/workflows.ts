@@ -1,6 +1,7 @@
 import { FlowProducer } from "bullmq";
 import { env } from "@/env/server.mjs";
 import { connection } from "@/utils/redis";
+import { jobOptions } from "@/server/queue";
 
 const flowProducer = new FlowProducer({
   connection,
@@ -95,15 +96,7 @@ export const createBackfillFlow = async (
     {
       queuesOptions: {
         [queueName]: {
-          defaultJobOptions: {
-            removeOnComplete: true,
-            removeOnFail: true,
-            attempts: 1,
-            backoff: {
-              type: "exponential",
-              delay: 1000,
-            },
-          },
+          defaultJobOptions: jobOptions,
         },
       },
     }

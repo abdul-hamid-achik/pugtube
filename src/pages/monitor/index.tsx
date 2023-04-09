@@ -6,17 +6,32 @@ import {
   CheckIcon,
   ClockIcon,
   EllipsisVerticalIcon,
+  HandRaisedIcon,
+  MagnifyingGlassIcon,
   PauseIcon,
   PlayIcon,
   QuestionMarkCircleIcon,
   ViewColumnsIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/spinner";
-import { Card, Grid, Metric, Tab, TabList, Text, Title } from "@tremor/react";
+import {
+  Card,
+  DateRangePicker,
+  DonutChart,
+  Grid,
+  LineChart,
+  Metric,
+  Tab,
+  TabList,
+  Text,
+  Title,
+} from "@tremor/react";
 import { NextPageWithLayout } from "@/pages/_app";
 import { Disclosure } from "@headlessui/react";
+import Link from "next/link";
 
 type State = JobType | "all";
 const states: State[] = [
@@ -46,30 +61,71 @@ const stateIcons = {
   unknown: <QuestionMarkCircleIcon className="h-4 w-4" />,
 };
 
-interface Props {}
-const Monitor: NextPageWithLayout<Props> = () => {
+interface Props {
+  jobs: BullMqJob[];
+}
+
+export async function getServerSideProps() {
+  const queue = await import("@/server/queue").then(
+    (exports) => exports.default
+  );
+  const jobs = await queue.getJobs().then((jobs) =>
+    Promise.all(
+      jobs
+        .map(async (job) => ({
+          ...job.toJSON(),
+          state: (await job.getState()) as State,
+        }))
+        .map(
+          async (job: any) =>
+            ({
+              ...job,
+              repeatJobKey: job.repeatJobKey ?? null,
+            } as BullMqJob & { repeatJobKey: string | null })
+        )
+    )
+  );
+
+  return {
+    props: {
+      jobs,
+    },
+  };
+}
+const Monitor: NextPageWithLayout<Props> = (props) => {
   const [state, setState] = useState<State>("all");
+  const [jobs, setJobs] = useState<BullMqJob[]>(props.jobs);
+  const router = useRouter();
   const {
     data = [],
     refetch,
     isLoading,
-  } = api.background.jobs.useQuery({
-    states:
-      state === "all"
-        ? (states.filter((s) => s !== "all") as JobType[])
-        : [state],
-  });
+  } = api.background.jobs.useQuery(
+    {
+      states:
+        state === "all"
+          ? (states.filter((s) => s !== "all") as JobType[])
+          : [state],
+    },
+    {
+      refetchInterval: 1000,
+    }
+  );
 
   const { mutateAsync: remove } = api.background.remove.useMutation();
-
+  const { mutateAsync: pause } = api.background.pause.useMutation();
+  const { mutateAsync: resume } = api.background.resume.useMutation();
   useEffect(() => {
-    refetch({}).then((r) => console.log(r));
+    refetch({}).catch((e) => console.error(e));
   }, [refetch, state]);
 
   return (
     <main className="h-screen w-screen overflow-hidden px-4 py-8">
       <Title className="text-white">Monitor</Title>
-      <Text className="text-white">watch all activity happen here</Text>
+      <Text className="text-white">
+        watch all background activity happen here. to go back{" "}
+        <Link href="/">click here</Link>
+      </Text>
       <TabList
         defaultValue="all"
         onValueChange={(value: string) => setState(value as JobType)}
@@ -81,17 +137,78 @@ const Monitor: NextPageWithLayout<Props> = () => {
       </TabList>
       <Grid numColsMd={2} numColsLg={3} className="mt-6 gap-6">
         <Card>
-          <div className="h-28">
-            <Text>Jobs</Text>
-            <Metric>{data!.length}</Metric>
+          <div className="flex h-28 flex-row">
+            <div className="flex flex-col">
+              <Text>Jobs</Text>
+              <Metric>{data!.length}</Metric>
+            </div>
+            <DonutChart
+              valueFormatter={(number: number) => `${number}`}
+              className="h-24"
+              category="count"
+              index="state"
+              variant="pie"
+              colors={[
+                "lime",
+                "indigo",
+                "blue",
+                "violet",
+                "amber",
+                "slate",
+                "zinc",
+                "neutral",
+                "stone",
+                "red",
+                "orange",
+              ]}
+              data={Object.entries(
+                data.reduce((counts, job) => {
+                  const { state } = job;
+                  if (!(state in counts)) {
+                    counts[state as State] = 0;
+                  }
+                  counts[state as State]++;
+                  return counts;
+                }, {} as Record<State | "unknown", number>)
+              ).map(([state, count]) => ({ state, count }))}
+            />
           </div>
         </Card>
         <Card>
-          {/* Placeholder to set height */}
-          <div className="h-28" />
+          <div className="h-28">
+            <LineChart
+              className="mt-4 h-28"
+              data={data
+                .map((job) => ({
+                  id: job.id,
+                  state: job.state,
+                  duration: job.finishedOn! - job.processedOn!,
+                  timestamp: new Date(
+                    job.timestamp * 1000
+                  ).toLocaleTimeString(),
+                }))
+                .sort((a, b) => a.timestamp.localeCompare(b.timestamp))}
+              index="timestamp"
+              categories={["state", "timestamp", "duration"]}
+              colors={[
+                "lime",
+                "indigo",
+                "blue",
+                "violet",
+                "amber",
+                "slate",
+                "zinc",
+                "neutral",
+                "stone",
+                "red",
+                "orange",
+              ]}
+              yAxisWidth={40}
+            />
+          </div>
         </Card>
         <Card>
-          <div className="h-28">
+          <div className="h-14">
             <Text>Actions</Text>
             {data.length > 0 && (
               <button
@@ -102,9 +219,34 @@ const Monitor: NextPageWithLayout<Props> = () => {
                   )
                 }
               >
-                Remove all jobs
+                <XMarkIcon className="h-4 w-4" />
+                <span className="sr-only">Remove All Jobs</span>
               </button>
             )}
+
+            <button
+              className="rounded-md bg-blue-400 px-4 py-2 text-white"
+              onClick={() => {
+                pause().then(() => refetch());
+              }}
+            >
+              <HandRaisedIcon className="h-4 w-4" />
+              <span className="sr-only">Pause All Jobs</span>
+            </button>
+
+            <button
+              className="rounded-md bg-green-400 px-4 py-2 text-white"
+              onClick={() => {
+                resume().then(() => refetch());
+              }}
+            >
+              <ArrowPathIcon className="h-4 w-4" />
+              <span className="sr-only">Resume All Jobs</span>
+            </button>
+          </div>
+          <div className="h-14">
+            <Text>Range</Text>
+            <DateRangePicker />
           </div>
         </Card>
       </Grid>
@@ -118,7 +260,12 @@ const Monitor: NextPageWithLayout<Props> = () => {
         >
           <ul className="text-black">
             {isLoading ? (
-              <li className="flex h-96 items-center justify-center">
+              <li
+                style={{
+                  height: "34rem",
+                }}
+                className="flex items-center justify-center"
+              >
                 <Spinner className="h-4 w-4" />
               </li>
             ) : (
@@ -130,17 +277,17 @@ const Monitor: NextPageWithLayout<Props> = () => {
                   <Disclosure>
                     {({ open }) => (
                       <>
-                        <Disclosure.Button className="flex w-full flex-row justify-between text-black">
+                        <Disclosure.Button className="flex w-full flex-row items-center justify-between text-black">
                           <p className="flex flex-row items-center justify-center">
-                            [{stateIcons[job!.state]} {job.state}]
+                            [{job.state}]
                           </p>
+                          {stateIcons[job!.state]}
                           {" - "}
                           <p>{job.id}</p>
                           {" - "}
                           <p>{job.name}</p>
                           {" - "}
                           <Timestamp timestamp={job.timestamp} />
-                          {" - "}
                           <span className="sr-only">Toggle job details</span>
                           {open ? (
                             <XMarkIcon className="h-4 w-4" />
@@ -150,12 +297,34 @@ const Monitor: NextPageWithLayout<Props> = () => {
                         </Disclosure.Button>
 
                         <Disclosure.Panel className="mt-2 bg-gray-200 p-4 text-black">
+                          <div className="mb-4 flex items-end justify-end">
+                            <button
+                              className="bg-green-200 py-2 px-4"
+                              onClick={() => {
+                                router
+                                  .push(`/monitor/jobs/${job.id}`)
+                                  .catch(console.error);
+                              }}
+                            >
+                              <MagnifyingGlassIcon className="h-4 w-4" />
+                            </button>
+                            <button
+                              className="justify-self-end bg-red-200 py-2 px-4"
+                              onClick={() => {
+                                remove(job.id!).then(() => refetch());
+                              }}
+                            >
+                              <XMarkIcon className="h-4 w-4" />
+                            </button>
+                          </div>
                           <div className="mb-4">
                             <Text>
                               Stacktrace: <br />
                             </Text>
                             <code>
-                              {JSON.stringify(job!.stacktrace, null, 2)}
+                              {job!.stacktrace.map((line) => (
+                                <p key={line}>{line}</p>
+                              ))}
                             </code>
                           </div>
                           <div className="mb-4">

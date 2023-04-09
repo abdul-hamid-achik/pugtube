@@ -80,4 +80,12 @@ export const backgroundRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await ctx.queue.remove(input);
     }),
+
+  pause: protectedProcedure.mutation(async ({ ctx }) => {
+    return await ctx.queue.pause();
+  }),
+
+  resume: protectedProcedure.mutation(async ({ ctx }) => {
+    return await ctx.queue.resume();
+  }),
 });

@@ -52,11 +52,18 @@ function Sidebar({
     //   current: router.pathname === "/history",
     // },
     {
-      id: 3,
+      id: 1,
       name: "Channel",
       href: `/channel/${user?.username}`,
       initial: "Y",
       current: router.pathname === "/channel",
+    },
+    {
+      id: 2,
+      name: "Monitor",
+      href: `/monitor`,
+      initial: "M",
+      current: router.pathname === "/monitor",
     },
   ];
   return (
