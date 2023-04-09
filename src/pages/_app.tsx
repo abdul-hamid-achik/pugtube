@@ -17,13 +17,10 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
-  // const getLayout = Component.getLayout ?? ((page) => page);
+  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
   return (
     <ClerkProvider {...pageProps}>
-      <Layout>
-        {/*{getLayout(<Component {...pageProps} />)}*/}
-        <Component {...pageProps} />
-      </Layout>
+      {getLayout(<Component {...pageProps} />)}
     </ClerkProvider>
   );
 };

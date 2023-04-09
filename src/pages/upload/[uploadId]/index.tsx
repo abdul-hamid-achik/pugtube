@@ -78,7 +78,9 @@ export default function Page() {
     });
 
   const { data: results = [] } = api.background.jobs.useQuery(
-    jobs?.map(({ id }) => id!),
+    {
+      ids: jobs?.map(({ id }) => id!) || [],
+    },
     {
       enabled: !!jobId,
       refetchInterval: 2_000,

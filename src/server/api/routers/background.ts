@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { Job } from "bullmq";
 
 export const backgroundRouter = createTRPCRouter({
   enqueue: protectedProcedure
@@ -23,34 +24,58 @@ export const backgroundRouter = createTRPCRouter({
   }),
 
   jobs: protectedProcedure
-    .input(z.array(z.string()))
+    .input(
+      z.object({
+        ids: z.array(z.string()).optional(),
+        states: z
+          .array(
+            z.enum([
+              "completed",
+              "failed",
+              "active",
+              "delayed",
+              "waiting",
+              "waiting-children",
+              "paused",
+              "repeat",
+              "wait",
+            ])
+          )
+          .optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
+      let jobs: Job[] = [];
+
+      if (input.ids)
+        jobs = (await Promise.all(
+          input.ids.map(async (id) => await ctx.queue.getJob(id))
+        )) as Job[];
+
+      if (input.states) jobs = await ctx.queue.getJobs(input.states);
+
       return await Promise.all(
-        input.map(async (id) => await ctx.queue.getJob(id))
+        jobs.map(async (job) => ({
+          id: job.id,
+          queueName: job.queueName,
+          name: job.name,
+          data: job.data,
+          progress: job.progress,
+          finishedOn: job.finishedOn,
+          processedOn: job.processedOn,
+          delay: job.opts.delay,
+          attempts: job.opts.attempts,
+          backoff: job.opts.backoff,
+          timestamp: job.timestamp / 1000,
+          failedReason: job.failedReason,
+          stacktrace: job.stacktrace,
+          returnvalue: job.returnvalue,
+          state: await job.getState(),
+        }))
       );
     }),
 
-  jobsByState: protectedProcedure
-    .input(
-      z.array(
-        z.enum([
-          "completed",
-          "failed",
-          "active",
-          "delayed",
-          "waiting",
-          "waiting-children",
-          "paused",
-          "repeat",
-          "wait",
-        ])
-      )
-    )
-    .query(async ({ ctx, input }) => {
-      return await ctx.queue.getJobs(input);
-    }),
-
-  removeJobFromQueue: protectedProcedure
+  remove: protectedProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       return await ctx.queue.remove(input);
