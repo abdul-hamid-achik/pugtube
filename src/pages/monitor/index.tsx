@@ -126,16 +126,6 @@ const Monitor: NextPageWithLayout<Props> = (props) => {
     refetch({}).catch((e) => console.error(e));
   }, [refetch, state]);
 
-  console.log(
-    data
-      .map((job) => ({
-        id: job.id,
-        state: job.state,
-        duration: job.finishedOn! - job.processedOn!,
-        timestamp: new Date(job.timestamp * 1000).toLocaleString(),
-      }))
-      .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
-  );
   return (
     <main className="h-screen w-screen overflow-hidden p-4">
       <Title className="text-white">Monitor</Title>
