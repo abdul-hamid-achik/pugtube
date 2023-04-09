@@ -42,6 +42,10 @@ export const backgroundRouter = createTRPCRouter({
             ])
           )
           .optional(),
+
+        start: z.number().optional(),
+        end: z.number().optional(),
+        asc: z.boolean().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -52,7 +56,13 @@ export const backgroundRouter = createTRPCRouter({
           input.ids.map(async (id) => await ctx.queue.getJob(id))
         )) as Job[];
 
-      if (input.states) jobs = await ctx.queue.getJobs(input.states);
+      if (input.states)
+        jobs = await ctx.queue.getJobs(
+          input.states,
+          input.start,
+          input.end,
+          input.asc || false
+        );
 
       return await Promise.all(
         jobs.map(async (job) => ({
