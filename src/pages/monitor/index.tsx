@@ -199,11 +199,30 @@ const Monitor: NextPageWithLayout<Props> = (props) => {
                   id: job.id,
                   state: job.state,
                   duration: job.finishedOn! - job.processedOn!,
-                  timestamp: new Date(
-                    job.timestamp * 1000
-                  ).toLocaleTimeString(),
+                  timestamp: new Date(job.timestamp * 1000).toLocaleString(),
                 }))
-                .sort((a, b) => a.timestamp.localeCompare(b.timestamp))}
+                .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+                .reduce((acc: any[], cur, idx, arr) => {
+                  const startAt = start || arr[0]!.timestamp;
+                  const endAt = end || arr[arr.length - 1]!.timestamp;
+
+                  const totalMilliseconds =
+                    new Date(endAt).getTime() - new Date(startAt).getTime();
+                  const step = Math.ceil(totalMilliseconds / 10);
+
+                  if (
+                    cur.timestamp >= startAt &&
+                    cur.timestamp <= endAt &&
+                    (acc.length === 0 ||
+                      new Date(cur.timestamp).getTime() -
+                        new Date(acc[acc.length - 1].timestamp).getTime() >=
+                        step)
+                  ) {
+                    acc.push(cur);
+                  }
+
+                  return acc;
+                }, [])}
               index="timestamp"
               categories={["state"]}
               colors={["lime"]}

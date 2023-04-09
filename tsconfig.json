@@ -54,7 +54,8 @@
     "cypress/fixtures/*",
     "cypress/videos/*",
     "cypress/screenshots/*",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.config.ts"
   ],
   "ts-node": {
     "swc": true
