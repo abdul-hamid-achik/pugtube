@@ -34,7 +34,7 @@ const Page: NextPageWithLayout<PageProps> = ({ job }) => {
   });
 
   return (
-    <main className="px-4 py-8 text-white">
+    <main className="p-4 text-white">
       <Link
         className="mb-4 flex w-60 flex-row items-center bg-gray-500 py-2 px-4"
         href="/monitor"

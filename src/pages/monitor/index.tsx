@@ -137,7 +137,7 @@ const Monitor: NextPageWithLayout<Props> = (props) => {
       .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
   );
   return (
-    <main className="h-screen w-screen overflow-hidden px-4 py-8">
+    <main className="h-screen w-screen overflow-hidden p-4">
       <Title className="text-white">Monitor</Title>
       <Text className="text-white">
         watch all background activity happen here. to go back{" "}
