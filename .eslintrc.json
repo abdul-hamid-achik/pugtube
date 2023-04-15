@@ -9,8 +9,7 @@
   ],
   "extends": [
     "next/core-web-vitals",
-    "plugin:tailwindcss/recommended",
-    "plugin:storybook/recommended"
+    "plugin:tailwindcss/recommended"
   ],
   "overrides": [
     {
