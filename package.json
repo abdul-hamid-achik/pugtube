@@ -89,6 +89,7 @@
     "eslint-plugin-tailwindcss": "^3.8.3",
     "eslint-plugin-unused-imports": "^2.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "focus-visible": "^5.2.0",
     "formidable": "^2.1.1",
     "http-status": "^1.6.2",
     "inngest": "^1.6.1",

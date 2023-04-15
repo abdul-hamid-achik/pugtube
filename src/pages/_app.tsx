@@ -1,3 +1,5 @@
+import "focus-visible";
+
 import { api } from "@/utils/api";
 import { ClerkProvider } from "@clerk/nextjs";
 import { type AppProps } from "next/app";

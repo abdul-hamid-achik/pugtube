@@ -6,10 +6,12 @@ import { withAxiom } from "next-axiom";
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-
   i18n: {
     locales: ["en", "es"],
     defaultLocale: "en",
+  },
+  experimental: {
+    scrollRestoration: true,
   },
   images: {
     remotePatterns: [
