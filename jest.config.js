@@ -11,13 +11,8 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   // Add more setup options before each test is run
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-
-  testEnvironment: "node",
+  testEnvironment: 'jest-environment-jsdom',
   testMatch: ["**/*.spec.[jt]s?(x)"],
-  testTimeout: 120_000,
-  transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": "@swc/jest",
-  },
   transformIgnorePatterns: ["node_modules/(?!@aws-sdk/.*)"],
   moduleNameMapper,
 };
