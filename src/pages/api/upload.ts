@@ -1,11 +1,7 @@
 import { env } from "@/env.mjs";
 import { prisma } from "@/server/db";
 import { s3 } from "@/utils/s3";
-import {
-  CompleteMultipartUploadCommand,
-  CreateMultipartUploadCommand,
-  UploadPartCommand,
-} from "@aws-sdk/client-s3";
+import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, UploadPartCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { getAuth } from "@clerk/nextjs/server";
 import status from "http-status";
@@ -79,8 +75,8 @@ export default async function handler(
       uploadId &&
       partNumber
     ) {
-      // @ts-ignore
       const signedUrl = await getSignedUrl(
+        // @ts-ignore
         s3,
         new UploadPartCommand({
           Bucket: env.AWS_S3_BUCKET,
