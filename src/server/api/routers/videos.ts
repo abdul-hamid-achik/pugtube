@@ -133,4 +133,14 @@ export const videoRouter = createTRPCRouter({
         ctx,
       });
     }),
+
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.video.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
 });

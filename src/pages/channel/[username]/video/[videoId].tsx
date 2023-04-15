@@ -8,19 +8,18 @@ import {
   DocumentArrowUpIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Upload, Video, VideoMetadata } from "@prisma/client";
+import { Asset, Upload, Video } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import superjson from "superjson";
 
 interface PageProps {
   user: User;
-  video:
-    | (Video & { upload: Upload & { metadata: VideoMetadata | null } })
-    | null;
+  video: (Video & { upload: Upload & { assets: Asset[] } }) | null;
 }
 
 type Inputs = {
@@ -44,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     include: {
       upload: {
         include: {
-          metadata: true,
+          assets: true,
         },
       },
     },
@@ -56,19 +55,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const { json } = superjson.serialize(video);
+
   return {
     props: {
       user: {
         username: user.username,
       },
       video: {
-        ...video,
-        upload: {
-          ...video.upload,
-          createdAt: video.upload.createdAt!.toISOString(),
-        },
-        analyzedAt: video.analyzedAt?.toISOString(),
-        createdAt: video.createdAt.toISOString(),
+        ...(json as unknown as object),
         thumbnailUrl: video.thumbnailUrl
           ? await getSignedUrl(video.thumbnailUrl)
           : null,

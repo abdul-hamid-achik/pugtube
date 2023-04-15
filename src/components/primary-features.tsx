@@ -1,59 +1,61 @@
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import { Tab } from '@headlessui/react'
-import clsx from 'clsx'
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Tab } from "@headlessui/react";
+import clsx from "clsx";
 
-import { Container } from '@/components/Container'
-import backgroundImage from '@/images/background-features.jpg'
-import screenshotExpenses from '@/images/screenshots/expenses.png'
-import screenshotPayroll from '@/images/screenshots/payroll.png'
-import screenshotReporting from '@/images/screenshots/reporting.png'
-import screenshotVatReturns from '@/images/screenshots/vat-returns.png'
+import { Container } from "@/components/container";
+import backgroundImage from "@/images/background-features.jpg";
+import screenshotExpenses from "@/images/screenshots/expenses.png";
+import screenshotPayroll from "@/images/screenshots/payroll.png";
+import screenshotReporting from "@/images/screenshots/reporting.png";
+import screenshotVatReturns from "@/images/screenshots/vat-returns.png";
 
 const features = [
   {
-    title: 'Payroll',
+    title: "Payroll",
     description:
       "Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.",
     image: screenshotPayroll,
   },
   {
-    title: 'Claim expenses',
+    title: "Claim expenses",
     description:
       "All of your receipts organized into one place, as long as you don't mind typing in the data by hand.",
     image: screenshotExpenses,
   },
   {
-    title: 'VAT handling',
+    title: "VAT handling",
     description:
       "We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.",
     image: screenshotVatReturns,
   },
   {
-    title: 'Reporting',
+    title: "Reporting",
     description:
-      'Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.',
+      "Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.",
     image: screenshotReporting,
   },
-]
+];
 
 export function PrimaryFeatures() {
-  let [tabOrientation, setTabOrientation] = useState('horizontal')
+  let [tabOrientation, setTabOrientation] = useState("horizontal");
 
   useEffect(() => {
-    let lgMediaQuery = window.matchMedia('(min-width: 1024px)')
+    let lgMediaQuery = window.matchMedia("(min-width: 1024px)");
 
-    function onMediaQueryChange({ matches }) {
-      setTabOrientation(matches ? 'vertical' : 'horizontal')
+    function onMediaQueryChange({
+      matches,
+    }: MediaQueryList | MediaQueryListEvent) {
+      setTabOrientation(matches ? "vertical" : "horizontal");
     }
 
-    onMediaQueryChange(lgMediaQuery)
-    lgMediaQuery.addEventListener('change', onMediaQueryChange)
+    onMediaQueryChange(lgMediaQuery);
+    lgMediaQuery.addEventListener("change", onMediaQueryChange);
 
     return () => {
-      lgMediaQuery.removeEventListener('change', onMediaQueryChange)
-    }
-  }, [])
+      lgMediaQuery.removeEventListener("change", onMediaQueryChange);
+    };
+  }, []);
 
   return (
     <section
@@ -82,7 +84,7 @@ export function PrimaryFeatures() {
         <Tab.Group
           as="div"
           className="mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0"
-          vertical={tabOrientation === 'vertical'}
+          vertical={tabOrientation === "vertical"}
         >
           {({ selectedIndex }) => (
             <>
@@ -92,19 +94,19 @@ export function PrimaryFeatures() {
                     <div
                       key={feature.title}
                       className={clsx(
-                        'group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6',
+                        "group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6",
                         selectedIndex === featureIndex
-                          ? 'bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10'
-                          : 'hover:bg-white/10 lg:hover:bg-white/5'
+                          ? "bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10"
+                          : "hover:bg-white/10 lg:hover:bg-white/5"
                       )}
                     >
                       <h3>
                         <Tab
                           className={clsx(
-                            'font-display text-lg [&:not(:focus-visible)]:focus:outline-none',
+                            "font-display text-lg [&:not(:focus-visible)]:focus:outline-none",
                             selectedIndex === featureIndex
-                              ? 'text-blue-600 lg:text-white'
-                              : 'text-blue-100 hover:text-white lg:text-white'
+                              ? "text-blue-600 lg:text-white"
+                              : "text-blue-100 hover:text-white lg:text-white"
                           )}
                         >
                           <span className="absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none" />
@@ -113,10 +115,10 @@ export function PrimaryFeatures() {
                       </h3>
                       <p
                         className={clsx(
-                          'mt-2 hidden text-sm lg:block',
+                          "mt-2 hidden text-sm lg:block",
                           selectedIndex === featureIndex
-                            ? 'text-white'
-                            : 'text-blue-100 group-hover:text-white'
+                            ? "text-white"
+                            : "text-blue-100 group-hover:text-white"
                         )}
                       >
                         {feature.description}
@@ -151,5 +153,5 @@ export function PrimaryFeatures() {
         </Tab.Group>
       </Container>
     </section>
-  )
+  );
 }

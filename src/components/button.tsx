@@ -1,5 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx";
+import { ReactNode } from "react";
 
 const baseStyles = {
   solid:
@@ -8,7 +9,7 @@ const baseStyles = {
     "group inline-flex ring-1 items-center justify-center rounded-full py-2 px-4 text-sm focus:outline-none",
 };
 
-const variantStyles = {
+const variantStyles: Record<keyof typeof baseStyles, Record<string, string>> = {
   solid: {
     slate:
       "bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900",
@@ -35,6 +36,7 @@ export function Button({
   color?: keyof (typeof variantStyles)[typeof variant];
   className?: string;
   href?: string;
+  children: ReactNode;
 }) {
   className = clsx(
     baseStyles[variant],

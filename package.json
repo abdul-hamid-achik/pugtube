@@ -37,7 +37,6 @@
     "@aws-sdk/s3-request-presigner": "^3.272.0",
     "@aws-sdk/url-parser": "^3.272.0",
     "@aws-sdk/util-format-url": "^3.272.0",
-    "@babel/core": "^7.21.4",
     "@clerk/clerk-sdk-node": "^4.8.0",
     "@clerk/nextjs": "^4.11.1",
     "@headlessui/react": "^1.7.7",
@@ -124,7 +123,6 @@
     "typescript": ">=5.0.0",
     "uuid": "^9.0.0",
     "vidstack": "^0.4.4",
-    "webpack": "^5.79.0",
     "zod": "^3.20.2"
   },
   "devDependencies": {
