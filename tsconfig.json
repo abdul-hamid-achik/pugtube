@@ -48,7 +48,4 @@
     "**/*.stories.tsx",
     "**/*.mdx",
   ],
-  "ts-node": {
-    "swc": true
-  }
 }
