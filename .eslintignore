@@ -1,4 +1,6 @@
 node_modules
-*.spec.ts
-*.cy.ts
-*.cy.tsx
+**/*.spec.ts
+**/*.stories.tsx
+**/*.mdx
+**/stories/*
+**/storybook-static/*

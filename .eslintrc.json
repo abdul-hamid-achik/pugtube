@@ -5,13 +5,12 @@
   "plugins": [
     "prettier",
     "unused-imports",
-    "cypress",
     "tailwindcss"
   ],
   "extends": [
     "next/core-web-vitals",
-    "plugin:cypress/recommended",
-    "plugin:tailwindcss/recommended"
+    "plugin:tailwindcss/recommended",
+    "plugin:storybook/recommended"
   ],
   "overrides": [
     {
@@ -21,23 +20,13 @@
         "!**/*.spec.ts",
         "!**/*.spec.tsx",
         "!**/*.test.ts",
-        "!**/*.test.tsx",
-        "!**/*.stories.ts",
-        "!**/*.stories.tsx",
-        "!**/*.cy.ts",
-        "!**/*.cy.tsx"
+        "!**/*.test.tsx"
       ],
       "excludedFiles": [
-        "cypress/downloads/*.ts",
-        "cypress/fixtures/*.ts",
         "**/*.spec.ts",
         "**/*.spec.tsx",
         "**/*.test.ts",
-        "**/*.test.tsx",
-        "**/*.stories.ts",
-        "**/*.stories.tsx",
-        "**/*.cy.ts",
-        "**/*.cy.tsx"
+        "**/*.test.tsx"
       ],
       "rules": {}
     }

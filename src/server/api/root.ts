@@ -1,4 +1,3 @@
-import { backgroundRouter } from "./routers/background";
 import { socialRouter } from "./routers/social";
 import { videoRouter } from "./routers/videos";
 import { createTRPCRouter } from "./trpc";
@@ -11,7 +10,6 @@ import { createTRPCRouter } from "./trpc";
 export const appRouter = createTRPCRouter({
   videos: videoRouter,
   social: socialRouter,
-  background: backgroundRouter,
 });
 
 // export type definition of API

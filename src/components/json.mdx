@@ -1,0 +1,24 @@
+# Json
+
+This is a component that renders a JSON object in a collapsible format.
+
+## Usage
+
+```jsx
+import Json from "./Json";
+
+const MyComponent = () => {
+  const json = {
+    name: "John Doe",
+    age: 30,
+    address: {
+      street: "123 Main St",
+      city: "Anytown",
+      state: "CA",
+      zip: "12345",
+    },
+    hobbies: ["reading", "coding", "traveling"],
+  };
+
+  return <Json json={json} />;
+};

@@ -40,12 +40,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-cypress/downloads/*
-cypress/videos/*
-cypress/screenshots/*
 
-
-# Sentry
+# Sentryw
 .sentryclirc
 .idea
 
@@ -58,3 +54,5 @@ public/sitemap-*.xml
 !.env.project
 !.env.vault
 .swc
+
+storybook-static

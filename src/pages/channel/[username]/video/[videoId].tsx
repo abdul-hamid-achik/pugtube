@@ -105,8 +105,6 @@ function Page(props: PageProps) {
   });
   const { mutate: deleteVideo } = api.videos.delete.useMutation();
 
-  const { mutate: enqueue } = api.background.enqueue.useMutation({});
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     let { thumbnailUrl } = data;
 
@@ -158,15 +156,7 @@ function Page(props: PageProps) {
     await router.push(`/channel/${props.user.username}`);
   };
 
-  const handleTranscode = async () => {
-    await enqueue({
-      name: "transcode",
-      payload: {
-        uploadId: props.video!.uploadId,
-        fileName: props.video!.upload!.metadata!.fileName,
-      },
-    });
-  };
+  const handleTranscode = async () => {};
 
   return (
     <div className="md:grid md:grid-cols-3 md:gap-6">
@@ -309,7 +299,7 @@ function Page(props: PageProps) {
                 >
                   Thumbnail
                 </label>
-                <div className="mt-2 flex h-full justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                <div className="mt-2 flex h-full justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5">
                   <div className="space-y-1 text-center">
                     {props.video!.thumbnailUrl || thumbnailPreview ? (
                       <Image
@@ -353,7 +343,7 @@ function Page(props: PageProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 {isLoading ? <Spinner className="ml-2" /> : "Send"}
               </button>

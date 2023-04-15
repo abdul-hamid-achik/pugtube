@@ -10,22 +10,11 @@ export async function getVideoData(
   const video = await ctx.prisma.video.findUniqueOrThrow({
     where: { id: String(videoId) },
     include: {
-      thumbnails: {
-        include: {
-          contentTags: true,
-        },
-      },
       upload: {
         include: {
-          metadata: true,
+          assets: true,
         },
       },
-    },
-  });
-
-  const metadata = await ctx.prisma.videoMetadata.findUnique({
-    where: {
-      uploadId: video?.uploadId as string,
     },
   });
 
@@ -44,22 +33,7 @@ export async function getVideoData(
   ]);
 
   return {
-    video: {
-      ...video,
-      upload: {
-        ...video?.upload,
-        metadata: {
-          ...(metadata || {}),
-        },
-      },
-      thumbnailUrl,
-      previewUrl,
-      analyzedAt: video?.analyzedAt?.toISOString(),
-      createdAt: video?.createdAt?.toISOString(),
-      thumbnails: video?.thumbnails.map((thumbnail) => ({
-        ...thumbnail,
-      })),
-    },
+    video: { ...video, thumbnailUrl, previewUrl },
     like,
     author,
   };
@@ -82,13 +56,6 @@ export async function getFeed({
     cursor: cursor ? { id: cursor } : undefined,
     orderBy: {
       createdAt: "desc",
-    },
-    where: {
-      upload: {
-        transcodedAt: {
-          not: null,
-        },
-      },
     },
   });
 
@@ -153,14 +120,9 @@ export async function getSearchResults({
       createdAt: "desc",
     },
     include: {
-      thumbnails: {
-        include: {
-          contentTags: true,
-        },
-      },
       upload: {
         include: {
-          metadata: true,
+          assets: true,
         },
       },
     },
@@ -181,34 +143,7 @@ export async function getSearchResults({
             contains: searchTerm,
           },
         },
-        {
-          thumbnails: {
-            some: {
-              contentTags: {
-                some: {
-                  name: {
-                    contains: searchTerm,
-                  },
-                },
-              },
-            },
-          },
-        },
-        {
-          thumbnails: {
-            some: {
-              caption: {
-                contains: searchTerm,
-              },
-            },
-          },
-        },
       ],
-      upload: {
-        transcodedAt: {
-          not: null,
-        },
-      },
     },
   });
 

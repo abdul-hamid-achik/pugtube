@@ -1,4 +1,4 @@
-import { env } from "@/env/client.mjs";
+import { env } from "@/env.mjs";
 import { Head, Html, Main, NextScript } from "next/document";
 import Script from "next/script";
 

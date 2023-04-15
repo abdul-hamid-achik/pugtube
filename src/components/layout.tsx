@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import Header from "@/components/header";
+import OldHeader from "@/components/old-header";
 import Sidebar from "@/components/sidebar";
 
 function Layout({ children }: { children: ReactNode }) {
@@ -10,7 +10,7 @@ function Layout({ children }: { children: ReactNode }) {
       <div>
         <Sidebar show={sidebarOpen} update={setSidebarOpen} />
         <div>
-          <Header setSidebarOpen={setSidebarOpen} />
+          <OldHeader setSidebarOpen={setSidebarOpen} />
           <main className="p-4">
             <div className="flex justify-center md:max-w-6xl md:px-0 lg:mx-auto lg:px-4">
               {children}

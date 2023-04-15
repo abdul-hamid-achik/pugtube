@@ -17,60 +17,8 @@ defaults:
 
 env:
   NODE_ENV: test
-  REDIS_URL: redis://redis:6379/0
-  HUSKY: 0
-  DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+
 jobs:
-  component:
-    runs-on: ubuntu-latest
-
-    services:
-      redis:
-        image: redis:latest
-
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Read .tool-versions
-        uses: marocchino/tool-versions-action@v1
-        id: versions
-
-      - name: Use Node.js ${{ steps.versions.outputs.nodejs}}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ steps.versions.outputs.nodejs}}
-
-      - name: Load environment variables
-        run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
-
-      - name: Load .env file
-        uses: xom9ikk/dotenv@v2
-
-      - name: Cypress Component Tests
-        uses: cypress-io/github-action@v5
-        with:
-          component: true
-          record: true
-        env:
-          AXIOM_DATASET: test
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_RECORD_KEY: ${{ env.CYPRESS_RECORD_KEY }}
-          DATABASE_URL: ${{ env.DATABASE_URL }}
-          GITHUB_ID: ${{ env.CLERK_GITHUB_ID }}
-          GITHUB_SECRET: ${{ env.CLERK_GITHUB_SECRET }}
-          DISCORD_ID: ${{ env.DISCORD_ID }}
-          DISCORD_SECRET: ${{ env.DISCORD_SECRET }}
-          CLERK_SECRET_KEY: ${{ env.CLERK_SECRET_KEY }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          AXIOM_TOKEN: ${{ env.AXIOM_TOKEN }}
-          PEXELS_API_KEY: ${{ env.PEXELS_API_KEY }}
-          AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}
-          AWS_S3_REGION: ${{ env.AWS_S3_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-
   unit:
     runs-on: ubuntu-latest
     steps:
@@ -86,14 +34,32 @@ jobs:
         with:
           node-version: ${{ steps.versions.outputs.nodejs }}
 
-      - name: Install ffmpeg
-        run: sudo apt-get update -y && sudo apt-get install ffmpeg -y
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Load environment variables
-        run: npx dotenv-vault pull ci .env -y -m=${{ secrets.DOTENV_ME }}
+        run: pnpx vercel env pull .env
 
       - name: Run Unit Tests
-        run: npm run unit --runInBand --detectOpenHandles --forceExit --ci
+        run: pnpm unit --runInBand --detectOpenHandles --forceExit --ci

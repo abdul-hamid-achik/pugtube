@@ -13,94 +13,65 @@ datasource db {
 }
 
 model Video {
-  id            String            @id @default(cuid())
-  title         String
-  description   String?
-  duration      Int?
-  analyzedAt    DateTime?         @map("analyzed_at")
-  publishedAt   DateTime?         @map("published_at")
-  thumbnailUrl  String?           @map("thumbnail_url")
-  previewUrl    String?           @map("preview_url")
-  category      String?
-  userId        String            @map("user_id")
-  comments      Comment[]
-  likes         Like[]
-  hlsPlaylist   HlsPlaylist?      @relation(fields: [hlsPlaylistId], references: [id])
-  hlsPlaylistId String?           @unique @map("hls_playlist_id")
-  uploadId      String            @unique @map("upload_id")
-  upload        Upload            @relation(fields: [uploadId], references: [id])
-  createdAt     DateTime          @default(now()) @updatedAt @map("created_at")
-  hlsSegments   HlsSegment[]
-  thumbnails    Thumbnail[]
-  channel       Channel?          @relation(fields: [channelId], references: [id])
-  channelId     String?
-  private       Boolean?          @default(false)
-  premium       Boolean?          @default(false) @map("subscription_required")
-  playlists     VideoInPlaylist[]
-  views         View[]
-  watchTime     WatchTime[]
+  id           String            @id @default(cuid())
+  title        String
+  description  String?
+  duration     Int?
+  analyzedAt   DateTime?         @map("analyzed_at")
+  publishedAt  DateTime?         @map("published_at")
+  thumbnailUrl String?           @map("thumbnail_url")
+  previewUrl   String?           @map("preview_url")
+  category     String?
+  userId       String            @map("user_id")
+  comments     Comment[]
+  likes        Like[]
+  uploadId     String            @unique @map("upload_id")
+  upload       Upload            @relation(fields: [uploadId], references: [id])
+  createdAt    DateTime          @default(now()) @updatedAt @map("created_at")
+  channel      Channel?          @relation(fields: [channelId], references: [id])
+  channelId    String?
+  private      Boolean?          @default(false)
+  premium      Boolean?          @default(false) @map("subscription_required")
+  playlists    VideoInPlaylist[]
+  views        View[]
+  watchTime    WatchTime[]
 
+  @@index([title], name: "title")
   @@index([userId], name: "user_id")
   @@index([uploadId], name: "upload_id")
   @@index([channelId])
   @@map("videos")
 }
 
-model HlsPlaylist {
-  id                    String       @id @default(uuid())
-  videoId               String       @unique @map("video_id")
-  key                   String
-  resolution            String?
-  url                   String?
-  createdAt             DateTime     @default(now()) @map("created_at")
-  updatedAt             DateTime     @updatedAt @map("updated_at")
-  segments              HlsSegment[]
-  allowCache            Boolean?     @map("allow_cache")
-  endList               Boolean?     @map("end_list")
-  mediaSequence         Int?         @map("media_sequence")
-  discontinuitySequence Int?         @map("discontinuity_sequence")
-  playlistType          String?      @map("playlist_type")
-  targetDuration        Int?         @map("target_duration")
-  totalDuration         Int?         @map("total_duration")
-  discontinuityStarts   String?      @map("discontinuity_starts")
-  video                 Video?
+model Upload {
+  id     String  @id @default(cuid())
+  video  Video?
+  assets Asset[]
 
-  @@index([videoId], name: "video_id")
-  @@map("hls_playlists")
+  @@unique([id])
+  @@index([id], name: "id")
+  @@map("uploads")
 }
 
-model HlsSegment {
-  id                 String      @id @default(uuid())
-  playlist           HlsPlaylist @relation(fields: [playlistId], references: [id])
-  playlistId         String      @map("playlist_id")
-  video              Video       @relation(fields: [videoId], references: [id])
-  videoId            String      @map("video_id")
-  key                String
-  url                String?
-  resolution         String?
-  duration           Float?
-  segmentNumber      Int         @map("segment_number")
-  createdAt          DateTime    @default(now()) @map("created_at")
-  updatedAt          DateTime    @updatedAt @map("updated_at")
-  byterangeOffset    Int?        @map("byterange_offset")
-  byterangeLength    Int?        @map("byterange_length")
-  discontinuity      Int?
-  uri                String?
-  timeline           Int?
-  keyMethod          String?     @map("key_method")
-  keyUri             String?     @map("key_uri")
-  keyIv              String?     @map("key_iv")
-  mapUri             String?     @map("map_uri")
-  mapByterangeOffset Int?        @map("map_byterange_offset")
-  mapByterangeLength Int?        @map("map_byterange_length")
-  cueOut             String?     @map("cue_out")
-  cueOutCont         String?     @map("cue_out_cont")
-  cueIn              String?     @map("cue_in")
-  custom             Json?
+model Asset {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  filename  String
+  mimeType  String   @map("mime_type")
+  size      Int
+  url       String
+  width     Int?
+  height    Int?
+  duration  Float?
+  uploadId  String?  @map("upload_id")
+  upload    Upload?  @relation(fields: [uploadId], references: [id])
 
-  @@index([playlistId], name: "playlist_id")
-  @@index([videoId], name: "video_id")
-  @@map("hls_segments")
+  @@unique([id])
+  @@index([filename], name: "filename")
+  @@index([mimeType], name: "mime_type")
+  @@index([uploadId], name: "upload_id")
+  @@map("assets")
 }
 
 model Comment {
@@ -135,59 +106,6 @@ model Like {
   @@index([videoId], name: "video_id")
   @@index([commentId], name: "comment_id")
   @@map("likes")
-}
-
-model VideoMetadata {
-  id           String @id @default(cuid())
-  name         String
-  type         String
-  fileType     String @map("filetype")
-  fileName     String @map("filename")
-  relativePath String @map("relative_path")
-
-  uploadId String  @unique @map("upload_id")
-  upload   Upload?
-
-  @@map("video_metadata")
-}
-
-model Upload {
-  id           String         @id @default(cuid())
-  size         Int?
-  offset       Int
-  createdAt    DateTime?      @map("created_at")
-  metadata     VideoMetadata? @relation(fields: [metadataId], references: [id])
-  transcodedAt DateTime?      @map("transcoded_at")
-  movedAt      DateTime?      @map("moved_at")
-  metadataId   String?        @unique @map("metadata_id")
-  video        Video?
-
-  @@map("uploads")
-}
-
-model Thumbnail {
-  id          String       @id @default(cuid())
-  timestamp   String       @map("timestamp")
-  url         String       @map("url")
-  key         String       @map("key")
-  caption     String?      @map("caption")
-  video       Video        @relation(fields: [videoId], references: [id])
-  videoId     String       @map("video_id")
-  contentTags ContentTag[]
-
-  @@index([videoId], name: "video_id")
-  @@map("thumbnails")
-}
-
-model ContentTag {
-  id          String    @id @default(cuid())
-  name        String
-  confidence  Float
-  thumbnail   Thumbnail @relation(fields: [thumbnailId], references: [id])
-  thumbnailId String    @map("thumbnail_id")
-
-  @@index([thumbnailId], name: "thumbnail_id")
-  @@map("content_tags")
 }
 
 model Channel {

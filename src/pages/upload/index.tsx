@@ -3,16 +3,14 @@ import "@uppy/dashboard/dist/style.css";
 
 import { api } from "@/utils/api";
 import { useAuth } from "@clerk/nextjs";
-import { Popover, Switch } from "@headlessui/react";
 import AwsS3Multipart from "@uppy/aws-s3-multipart";
 import Uppy, { UppyFile } from "@uppy/core";
 import { Dashboard } from "@uppy/react";
-import Tus from "@uppy/tus";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import router from "next/router";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 
 interface FormData {
   title: string;
@@ -27,8 +25,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default function Upload() {
-  const [isResumable, setIsResumable] = useState(false);
   const { getToken } = useAuth();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -38,30 +36,19 @@ export default function Upload() {
   const { mutate } = api.videos.create.useMutation({
     onSuccess: async (video) => {
       uppy.resetProgress();
+      alert("Video uploaded successfully");
       await router.push(`/upload/${video.uploadId}`);
     },
   });
 
-  const uppy = React.useMemo(() => {
-    const uppyInstance = new Uppy();
-    if (isResumable) {
-      uppyInstance.use(Tus, {
-        id: "uppy-tus",
-        endpoint: "/api/upload",
-        retryDelays: [0, 1000, 3000, 5000],
-        chunkSize: 10_485_760, // 10 MB
-        onBeforeRequest: async (req, _file) => {
-          const token = await getToken();
-          req.setHeader("Authorization", `Bearer ${token}`);
-        },
-      });
-    } else {
-      uppyInstance.use(AwsS3Multipart, {
+  const uppy = React.useMemo(
+    () =>
+      new Uppy().use(AwsS3Multipart, {
         id: "uppy-s3-multipart",
         companionUrl: "/api",
         createMultipartUpload(file) {
           return getToken().then((token) =>
-            fetch("/api/get-signed-url", {
+            fetch("/api/upload", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -85,7 +72,7 @@ export default function Upload() {
         },
         signPart(file, partData) {
           return getToken().then((token) =>
-            fetch("/api/get-signed-url", {
+            fetch("/api/upload", {
               method: "POST",
               credentials: "include",
               headers: {
@@ -105,7 +92,7 @@ export default function Upload() {
         },
         completeMultipartUpload(file, data) {
           return getToken().then((token) =>
-            fetch("/api/get-signed-url", {
+            fetch("/api/upload", {
               method: "POST",
               credentials: "include",
               headers: {
@@ -128,11 +115,9 @@ export default function Upload() {
               })
           );
         },
-      });
-    }
-    return uppyInstance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isResumable]);
+      }),
+    []
+  );
 
   const onSubmit = async (data: FormData) => {
     const { successful } = await uppy.upload();
@@ -181,7 +166,7 @@ export default function Upload() {
             )}
             <input
               {...register("title", { required: true })}
-              className="w-full border border-x-0 border-t-0 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
           <div className="mb-6">
@@ -198,7 +183,7 @@ export default function Upload() {
             )}
             <textarea
               {...register("description", { required: true })}
-              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
           <div className="mb-6">
@@ -215,41 +200,11 @@ export default function Upload() {
             )}
             <input
               {...register("category", { required: true })}
-              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 py-2 px-3 leading-tight text-gray-50 focus:outline-none"
+              className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
         </div>
         <div className="flex flex-col sm:px-2 md:px-4 lg:px-8">
-          <div className="mb-4">
-            <div className="flex items-center justify-between">
-              <Popover className="relative inline-block">
-                <Popover.Button>
-                  <span className="cursor-pointer text-gray-200">
-                    Resumable Uploads
-                  </span>
-                </Popover.Button>
-                <Popover.Panel className="absolute z-10 mt-1 rounded-md bg-gray-800 p-2 text-sm text-gray-50 shadow-md">
-                  Resumable uploads may not work at the moment, but you can try
-                  them if you want.
-                </Popover.Panel>
-              </Popover>
-
-              <Switch
-                checked={isResumable}
-                onChange={setIsResumable}
-                className={`${
-                  isResumable ? "bg-blue-600" : "bg-gray-50"
-                } relative inline-flex h-6 w-11 items-center rounded-full`}
-              >
-                <span
-                  className={`${
-                    isResumable ? "translate-x-6" : "translate-x-1"
-                  } inline-block h-4 w-4 rounded-full bg-gray-200`}
-                />
-              </Switch>
-            </div>
-          </div>
-
           <div className="mb-6 flex w-full justify-center">
             <Dashboard
               id="upload"
@@ -268,7 +223,7 @@ export default function Upload() {
               errors.title || errors.category || errors.description
                 ? "bg-red-500"
                 : "bg-gray-50"
-            } w-full py-2 px-4 text-black focus:outline-none md:w-60`}
+            } w-full px-4 py-2 text-black focus:outline-none md:w-60`}
           >
             Upload
           </button>

@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env.mjs";
 import * as shared from "@/utils/shared";
 import type { Video } from "@prisma/client";
 import { z } from "zod";
@@ -114,52 +114,6 @@ export const videoRouter = createTRPCRouter({
         },
       });
     }),
-
-  delete: protectedProcedure
-    .input(z.string())
-    .mutation(async ({ ctx, input }) => {
-      return await ctx.queue.add("deleteVideoArtifacts", {
-        videoId: input,
-      });
-    }),
-
-  upload: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const upload = await ctx.prisma.upload.findUniqueOrThrow({
-      where: {
-        id: input,
-      },
-      include: {
-        metadata: true,
-      },
-    });
-
-    const metadata = await ctx.prisma.videoMetadata.findUniqueOrThrow({
-      where: {
-        uploadId: input,
-      },
-    });
-
-    return { ...upload, metadata };
-  }),
-
-  segments: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const video = await ctx.prisma.video.findUniqueOrThrow({
-      where: {
-        uploadId: input,
-      },
-      include: {
-        hlsPlaylist: true,
-      },
-    });
-
-    const segments = await ctx.prisma.hlsSegment.findMany({
-      where: {
-        videoId: video!.id,
-      },
-    });
-
-    return segments || [];
-  }),
 
   search: publicProcedure
     .input(

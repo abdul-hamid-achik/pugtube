@@ -12,7 +12,6 @@ import { User } from "@clerk/nextjs/api";
 import { getAuth } from "@clerk/nextjs/server";
 import { Disclosure } from "@headlessui/react";
 import { Comment, Prisma } from "@prisma/client";
-import { Duration } from "luxon";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -22,13 +21,13 @@ import React, { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Timestamp from "@/components/timestamp";
+import { getSignedUrl } from "@/utils/s3";
 
 interface PageProps {
   keywords: string[];
-  playlistUrl: string;
+  src: string | { src: string; type: string }[];
   likeId: string | null;
   videoId: string;
-  uploadId: string | undefined;
   title: string;
   description: string;
   category: string;
@@ -36,7 +35,6 @@ interface PageProps {
   authorProfileImageUrl: string;
   poster: string;
   createdAt: string;
-  duration: number;
   initialData: {
     items: CommentItem[];
     nextCursor: string | null;
@@ -60,7 +58,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   req,
 }) => {
   const { getVideoData, getComments } = await import("@/utils/shared");
-  const { connection } = await import("@/utils/redis");
   const { userId } = await getAuth(req);
   let { videoId } = params as { videoId: string };
   if (videoId === "random") {
@@ -97,54 +94,44 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     limit: 9,
   });
 
-  // TODO: This is a hack to get the keywords to show up in the meta tags
-  const key = `video:${videoId}`;
-  let keywords: string[] | null;
+  const src = await Promise.all(
+    video.upload.assets
+      .filter((asset) => {
+        return asset.mimeType.includes("video");
+      })
+      .map(async (asset) => ({
+        src: await getSignedUrl(asset.url),
+        type: asset.mimeType,
+      }))
+  );
 
-  // attempt to retrieve the keywords from Redis
-  const cachedKeywords = await connection.get(key);
-  if (cachedKeywords) {
-    keywords = JSON.parse(cachedKeywords);
-  } else {
-    keywords = Array.from(
-      new Set(
-        video?.thumbnails
-          ?.flatMap((t: any) => [
-            ...t.contentTags.flatMap((ct: any) =>
-              ct.name.split(",").map((keyword: string) => keyword.trim())
-            ),
-            t.caption,
-          ])
-          .filter((keyword: string) => keyword?.length > 0) || []
-      )
-    );
-    const ttl = 24 * 60 * 60; // 24 hours in seconds
-    await connection
-      .multi()
-      .set(key, JSON.stringify(keywords))
-      .expire(key, ttl)
-      .exec();
-  }
+  const title = video?.title || "Unavailable";
+  const description = video?.description || "";
+  const category = video?.category || "Uncategorized";
+  const generatedThumbnail = video.upload.assets.find((asset) =>
+    asset.mimeType.includes("image")
+  )?.url;
+  const poster =
+    video?.thumbnailUrl || generatedThumbnail
+      ? await getSignedUrl(generatedThumbnail as string)
+      : "/images/video-placeholder.jpg";
 
-  const isVideoReady = video?.upload?.transcodedAt !== null;
   return {
     props: {
       videoId,
-      keywords: keywords || [],
       likeId: like?.id || null,
-      uploadId: video?.upload?.id,
-      playlistUrl: isVideoReady ? `/api/watch/${videoId}.m3u8` : "",
-      title: video?.title || "Unavailable",
-      description: video?.description || "",
-      category: video?.category || "Uncategorized",
-      author: author.username || "Unknown",
+      keywords: [],
+      src,
+      title,
+      description,
+      category,
+      author: author.username || "",
+      poster,
       authorProfileImageUrl: author.profileImageUrl || "",
       createdAt:
         typeof video?.createdAt === "object"
           ? (video?.createdAt as Date).toISOString() || new Date().toISOString()
           : video?.createdAt,
-      poster: video?.thumbnailUrl || "",
-      duration: video?.duration || 0,
       initialData: {
         items: items as CommentItem[],
         nextCursor,
@@ -153,11 +140,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   };
 };
 
-const Page: NextPageWithLayout<PageProps> = ({
-  playlistUrl,
-  initialData,
-  ...props
-}) => {
+const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const { isSignedIn, userId } = useAuth();
@@ -241,8 +224,8 @@ const Page: NextPageWithLayout<PageProps> = ({
         <meta property="og:title" content={props.title} />
         <meta property="og:description" content={props.description} />
         <meta property="og:image" content={props.poster} />
-        <meta property="og:video" content={playlistUrl} />
-        <meta property="og:video:secure_url" content={playlistUrl} />
+        {/*<meta property="og:video" content={playlistUrl} />*/}
+        {/*<meta property="og:video:secure_url" content={playlistUrl} />*/}
         <meta property="og:video:type" content="application/x-mpegURL" />
         <meta property="og:video:width" content="720" />
         <meta property="og:video:height" content="480" />
@@ -255,8 +238,8 @@ const Page: NextPageWithLayout<PageProps> = ({
       </Head>
       <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:flex-row lg:max-w-6xl">
         <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
-          <VideoPlayer src={playlistUrl} poster={props.poster} />
-          <div className="flex flex-col bg-gray-500 py-2 px-4">
+          <VideoPlayer src={props.src} poster={props.poster} />
+          <div className="flex flex-col bg-gray-500 px-4 py-2">
             <Disclosure>
               {({ open }) => (
                 <>
@@ -475,9 +458,9 @@ const Page: NextPageWithLayout<PageProps> = ({
             description: props.description,
             thumbnailUrl: props.poster,
             uploadDate: props.createdAt,
-            duration: Duration.fromObject({
-              seconds: props.duration,
-            }).toISOTime({ includePrefix: true }),
+            // duration: Duration.fromObject({
+            //   seconds: props.duration,
+            // }).toISOTime({ includePrefix: true }),
             contentUrl: `https://pugtube.dev/api/watch/${props.videoId}.m3u8`,
             embedUrl: `https://pugtube.dev/embed/${props.videoId}`,
             author: {

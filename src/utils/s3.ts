@@ -14,7 +14,7 @@ import { parseUrl } from "@aws-sdk/url-parser";
 import { formatUrl } from "@aws-sdk/util-format-url";
 import log from "@/utils/logger";
 import { Readable } from "stream";
-import { env } from "@/env/server.mjs";
+import { env } from "@/env.mjs";
 
 export const s3 = new S3Client({
   region: env.AWS_S3_REGION as string,
