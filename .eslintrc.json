@@ -28,7 +28,9 @@
         "**/*.test.ts",
         "**/*.test.tsx"
       ],
-      "rules": {}
+      "rules": {
+        "tailwindcss/no-custom-classname": "off"
+      }
     }
   ]
 }
