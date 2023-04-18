@@ -9,24 +9,12 @@
   ],
   "extends": [
     "next/core-web-vitals",
-    "plugin:tailwindcss/recommended"
+    "plugin:tailwindcss/recommended",
+    "plugin:storybook/recommended"
   ],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx",
-        "!**/*.spec.ts",
-        "!**/*.spec.tsx",
-        "!**/*.test.ts",
-        "!**/*.test.tsx"
-      ],
-      "excludedFiles": [
-        "**/*.spec.ts",
-        "**/*.spec.tsx",
-        "**/*.test.ts",
-        "**/*.test.tsx"
-      ],
+      "files": ["*.{ts,tsx}", "!(**/*).(spec|test).(ts|tsx)"],
       "rules": {
         "tailwindcss/no-custom-classname": "off"
       }

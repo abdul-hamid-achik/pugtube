@@ -1,8 +1,8 @@
-import Image from "next/image";
+import Image from 'next/image'
 
-import { Button } from "@/components/button";
-import { Container } from "@/components/container";
-import backgroundImage from "@/images/background-call-to-action.jpg";
+import { Button } from '@/components/button'
+import { Container } from '@/components/container'
+import backgroundImage from '@/images/background-call-to-action.jpg'
 
 export function CallToAction() {
   return (
@@ -24,14 +24,14 @@ export function CallToAction() {
             Get started today
           </h2>
           <p className="mt-4 text-lg tracking-tight text-white">
-            It’s time to take control of your books. Buy our software so you can
-            feel like you’re doing something productive.
+            It&lsquo;s time to start making money from your videos. Sign up
+            today and
           </p>
-          <Button href="/register" color="white" className="mt-10">
-            Get 6 months free
+          <Button href="/subscribe" color="white" className="mt-10">
+            Get 3 months free
           </Button>
         </div>
       </Container>
     </section>
-  );
+  )
 }
