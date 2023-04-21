@@ -1,14 +1,14 @@
 import Head from 'next/head'
 
-import { CallToAction } from '@/components/call-to-action'
-import { Faqs } from '@/components/faqs'
+// import { CallToAction } from '@/components/call-to-action'
+// import { Faqs } from '@/components/faqs'
 import { Footer } from '@/components/footer'
 import { Header } from '@/components/header'
 import { Hero } from '@/components/hero'
 import { Pricing } from '@/components/pricing'
-import { PrimaryFeatures } from '@/components/primary-features'
-import { SecondaryFeatures } from '@/components/secondary-features'
-import { Testimonials } from '@/components/testimonials'
+// import { PrimaryFeatures } from '@/components/primary-features'
+// import { SecondaryFeatures } from '@/components/secondary-features'
+// import { Testimonials } from '@/components/testimonials'
 
 function Home() {
   return (
@@ -25,12 +25,12 @@ function Home() {
       <Header />
       <main>
         <Hero />
-        <PrimaryFeatures />
-        <SecondaryFeatures />
-        <CallToAction />
-        <Testimonials />
+        {/* <PrimaryFeatures />
+        <SecondaryFeatures /> */}
+        {/* <CallToAction /> */}
+        {/* <Testimonials /> */}
         <Pricing />
-        <Faqs />
+        {/* <Faqs /> */}
       </main>
       <Footer />
     </>

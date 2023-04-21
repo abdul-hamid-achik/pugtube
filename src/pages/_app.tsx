@@ -5,6 +5,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { type AppProps } from 'next/app'
 import type { NextPage } from 'next'
 import type { ReactElement, ReactNode } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 
 export { reportWebVitals } from 'next-axiom'
 
@@ -21,6 +22,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <ClerkProvider {...pageProps}>
       {getLayout(<Component {...pageProps} />)}
+      <Analytics />
     </ClerkProvider>
   )
 }

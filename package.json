@@ -73,6 +73,7 @@
     "@uppy/file-input": "^3.0.1",
     "@uppy/progress-bar": "^3.0.1",
     "@uppy/react": "^3.0.2",
+    "@vercel/analytics": "^1.0.0",
     "@vidstack/react": "^0.4.4",
     "autoprefixer": "^10.4.14",
     "clsx": "^1.2.1",
