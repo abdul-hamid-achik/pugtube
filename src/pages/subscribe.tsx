@@ -1,87 +1,97 @@
-import { useState, ReactNode } from 'react';
-import Link from 'next/link';
-import { GetServerSidePropsContext } from 'next';
-import Spinner from '@/components/spinner';
-import Button from '@/components/button';
-import { useUser, type User } from '@clerk/nextjs';
+import { ReactNode, useState } from 'react'
+import Link from 'next/link'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import Spinner from '@/components/spinner'
+import { Button } from '@/components/button'
+import { User } from '@clerk/nextjs/api'
+import { postData } from '@/utils/helpers'
+import { buildClerkProps, clerkClient, getAuth } from '@clerk/nextjs/server'
 
 interface Props {
-  title: string;
-  description?: string;
-  footer?: ReactNode;
-  children: ReactNode;
+  title: string
+  description?: string
+  footer?: ReactNode
+  children: ReactNode
 }
 
 function Card({ title, description, footer, children }: Props) {
   return (
-    <div className="border border-zinc-700	max-w-3xl w-full p rounded-md m-auto my-8">
+    <div className="p m-auto	my-8 w-full max-w-3xl rounded-md border border-zinc-700">
       <div className="px-5 py-4">
-        <h3 className="text-2xl mb-1 font-medium">{title}</h3>
+        <h3 className="mb-1 text-2xl font-medium">{title}</h3>
         <p className="text-zinc-300">{description}</p>
         {children}
       </div>
-      <div className="border-t border-zinc-700 bg-zinc-900 p-4 text-zinc-500 rounded-b-md">
+      <div className="rounded-b-md border-t border-zinc-700 bg-zinc-900 p-4 text-zinc-500">
         {footer}
       </div>
     </div>
-  );
+  )
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const supabase = createServerSupabaseClient(ctx);
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
+export const getServerSideProps: GetServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
+  const { userId } = getAuth(ctx.req)
 
-  if (!session)
+  if (!userId)
     return {
       redirect: {
         destination: '/signin',
-        permanent: false
-      }
-    };
+        permanent: false,
+      },
+    }
+
+  const user = userId ? await clerkClient.users.getUser(userId) : undefined
 
   return {
-    props: {
-      initialSession: session,
-      user: session.user
-    }
-  };
-};
+    props: { ...buildClerkProps(ctx.req, { user }) },
+  }
+}
 
 export default function Subscribe({ user }: { user: User }) {
-  const [loading, setLoading] = useState(false);
-  const { isLoading, subscription, userDetails } = useUser();
+  const [isLoading, setLoading] = useState(false)
+
+  let subscription = {
+    prices: {
+      currency: 'USD',
+      unit_amount: 0,
+      products: {
+        name: 'Free',
+      },
+      interval: 'month',
+    },
+  }
 
   const redirectToCustomerPortal = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       const { url, error } = await postData({
-        url: '/api/create-portal-link'
-      });
-      window.location.assign(url);
+        url: '/api/create-portal-link',
+      })
+      window.location.assign(url)
     } catch (error) {
-      if (error) return alert((error as Error).message);
+      if (error) return alert((error as Error).message)
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const subscriptionPrice =
     subscription &&
     new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: subscription?.prices?.currency,
-      minimumFractionDigits: 0
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+      minimumFractionDigits: 0,
+    }).format((subscription?.prices?.unit_amount || 0) / 100)
 
   return (
-    <section className="bg-black mb-32">
-      <div className="max-w-6xl mx-auto pt-8 sm:pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex sm:flex-col sm:align-center">
+    <section className="mb-32 bg-black">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:pt-24 lg:px-8">
+        <div className="sm:align-center sm:flex sm:flex-col">
           <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
             Account
           </h1>
-          <p className="mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl max-w-2xl m-auto">
+          <p className="m-auto mt-5 max-w-2xl text-xl text-zinc-200 sm:text-center sm:text-2xl">
             We partnered with Stripe for a simplified billing.
           </p>
         </div>
@@ -95,14 +105,14 @@ export default function Subscribe({ user }: { user: User }) {
               : ''
           }
           footer={
-            <div className="flex items-start justify-between flex-col sm:flex-row sm:items-center">
+            <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
               <p className="pb-4 sm:pb-0">
                 Manage your subscription on Stripe.
               </p>
               <Button
-                variant="slim"
-                loading={loading}
-                disabled={loading || !subscription}
+                variant="solid"
+                loading={isLoading}
+                disabled={isLoading || !subscription}
                 onClick={redirectToCustomerPortal}
               >
                 Open customer portal
@@ -110,9 +120,9 @@ export default function Subscribe({ user }: { user: User }) {
             </div>
           }
         >
-          <div className="text-xl mt-8 mb-4 font-semibold">
+          <div className="mt-8 mb-4 text-xl font-semibold">
             {isLoading ? (
-              <div className="h-12 mb-6">
+              <div className="mb-6 h-12">
                 <Spinner />
               </div>
             ) : subscription ? (
@@ -127,14 +137,12 @@ export default function Subscribe({ user }: { user: User }) {
           description="Please enter your full name, or a display name you are comfortable with."
           footer={<p>Please use 64 characters at maximum.</p>}
         >
-          <div className="text-xl mt-8 mb-4 font-semibold">
-            {userDetails ? (
-              `${userDetails.full_name ??
-              `${userDetails.first_name} ${userDetails.last_name}`
-              }`
+          <div className="mt-8 mb-4 text-xl font-semibold">
+            {user ? (
+              `${user.firstName} ${user.lastName}`
             ) : (
-              <div className="h-8 mb-6">
-                <LoadingDots />
+              <div className="mb-6 h-8">
+                <Spinner />
               </div>
             )}
           </div>
@@ -144,11 +152,11 @@ export default function Subscribe({ user }: { user: User }) {
           description="Please enter the email address you want to use to login."
           footer={<p>We will email you to verify the change.</p>}
         >
-          <p className="text-xl mt-8 mb-4 font-semibold">
-            {user ? user.email : undefined}
+          <p className="mt-8 mb-4 text-xl font-semibold">
+            {user ? user.emailAddresses[0]!.emailAddress : undefined}
           </p>
         </Card>
       </div>
     </section>
-  );
+  )
 }
