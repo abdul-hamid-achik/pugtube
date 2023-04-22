@@ -31,6 +31,7 @@ export function Button({
   color = 'slate',
   className,
   href,
+  loading,
   ...props
 }: {
   variant?: keyof typeof baseStyles
@@ -49,7 +50,7 @@ export function Button({
     props.disabled && 'cursor-not-allowed opacity-50'
   )
 
-  if (props.loading) {
+  if (loading) {
     return (
       <button className={className} {...props}>
         <Spinner className="h-5 w-5 text-white" />

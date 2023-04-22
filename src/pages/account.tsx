@@ -4,8 +4,11 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Spinner from '@/components/spinner'
 import { Button } from '@/components/button'
 import { User } from '@clerk/nextjs/api'
-import { postData } from '@/utils/helpers'
-import { buildClerkProps, clerkClient, getAuth } from '@clerk/nextjs/server'
+import { postData, retrieveCustomerSubscription } from '@/utils/helpers'
+import { buildClerkProps, getAuth } from '@clerk/nextjs/server'
+import { stripe } from '@/utils/stripe'
+import superjson from 'superjson'
+import Stripe from 'stripe'
 
 interface Props {
   title: string
@@ -32,36 +35,42 @@ function Card({ title, description, footer, children }: Props) {
 export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
 ) => {
-  const { userId } = getAuth(ctx.req)
+  const { user } = getAuth(ctx.req)
 
-  if (!userId)
+  if (!user)
     return {
       redirect: {
-        destination: '/signin',
+        destination: '/sign-in',
         permanent: false,
       },
     }
 
-  const user = userId ? await clerkClient.users.getUser(userId) : undefined
+  const subscription = await retrieveCustomerSubscription({
+    email: user!.emailAddresses[0]!.emailAddress,
+  })
 
+  const products = await stripe.products.list({
+    expand: ['data.prices'],
+  })
   return {
-    props: { ...buildClerkProps(ctx.req, { user }) },
+    props: {
+      ...buildClerkProps(ctx.req, { user }),
+      subscription: superjson.serialize(subscription),
+      products: superjson.serialize(products),
+    },
   }
 }
 
-export default function Subscribe({ user }: { user: User }) {
-  const [isLoading, setLoading] = useState(false)
-
-  let subscription = {
-    prices: {
-      currency: 'USD',
-      unit_amount: 0,
-      products: {
-        name: 'Free',
-      },
-      interval: 'month',
-    },
+export default function Account({
+  user,
+  subscription,
+}: {
+  user: User
+  subscription?: Stripe.Subscription & {
+    prices: Stripe.Price & { products: Stripe.Product; interval: string }
   }
+}) {
+  const [isLoading, setLoading] = useState(false)
 
   const redirectToCustomerPortal = async () => {
     setLoading(true)

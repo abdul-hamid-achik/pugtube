@@ -12,6 +12,12 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum UserType {
+  FREE
+  PREMIUM
+  ENTERPRISE
+}
+
 model Video {
   id           String            @id @default(cuid())
   title        String
@@ -145,15 +151,14 @@ model SubscriptionPlanBenefit {
   @@map("subscription_plan_benefits")
 }
 
-model Subscription {
-  id                   String           @id @default(cuid())
-  userId               String           @map("user_id")
-  channelId            String           @map("channel_id")
-  planId               String           @map("plan_id")
-  stripeSubscriptionId String           @unique @map("stripe_subscription_id")
-  channel              Channel          @relation(fields: [channelId], references: [id])
-  subscriptionPlan     SubscriptionPlan @relation(fields: [planId], references: [id])
-  createdAt            DateTime         @default(now()) @map("created_at")
+model Account {
+  id               String           @id @default(cuid())
+  userId           String           @map("user_id")
+  channelId        String           @map("channel_id")
+  planId           String           @map("plan_id")
+  channel          Channel          @relation(fields: [channelId], references: [id])
+  subscriptionPlan SubscriptionPlan @relation(fields: [planId], references: [id])
+  createdAt        DateTime         @default(now()) @map("created_at")
 
   @@index([userId], name: "user_id")
   @@index([channelId], name: "channel_id")

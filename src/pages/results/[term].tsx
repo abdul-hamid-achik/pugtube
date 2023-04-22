@@ -1,38 +1,38 @@
-import Layout from "@/components/layout";
-import Spinner from "@/components/spinner";
-import VideoCard from "@/components/video-card";
-import { api } from "@/utils/api";
-import { User } from "@clerk/nextjs/api";
-import { Video } from "@prisma/client";
-import { GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
-import { ReactElement } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { NextPageWithLayout } from "../_app";
-import Head from "next/head";
-import log from "@/utils/logger";
+import Layout from '@/components/layout'
+import Spinner from '@/components/spinner'
+import VideoCard from '@/components/video-card'
+import { api } from '@/utils/api'
+import { User } from '@clerk/nextjs/api'
+import { Video } from '@prisma/client'
+import { GetServerSidePropsContext } from 'next'
+import { useRouter } from 'next/router'
+import { ReactElement } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { NextPageWithLayout } from '../_app'
+import Head from 'next/head'
+import log from '@/utils/logger'
 
 interface ItemType {
-  video: Video;
-  author: User;
+  video: Video
+  author: User
 }
 
 interface PageProps {
   initialData: {
-    items: ItemType[];
-    nextCursor: string | null;
-  };
+    items: ItemType[]
+    nextCursor: string | null
+  }
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { getSearchResults } = await import("@/utils/shared");
+  const { getSearchResults } = await import('@/utils/shared')
 
-  const searchTerm = context.query.term as string;
+  const searchTerm = context.query.term as string
   const { items, nextCursor = null } = await getSearchResults({
     searchTerm,
     limit: 10,
     skip: 0,
-  });
+  })
 
   return {
     props: {
@@ -41,17 +41,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         nextCursor,
       },
     },
-  };
+  }
 }
 
 const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
   const {
     query: { term },
-  } = useRouter();
+  } = useRouter()
   const { data, fetchNextPage, isError, isLoading } =
     api.videos.search.useInfiniteQuery(
       {
-        searchTerm: (term as string) || "",
+        searchTerm: (term as string) || '',
         limit: 10,
         skip: 10,
       },
@@ -60,19 +60,19 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
         initialData: { pages: [initialData], pageParams: [undefined] },
         enabled: false,
       }
-    );
+    )
 
-  const hasNextPage = data?.pages.some((page) => !!page.nextCursor) || false;
+  const hasNextPage = data?.pages.some((page) => !!page.nextCursor) || false
 
   const fetchMoreSearchResults = () => {
     if (hasNextPage) {
       fetchNextPage().catch(
         (err) => log.error(err) // eslint-disable-line no-console
-      );
+      )
     }
-  };
+  }
 
-  const items = data?.pages.flatMap((page) => page.items) || [];
+  const items = data?.pages.flatMap((page) => page.items) || []
 
   return (
     <>
@@ -85,7 +85,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
         />
         <meta
           property="og:url"
-          content={`https://pugtube.dev/results/${term}`}
+          content={`https://pugtube.com/results/${term}`}
         />
         <meta property="og:type" content="website" />
       </Head>
@@ -135,11 +135,11 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData }) => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
 Page.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
-export default Page;
+export default Page

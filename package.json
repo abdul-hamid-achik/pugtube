@@ -27,7 +27,7 @@
     "test": "concurrently -m ${MAX_CONCURRENT_TESTS:-1} \"pnpm:unit\"",
     "unit": "jest",
     "seed": "npx prisma db seed",
-    "tunnel": "ngrok http --hostname=tunnel.pugtube.dev 3000",
+    "tunnel": "ngrok http --hostname=tunnel.pugtube.com 3000",
     "postbuild": "next-sitemap",
     "reset": "npx prisma migrate reset --force --skip-seed",
     "shell": "npx tsx",

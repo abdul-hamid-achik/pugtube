@@ -5,18 +5,18 @@
  *
  * We also create a few inference helpers for input and output types
  */
-import { type AppRouter } from "@/server/api/root";
-import { httpBatchLink, loggerLink } from "@trpc/client";
-import { createTRPCNext } from "@trpc/next";
-import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-import Cookie from "js-cookie";
-import superjson from "superjson";
+import { type AppRouter } from '@/server/api/root'
+import { httpBatchLink, loggerLink } from '@trpc/client'
+import { createTRPCNext } from '@trpc/next'
+import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
+import Cookie from 'js-cookie'
+import superjson from 'superjson'
 
 const getBaseUrl = () => {
-  if (typeof window !== "undefined") return ""; // browser should use relative url
-  if (process.env.NODE_ENV === "production") return "https://pugtube.dev"; // prod SSR should use relative url (same domain
-  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
-};
+  if (typeof window !== 'undefined') return '' // browser should use relative url
+  if (process.env.NODE_ENV === 'production') return 'https://pugtube.com' // prod SSR should use relative url (same domain
+  return `http://localhost:${process.env.PORT ?? 3000}` // dev SSR should use localhost
+}
 
 /**
  * A set of typesafe react-query hooks for your tRPC API
@@ -38,36 +38,36 @@ export const api = createTRPCNext<AppRouter>({
         loggerLink({
           // logger,
           enabled: (opts) =>
-            process.env.NODE_ENV === "development" ||
-            (opts.direction === "down" && opts.result instanceof Error),
+            process.env.NODE_ENV === 'development' ||
+            (opts.direction === 'down' && opts.result instanceof Error),
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
           headers: () => {
-            const token = Cookie.get("__session") ?? "";
+            const token = Cookie.get('__session') ?? ''
             return {
               ...(ctx?.req?.headers ?? {}),
               Authorization: `Bearer ${token}`,
-            };
+            }
           },
         }),
       ],
-    };
+    }
   },
   /**
    * Whether tRPC should await queries when server rendering pages
    * @see https://trpc.io/docs/nextjs#ssr-boolean-default-false
    */
   ssr: false,
-});
+})
 
 /**
  * Inference helper for inputs
  * @example type HelloInput = RouterInputs['example']['hello']
  * */
-export type RouterInputs = inferRouterInputs<AppRouter>;
+export type RouterInputs = inferRouterInputs<AppRouter>
 /**
  * Inference helper for outputs
  * @example type HelloOutput = RouterOutputs['example']['hello']
  * */
-export type RouterOutputs = inferRouterOutputs<AppRouter>;
+export type RouterOutputs = inferRouterOutputs<AppRouter>

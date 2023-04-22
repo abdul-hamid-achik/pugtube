@@ -33,7 +33,7 @@ export function Hero() {
         for your videos, or make them free. Subscriptions are also available.
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
-        <Button href="/subscribe">Get 3 months free</Button>
+        <Button href="/account">Get 3 months free</Button>
         <Button
           href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
           variant="outline"

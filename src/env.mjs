@@ -15,6 +15,8 @@ const server = z.object({
   TRANSLOADIT_KEY: z.string().min(1),
   TRANSLOADIT_SECRET: z.string().min(1),
   TRANSLOADIT_TEMPLATE_ID: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1),
 });
 
 /**
@@ -24,6 +26,7 @@ const server = z.object({
 const client = z.object({
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
 });
 
 /**
@@ -43,8 +46,11 @@ const processEnv = {
   TRANSLOADIT_TEMPLATE_ID: process.env.TRANSLOADIT_TEMPLATE_ID,
   TRANSLOADIT_KEY: process.env.TRANSLOADIT_KEY,
   TRANSLOADIT_SECRET: process.env.TRANSLOADIT_SECRET,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
   NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 };
 
 // Don't touch the part below

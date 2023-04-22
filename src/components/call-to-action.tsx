@@ -27,7 +27,7 @@ export function CallToAction() {
             It&lsquo;s time to start making money from your videos. Sign up
             today and
           </p>
-          <Button href="/subscribe" color="white" className="mt-10">
+          <Button href="/account" color="white" className="mt-10">
             Get 3 months free
           </Button>
         </div>

@@ -1,102 +1,102 @@
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 
-import { api } from "@/utils/api";
-import { useAuth } from "@clerk/nextjs";
-import AwsS3Multipart from "@uppy/aws-s3-multipart";
-import Uppy, { UppyFile } from "@uppy/core";
-import { Dashboard } from "@uppy/react";
-import { GetServerSidePropsContext } from "next";
-import Link from "next/link";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
+import { api } from '@/utils/api'
+import { useAuth } from '@clerk/nextjs'
+import AwsS3Multipart from '@uppy/aws-s3-multipart'
+import Uppy, { UppyFile } from '@uppy/core'
+import { Dashboard } from '@uppy/react'
+import { GetServerSidePropsContext } from 'next'
+import Link from 'next/link'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/router'
 
 interface FormData {
-  title: string;
-  description: string;
-  category: string;
+  title: string
+  description: string
+  category: string
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {},
-  };
+  }
 }
 
 export default function Upload() {
-  const { getToken } = useAuth();
-  const router = useRouter();
+  const { getToken } = useAuth()
+  const router = useRouter()
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>()
   const { mutate } = api.videos.create.useMutation({
     onSuccess: async (video) => {
-      uppy.resetProgress();
-      alert("Video uploaded successfully");
-      await router.push(`/upload/${video.uploadId}`);
+      uppy.resetProgress()
+      alert('Video uploaded successfully')
+      await router.push(`/upload/${video.uploadId}`)
     },
-  });
+  })
 
   const uppy = React.useMemo(
     () =>
       new Uppy().use(AwsS3Multipart, {
-        id: "uppy-s3-multipart",
-        companionUrl: "/api",
+        id: 'uppy-s3-multipart',
+        companionUrl: '/api',
         createMultipartUpload(file) {
           return getToken().then((token) =>
-            fetch("/api/upload", {
-              method: "POST",
+            fetch('/api/upload', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              credentials: "include",
+              credentials: 'include',
               body: JSON.stringify({
                 filename: file.name,
                 filetype: file.type,
                 type: file.type,
                 contentType: file.type,
                 size: file.size,
-                operation: "createMultipartUpload",
+                operation: 'createMultipartUpload',
               }),
             })
               .then((res) => res.json())
               .then((data) => {
-                return { uploadId: data.uploadId, key: data.key };
+                return { uploadId: data.uploadId, key: data.key }
               })
-          );
+          )
         },
         signPart(file, partData) {
           return getToken().then((token) =>
-            fetch("/api/upload", {
-              method: "POST",
-              credentials: "include",
+            fetch('/api/upload', {
+              method: 'POST',
+              credentials: 'include',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
                 ...partData,
-                operation: "prepareUploadPart",
+                operation: 'prepareUploadPart',
               }),
             })
               .then((res) => res.json())
               .then((data) => {
-                return { url: data.url };
+                return { url: data.url }
               })
-          );
+          )
         },
         completeMultipartUpload(file, data) {
           return getToken().then((token) =>
-            fetch("/api/upload", {
-              method: "POST",
-              credentials: "include",
+            fetch('/api/upload', {
+              method: 'POST',
+              credentials: 'include',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
@@ -106,29 +106,30 @@ export default function Upload() {
                 size: file.size,
                 filename: file.name,
                 contentType: file.type,
-                operation: "completeMultipartUpload",
+                operation: 'completeMultipartUpload',
               }),
             })
               .then((res) => res.json())
               .then((data) => {
-                return { location: data.location };
+                return { location: data.location }
               })
-          );
+          )
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
-  );
+  )
 
   const onSubmit = async (data: FormData) => {
-    const { successful } = await uppy.upload();
-    const file = successful.pop();
+    const { successful } = await uppy.upload()
+    const file = successful.pop()
     const uploadId = (file as UppyFile & { uploadURL?: string })?.uploadURL
-      ?.split("/")
-      .pop();
+      ?.split('/')
+      .pop()
 
     if (!uploadId) {
-      setError("title", { message: "could not parse upload Id" });
-      return;
+      setError('title', { message: 'could not parse upload Id' })
+      return
     }
 
     mutate(
@@ -139,11 +140,11 @@ export default function Upload() {
       },
       {
         onError: (error) => {
-          setError("title", { message: error.message });
+          setError('title', { message: error.message })
         },
       }
-    );
-  };
+    )
+  }
 
   return (
     <form
@@ -165,7 +166,7 @@ export default function Upload() {
               </p>
             )}
             <input
-              {...register("title", { required: true })}
+              {...register('title', { required: true })}
               className="w-full border border-x-0 border-t-0 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
@@ -182,7 +183,7 @@ export default function Upload() {
               </p>
             )}
             <textarea
-              {...register("description", { required: true })}
+              {...register('description', { required: true })}
               className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
@@ -199,7 +200,7 @@ export default function Upload() {
               </p>
             )}
             <input
-              {...register("category", { required: true })}
+              {...register('category', { required: true })}
               className="w-full border border-x-0 border-t-0 border-gray-50 bg-gray-700 px-3 py-2 leading-tight text-gray-50 focus:outline-none"
             />
           </div>
@@ -209,7 +210,7 @@ export default function Upload() {
             <Dashboard
               id="upload"
               uppy={uppy}
-              plugins={["Tus", "AwsS3Multipart"]}
+              plugins={['Tus', 'AwsS3Multipart']}
               width="100%"
               className="w-full"
               hideUploadButton
@@ -221,8 +222,8 @@ export default function Upload() {
             type="submit"
             className={`rounded ${
               errors.title || errors.category || errors.description
-                ? "bg-red-500"
-                : "bg-gray-50"
+                ? 'bg-red-500'
+                : 'bg-gray-50'
             } w-full px-4 py-2 text-black focus:outline-none md:w-60`}
           >
             Upload
@@ -242,5 +243,5 @@ export default function Upload() {
         </div>
       </div>
     </form>
-  );
+  )
 }

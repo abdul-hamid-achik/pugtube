@@ -1,71 +1,71 @@
-import CommentCard from "@/components/comment";
-import Layout from "@/components/layout";
-import LikeButton from "@/components/like";
-import Spinner from "@/components/spinner";
-import VideoPlayer from "@/components/video-player";
-import { NextPageWithLayout } from "@/pages/_app";
-import { prisma } from "@/server/db";
-import { api } from "@/utils/api";
-import log from "@/utils/logger";
-import { useAuth } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/api";
-import { getAuth } from "@clerk/nextjs/server";
-import { Disclosure } from "@headlessui/react";
-import { Comment, Prisma } from "@prisma/client";
-import { GetServerSideProps } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { ReactElement } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import InfiniteScroll from "react-infinite-scroll-component";
-import Timestamp from "@/components/timestamp";
-import { getSignedUrl } from "@/utils/s3";
+import CommentCard from '@/components/comment'
+import Layout from '@/components/layout'
+import LikeButton from '@/components/like'
+import Spinner from '@/components/spinner'
+import VideoPlayer from '@/components/video-player'
+import { NextPageWithLayout } from '@/pages/_app'
+import { prisma } from '@/server/db'
+import { api } from '@/utils/api'
+import log from '@/utils/logger'
+import { useAuth } from '@clerk/nextjs'
+import { User } from '@clerk/nextjs/api'
+import { getAuth } from '@clerk/nextjs/server'
+import { Disclosure } from '@headlessui/react'
+import { Comment, Prisma } from '@prisma/client'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { ReactElement } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import Timestamp from '@/components/timestamp'
+import { getSignedUrl } from '@/utils/s3'
 
 interface PageProps {
-  keywords: string[];
-  src: string | { src: string; type: string }[];
-  likeId: string | null;
-  videoId: string;
-  title: string;
-  description: string;
-  category: string;
-  author: string;
-  authorProfileImageUrl: string;
-  poster: string;
-  createdAt: string;
+  keywords: string[]
+  src: string | { src: string; type: string }[]
+  likeId: string | null
+  videoId: string
+  title: string
+  description: string
+  category: string
+  author: string
+  authorProfileImageUrl: string
+  poster: string
+  createdAt: string
   initialData: {
-    items: CommentItem[];
-    nextCursor: string | null;
-  };
+    items: CommentItem[]
+    nextCursor: string | null
+  }
 }
 
 type CommentItem = {
-  comment: Comment | { createdAt: string; updatedAt: string };
-  author: User;
-  parentComment?: Comment | { createdAt: string; updatedAt: string };
-};
+  comment: Comment | { createdAt: string; updatedAt: string }
+  author: User
+  parentComment?: Comment | { createdAt: string; updatedAt: string }
+}
 
-type Inputs = { text: string };
+type Inputs = { text: string }
 
 function getRandomIndex(arrayLength: number) {
-  return Math.floor(Math.random() * arrayLength);
+  return Math.floor(Math.random() * arrayLength)
 }
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   params,
   req,
 }) => {
-  const { getVideoData, getComments } = await import("@/utils/shared");
-  const { userId } = await getAuth(req);
-  let { videoId } = params as { videoId: string };
-  if (videoId === "random") {
+  const { getVideoData, getComments } = await import('@/utils/shared')
+  const { userId } = await getAuth(req)
+  let { videoId } = params as { videoId: string }
+  if (videoId === 'random') {
     let findManyArgs: Prisma.VideoFindManyArgs = {
       select: {
         id: true,
       },
-    };
+    }
 
     if (userId) {
       findManyArgs = {
@@ -73,48 +73,48 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         where: {
           userId: userId!,
         },
-      } as Prisma.VideoFindManyArgs;
+      } as Prisma.VideoFindManyArgs
     }
 
-    const videos = await prisma.video.findMany(findManyArgs);
+    const videos = await prisma.video.findMany(findManyArgs)
 
-    const randomIndex = getRandomIndex(videos.length);
-    const randomVideoId = videos[randomIndex]!.id;
+    const randomIndex = getRandomIndex(videos.length)
+    const randomVideoId = videos[randomIndex]!.id
 
     return {
       redirect: {
         destination: `/watch/${randomVideoId}`,
         permanent: false,
       },
-    };
+    }
   }
-  const { video, author, like } = await getVideoData(videoId);
+  const { video, author, like } = await getVideoData(videoId)
   const { items, nextCursor = null } = await getComments({
     videoId,
     limit: 9,
-  });
+  })
 
   const src = await Promise.all(
     video.upload.assets
       .filter((asset) => {
-        return asset.mimeType.includes("video");
+        return asset.mimeType.includes('video')
       })
       .map(async (asset) => ({
         src: await getSignedUrl(asset.url),
         type: asset.mimeType,
       }))
-  );
+  )
 
-  const title = video?.title || "Unavailable";
-  const description = video?.description || "";
-  const category = video?.category || "Uncategorized";
+  const title = video?.title || 'Unavailable'
+  const description = video?.description || ''
+  const category = video?.category || 'Uncategorized'
   const generatedThumbnail = video.upload.assets.find((asset) =>
-    asset.mimeType.includes("image")
-  )?.url;
+    asset.mimeType.includes('image')
+  )?.url
   const poster =
     video?.thumbnailUrl || generatedThumbnail
       ? await getSignedUrl(generatedThumbnail as string)
-      : "/images/video-placeholder.jpg";
+      : '/images/video-placeholder.jpg'
 
   return {
     props: {
@@ -125,11 +125,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       title,
       description,
       category,
-      author: author.username || "",
+      author: author.username || '',
       poster,
-      authorProfileImageUrl: author.profileImageUrl || "",
+      authorProfileImageUrl: author.profileImageUrl || '',
       createdAt:
-        typeof video?.createdAt === "object"
+        typeof video?.createdAt === 'object'
           ? (video?.createdAt as Date).toISOString() || new Date().toISOString()
           : video?.createdAt,
       initialData: {
@@ -137,13 +137,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         nextCursor,
       },
     },
-  };
-};
+  }
+}
 
 const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
-  const router = useRouter();
-  const { register, handleSubmit, reset } = useForm<Inputs>();
-  const { isSignedIn, userId } = useAuth();
+  const router = useRouter()
+  const { register, handleSubmit, reset } = useForm<Inputs>()
+  const { isSignedIn, userId } = useAuth()
   const {
     data: commentData,
     error: commentError,
@@ -163,44 +163,44 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
       refetchInterval: 10000,
       enabled: false,
     }
-  );
+  )
 
   const { data: likes, refetch: refetchLikes } = api.social.likes.useQuery({
     videoId: props.videoId,
-  });
+  })
 
   const { mutate } = api.social.comment.useMutation({
     onSuccess: () => {
-      reset();
-      refresh();
+      reset()
+      refresh()
     },
-  });
+  })
 
   const hasNextCommentPage =
-    commentData?.pages.some((page) => !!page?.nextCursor) || false;
+    commentData?.pages.some((page) => !!page?.nextCursor) || false
 
   const fetchMoreCommentData = () => {
     if (hasNextCommentPage) {
       fetchNextCommentPage().then((r: any) => {
-        return log.info(r);
-      });
+        return log.info(r)
+      })
     }
-  };
+  }
 
-  const commentItems = commentData?.pages?.flatMap((page) => page?.items) || [];
+  const commentItems = commentData?.pages?.flatMap((page) => page?.items) || []
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     mutate({
       videoId: props.videoId,
       text: data.text,
-    });
-  };
+    })
+  }
 
   const refresh = () => {
     Promise.all([refetchComments(), refetchLikes()]).catch((err) => {
-      log.error(err);
-    });
-  };
+      log.error(err)
+    })
+  }
   return (
     <>
       <Head>
@@ -219,7 +219,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
         <meta property="og:site_name" content="PugTube" />
         <meta
           property="og:url"
-          content={`https://pugtube.dev/watch/${props.videoId}`}
+          content={`https://pugtube.com/watch/${props.videoId}`}
         />
         <meta property="og:title" content={props.title} />
         <meta property="og:description" content={props.description} />
@@ -234,7 +234,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
         <meta property="og:video:tag" content={props.title} />
         <meta property="og:video:tag" content={props.description} />
         <meta property="og:video:tag" content="PugTube" />
-        <meta name="keywords" content={props.keywords.join(", ")} />
+        <meta name="keywords" content={props.keywords.join(', ')} />
       </Head>
       <div className="m-0 mx-auto flex h-fit flex-col bg-gray-700 sm:w-full md:flex-row lg:max-w-6xl">
         <div className="mx-auto flex w-full flex-1 flex-col sm:p-0 md:p-4">
@@ -302,7 +302,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
 
                         <div className="flex w-full justify-end">
                           <p className="text-white">
-                            {!open ? "...more" : "close"}
+                            {!open ? '...more' : 'close'}
                           </p>
                         </div>
                       </div>
@@ -339,7 +339,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
                               onClick={() => {
                                 router
                                   .push(`/results/${keyword}`)
-                                  .catch((err) => log.error(err));
+                                  .catch((err) => log.error(err))
                               }}
                               className="inline-flex cursor-pointer items-center rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800 hover:underline"
                             >
@@ -362,7 +362,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
               >
                 <div className="mb-4">
                   <textarea
-                    {...register("text")}
+                    {...register('text')}
                     className="h-32 w-full rounded border border-gray-600 bg-gray-800 p-2 text-white"
                     placeholder="Add a comment"
                   ></textarea>
@@ -414,7 +414,7 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
               next={fetchMoreCommentData}
               hasMore={hasNextCommentPage}
               style={{
-                minHeight: "calc(100vh - 24rem)",
+                minHeight: 'calc(100vh - 24rem)',
               }}
               loader={
                 <div className="p-4">
@@ -452,8 +452,8 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            "@context": "http://schema.org",
-            "@type": "VideoObject",
+            '@context': 'http://schema.org',
+            '@type': 'VideoObject',
             name: props.title,
             description: props.description,
             thumbnailUrl: props.poster,
@@ -461,27 +461,27 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
             // duration: Duration.fromObject({
             //   seconds: props.duration,
             // }).toISOTime({ includePrefix: true }),
-            contentUrl: `https://pugtube.dev/api/watch/${props.videoId}.m3u8`,
-            embedUrl: `https://pugtube.dev/embed/${props.videoId}`,
+            contentUrl: `https://pugtube.com/api/watch/${props.videoId}.m3u8`,
+            embedUrl: `https://pugtube.com/embed/${props.videoId}`,
             author: {
-              "@type": "Person",
+              '@type': 'Person',
               name: props.author,
-              url: `https://pugtube.dev/channel/${props.author}`,
+              url: `https://pugtube.com/channel/${props.author}`,
             },
             publisher: {
-              "@type": "Organization",
-              name: "PugTube",
+              '@type': 'Organization',
+              name: 'PugTube',
               logo: {
-                "@type": "ImageObject",
-                url: "https://pugtube.dev/logo.png", // Replace with the URL to your site's logo
+                '@type': 'ImageObject',
+                url: 'https://pugtube.com/logo.png', // Replace with the URL to your site's logo
                 width: 200, // Replace with the width of your logo
                 height: 60, // Replace with the height of your logo
               },
             },
             interactionStatistic: {
-              "@type": "InteractionCounter",
+              '@type': 'InteractionCounter',
               interactionType: {
-                "@type": "http://schema.org/LikeAction",
+                '@type': 'http://schema.org/LikeAction',
               },
               userInteractionCount: likes,
             },
@@ -490,14 +490,14 @@ const Page: NextPageWithLayout<PageProps> = ({ initialData, ...props }) => {
         }}
       />
     </>
-  );
-};
+  )
+}
 
 Page.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+  return <Layout>{page}</Layout>
+}
 
-export default Page;
+export default Page
 
 // async function generateMetadata({
 //   params,
@@ -516,7 +516,7 @@ export default Page;
 //     authors: [
 //       {
 //         name: author.username!,
-//         url: `https://pugtube.dev/channel/${author.username}`,
+//         url: `https://pugtube.com/channel/${author.username}`,
 //       },
 //     ],
 //     twitter: {
@@ -530,7 +530,7 @@ export default Page;
 //     openGraph: {
 //       type: "video.other",
 //       siteName: "PugTube",
-//       url: `https://pugtube.dev/watch/${video.id}`,
+//       url: `https://pugtube.com/watch/${video.id}`,
 //       title: video!.title,
 //       description: video!.description as string,
 //       images: video!.thumbnailUrl,
