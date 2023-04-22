@@ -35,7 +35,10 @@ const relevantEvents = new Set([
   'customer.subscription.deleted',
 ])
 
-const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     const buf = await buffer(req)
     const sig = req.headers['stripe-signature']
@@ -100,8 +103,6 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json({ received: true })
   } else {
     res.setHeader('Allow', 'POST')
-    res.status(status.METHOD_NOT_ALLOWED).end('Method Not Allowed')
+    res.status(status.METHOD_NOT_ALLOWED).end(status['405_MESSAGE'])
   }
 }
-
-export default webhookHandler

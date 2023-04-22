@@ -129,14 +129,13 @@ model Channel {
 }
 
 model SubscriptionPlan {
-  id            String                    @id @default(cuid())
-  name          String
-  stripePriceId String                    @unique @map("stripe_price_id")
-  price         Float
-  createdAt     DateTime                  @default(now()) @map("created_at")
-  updatedAt     DateTime                  @updatedAt @map("updated_at")
-  subscriptions Subscription[]
-  benefits      SubscriptionPlanBenefit[]
+  id           String                    @id @default(cuid())
+  name         String
+  price        Float
+  createdAt    DateTime                  @default(now()) @map("created_at")
+  updatedAt    DateTime                  @updatedAt @map("updated_at")
+  benefits     SubscriptionPlanBenefit[]
+  Subscription Subscription[]
 
   @@map("subscription_plans")
 }
@@ -151,14 +150,14 @@ model SubscriptionPlanBenefit {
   @@map("subscription_plan_benefits")
 }
 
-model Account {
-  id               String           @id @default(cuid())
-  userId           String           @map("user_id")
-  channelId        String           @map("channel_id")
-  planId           String           @map("plan_id")
-  channel          Channel          @relation(fields: [channelId], references: [id])
-  subscriptionPlan SubscriptionPlan @relation(fields: [planId], references: [id])
-  createdAt        DateTime         @default(now()) @map("created_at")
+model Subscription {
+  id        String           @id @default(cuid())
+  userId    String           @map("user_id")
+  channelId String           @map("channel_id")
+  planId    String           @map("plan_id")
+  channel   Channel          @relation(fields: [channelId], references: [id])
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id])
+  createdAt DateTime         @default(now()) @map("created_at")
 
   @@index([userId], name: "user_id")
   @@index([channelId], name: "channel_id")

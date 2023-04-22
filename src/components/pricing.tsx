@@ -132,10 +132,10 @@ export function Pricing(props: Props) {
         </div>
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
           <Plan
-            name="Starter"
-            price="$9"
+            name="Free"
+            price="$0"
             description="Good for anyone who is self-employed and just getting started."
-            href="/account"
+            href="/account?plan=FREE"
             features={[
               'Send 10 quotes and invoices',
               'Connect up to 2 bank accounts',
@@ -146,10 +146,10 @@ export function Pricing(props: Props) {
           />
           <Plan
             featured
-            name="Small business"
-            price="$15"
+            name="Premium"
+            price="$200"
             description="Perfect for small / medium sized businesses."
-            href="/account"
+            href="/account?plan=PREMIUM"
             features={[
               'Send 25 quotes and invoices',
               'Connect up to 5 bank accounts',
@@ -162,9 +162,9 @@ export function Pricing(props: Props) {
           />
           <Plan
             name="Enterprise"
-            price="$39"
+            price="$1000"
             description="For even the biggest enterprise companies."
-            href="/account"
+            href="/account?plan=ENTERPRISE"
             features={[
               'Send unlimited quotes and invoices',
               'Connect up to 15 bank accounts',
